@@ -27,6 +27,9 @@ Deterministic Calculators
 Calculator Registry
     |
     v
+Analytics Assembler
+    |
+    v
 CalculatedChannelAnalytics
     |
     v
@@ -50,7 +53,9 @@ The analytics layer consumes those canonical models. Shared validation establish
 
 The calculator registry owns an explicitly injected, ordered calculator sequence. It executes each calculator once in registration order and returns an immutable result tuple. Duplicate metric identities are rejected during construction. Execution is fail-fast: calculator exceptions propagate unchanged, no partial result collection is returned, and later calculators are not executed.
 
-Population of `CalculatedChannelAnalytics` remains a future orchestration responsibility. The future signal engine will interpret deterministic results through explicit business rules. The AI narrative engine will be the final consumer and will explain typed evidence rather than calculate metrics or signals.
+The future analytics assembler will consume metric results, validate their completeness and uniqueness, and construct `CalculatedChannelAnalytics`. The registry will remain unaware of the aggregate, and the aggregate will remain a pure immutable data contract without mapping or orchestration behavior.
+
+Implementation of the analytics assembler and population of `CalculatedChannelAnalytics` remain future work. The future signal engine will interpret deterministic results through explicit business rules. The AI narrative engine will be the final consumer and will explain typed evidence rather than calculate metrics or signals.
 
 ## Dependency Direction
 
@@ -79,6 +84,7 @@ Raw API response shapes and Google SDK types must not cross the canonical domain
 
 ### Planned Pipeline Stages
 
+- Analytics Assembler
 - CalculatedChannelAnalytics population
 - Signal Engine
 - AI Narrative Engine

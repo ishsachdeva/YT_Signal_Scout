@@ -17,6 +17,7 @@ This directory contains all significant architectural decisions for the YT Signa
 | ADR-002 | Separate Raw Analytics, Deterministic Metrics, and Signal Generation | 🟢 Accepted | 2026-07-21 |
 | ADR-003 | YT-003 — Rich YouTube Domain Model Before Analytics Expansion | 🟢 Accepted | 2026-07-21 |
 | ADR-004 | Explicit Deterministic Calculator Registry | 🟢 Accepted | 2026-07-21 |
+| ADR-005 | Separate Metric Execution from Analytics Assembly | 🟢 Accepted | 2026-07-21 |
 
 ---
 
