@@ -6,7 +6,7 @@ from datetime import UTC, datetime
 from pydantic import ValidationError
 
 from app.services.analytics.exceptions import AnalyticsValidationError
-from app.services.analytics.models import ChannelAnalytics
+from app.services.analytics.models import CalculatedChannelAnalytics, ChannelAnalytics
 from app.services.analytics.service import AnalyticsService
 from app.services.youtube.models import Channel, Video
 
@@ -25,6 +25,7 @@ class AnalyticsServiceTests(unittest.TestCase):
         analytics = self.service.build_channel_analytics(self.channel, self.videos)
 
         self.assertIsInstance(analytics, ChannelAnalytics)
+        self.assertNotIsInstance(analytics, CalculatedChannelAnalytics)
         self.assertEqual(analytics.channel, self.channel)
         self.assertEqual(analytics.videos, self.videos)
         self.assertEqual(analytics.video_count, 2)

@@ -29,6 +29,7 @@ class AnalyticsService:
         generated_at = self._clock()
         if generated_at.tzinfo is None or generated_at.utcoffset() is None:
             raise AnalyticsValidationError("generated_at must be timezone-aware")
+        # Calculator orchestration is deferred until calculator implementations exist.
         return ChannelAnalytics(
             channel=channel,
             videos=list(videos),
