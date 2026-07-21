@@ -22,7 +22,7 @@ class MetricType(str, Enum):
     MEDIAN_VIEWS = "median_views"
     VIEWS_PER_DAY = "views_per_day"
     VIEW_DISTRIBUTION = "view_distribution"
-    CONSISTENCY = "consistency"
+    UPLOAD_CONSISTENCY = "upload_consistency"
     OUTLIER = "outlier"
     ENGAGEMENT = "engagement"
 
