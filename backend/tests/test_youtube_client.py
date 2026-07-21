@@ -58,6 +58,23 @@ class YouTubeClientTests(unittest.TestCase):
         self.assertNotIn("pageToken", parameters)
         self.assertNotIn("regionCode", parameters)
 
+    def test_get_videos_uses_videos_list_endpoint(self) -> None:
+        self.resource.videos.return_value.list.return_value = self.request
+
+        result = self.client.get_videos(
+            ["video-1"], parts=("snippet", "statistics", "contentDetails")
+        )
+
+        self.assertEqual(result["items"], [])
+        self.resource.videos.return_value.list.assert_called_once_with(
+            part="snippet,statistics,contentDetails", id="video-1", maxResults=1
+        )
+        self.request.execute.assert_called_once_with(num_retries=4)
+
+    def test_get_videos_requires_between_one_and_fifty_ids(self) -> None:
+        with self.assertRaisesRegex(ValueError, "between 1 and 50"):
+            self.client.get_videos([], parts=("snippet",))
+
     def test_timeout_is_normalized(self) -> None:
         self.request.execute.side_effect = socket.timeout("private transport detail")
         with self.assertRaises(YouTubeTimeoutError) as raised:

@@ -34,6 +34,8 @@ class YouTubeResource(Protocol):
 
     def channels(self) -> Any: ...
 
+    def videos(self) -> Any: ...
+
     def playlistItems(self) -> Any: ...
 
 
@@ -104,6 +106,15 @@ class YouTubeClient:
             raise ValueError("channel_ids must contain between 1 and 50 IDs")
         request = self._resource.channels().list(
             part=",".join(parts), id=",".join(channel_ids), maxResults=len(channel_ids)
+        )
+        return self._execute(request)
+
+    def get_videos(self, video_ids: list[str], *, parts: tuple[str, ...]) -> JsonObject:
+        """Retrieve requested resource parts for up to 50 video IDs."""
+        if not 1 <= len(video_ids) <= 50:
+            raise ValueError("video_ids must contain between 1 and 50 IDs")
+        request = self._resource.videos().list(
+            part=",".join(parts), id=",".join(video_ids), maxResults=len(video_ids)
         )
         return self._execute(request)
 

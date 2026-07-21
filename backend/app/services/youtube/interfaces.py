@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from app.services.youtube.models import Channel, ChannelStatistics, SearchResult
+from app.services.youtube.models import Channel, ChannelStatistics, SearchResult, Video
 
 
 class VideoPlatformService(Protocol):
@@ -19,6 +19,8 @@ class VideoPlatformService(Protocol):
     ) -> SearchResult: ...
 
     def get_channel(self, channel_id: str) -> Channel: ...
+
+    def get_video(self, video_id: str) -> Video: ...
 
     def get_channel_statistics(self, channel_id: str) -> ChannelStatistics: ...
 

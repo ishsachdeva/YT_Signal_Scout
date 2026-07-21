@@ -7,7 +7,11 @@ from datetime import datetime
 from typing import Any
 
 from app.services.youtube.client import JsonObject, YouTubeClient
-from app.services.youtube.exceptions import ChannelNotFoundError, YouTubeAPIError
+from app.services.youtube.exceptions import (
+    ChannelNotFoundError,
+    VideoNotFoundError,
+    YouTubeAPIError,
+)
 from app.services.youtube.models import (
     Channel,
     ChannelStatistics,
@@ -73,6 +77,16 @@ class YouTubeService:
         if not items:
             raise ChannelNotFoundError(f"YouTube channel '{channel_id}' was not found")
         return self._parse_channel(items[0])
+
+    def get_video(self, video_id: str) -> Video:
+        """Retrieve public metadata, statistics, and content details for one video."""
+        payload = self._client.get_videos(
+            [video_id], parts=("snippet", "statistics", "contentDetails")
+        )
+        items = self._items(payload)
+        if not items:
+            raise VideoNotFoundError(f"YouTube video '{video_id}' was not found")
+        return self._parse_video(items[0])
 
     def get_channel_statistics(self, channel_id: str) -> ChannelStatistics:
         """Retrieve the current public statistics for one channel."""

@@ -5,7 +5,11 @@ from datetime import UTC, datetime
 from unittest.mock import MagicMock, call
 
 from app.services.youtube.client import YouTubeClient
-from app.services.youtube.exceptions import ChannelNotFoundError, YouTubeAPIError
+from app.services.youtube.exceptions import (
+    ChannelNotFoundError,
+    VideoNotFoundError,
+    YouTubeAPIError,
+)
 from app.services.youtube.models import Channel, Video
 from app.services.youtube.service import YouTubeService
 
@@ -111,6 +115,28 @@ class YouTubeServiceTests(unittest.TestCase):
         self.client.get_channels.assert_called_once_with(
             ["channel-1"], parts=("snippet", "statistics", "contentDetails")
         )
+
+    def test_get_video_returns_parsed_video(self) -> None:
+        item = _video_item("video-1")
+        item["id"] = "video-1"
+        item["statistics"] = {"viewCount": "100"}
+        item["contentDetails"] = {"duration": "PT5M"}
+        self.client.get_videos.return_value = {"items": [item]}
+
+        video = self.service.get_video("video-1")
+
+        self.assertIsInstance(video, Video)
+        self.assertEqual(video.id, "video-1")
+        self.client.get_videos.assert_called_once_with(
+            ["video-1"], parts=("snippet", "statistics", "contentDetails")
+        )
+
+    def test_missing_video_raises_normalized_exception(self) -> None:
+        self.client.get_videos.return_value = {"items": []}
+        with self.assertRaisesRegex(
+            VideoNotFoundError, "YouTube video 'missing' was not found"
+        ):
+            self.service.get_video("missing")
 
     def test_get_channel_statistics_preserves_hidden_subscriber_state(self) -> None:
         item = _channel_item(hidden_subscribers=True)
