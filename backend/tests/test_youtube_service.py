@@ -127,6 +127,7 @@ class YouTubeServiceTests(unittest.TestCase):
 
         self.assertIsInstance(video, Video)
         self.assertEqual(video.id, "video-1")
+        self.assertEqual(video.view_count, 100)
         self.client.get_videos.assert_called_once_with(
             ["video-1"], parts=("snippet", "statistics", "contentDetails")
         )

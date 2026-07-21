@@ -192,6 +192,9 @@ class YouTubeService:
             title=cls._required_string(snippet.get("title"), "video title"),
             description=cls._optional_string(snippet.get("description")) or "",
             published_at=cls._datetime(snippet.get("publishedAt")),
+            view_count=cls._optional_integer(
+                cls._mapping(item.get("statistics")).get("viewCount")
+            ),
             thumbnails=cls._thumbnails(snippet.get("thumbnails")),
         )
 

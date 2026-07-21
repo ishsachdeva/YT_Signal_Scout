@@ -56,6 +56,7 @@ class Video(BaseModel):
     title: str
     description: str = ""
     published_at: datetime | None = None
+    view_count: int | None = None
     thumbnails: tuple[Thumbnail, ...] = ()
 
 
