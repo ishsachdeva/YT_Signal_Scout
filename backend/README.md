@@ -47,3 +47,10 @@ singleton. Tests inject a mock Google resource and never contact YouTube.
 cd backend
 python -m unittest discover -s tests -v
 ```
+
+## Analytics calculator registry
+
+`CalculatorRegistry` is the deterministic entry point for executing analytics calculators.
+Callers inject calculators in the required execution order; the registry preserves that order,
+rejects duplicate metric identities, and returns an immutable tuple of results. Calculator
+failures propagate immediately and no partial result collection is returned.

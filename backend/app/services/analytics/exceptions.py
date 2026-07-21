@@ -7,3 +7,7 @@ class AnalyticsError(Exception):
 
 class AnalyticsValidationError(AnalyticsError):
     """The supplied analytics dataset is invalid."""
+
+
+class DuplicateCalculatorError(AnalyticsError):
+    """More than one registered calculator produces the same metric."""

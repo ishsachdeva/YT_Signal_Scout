@@ -48,7 +48,9 @@ This boundary prevents external naming and serialization formats from leaking in
 
 The analytics layer consumes those canonical models. Shared validation establishes calculator preconditions, and each deterministic calculator produces exactly one typed metric without orchestration, scoring, signal detection, or AI behavior.
 
-The calculator registry and population of `CalculatedChannelAnalytics` are future orchestration responsibilities. The future signal engine will interpret deterministic results through explicit business rules. The AI narrative engine will be the final consumer and will explain typed evidence rather than calculate metrics or signals.
+The calculator registry owns an explicitly injected, ordered calculator sequence. It executes each calculator once in registration order and returns an immutable result tuple. Duplicate metric identities are rejected during construction. Execution is fail-fast: calculator exceptions propagate unchanged, no partial result collection is returned, and later calculators are not executed.
+
+Population of `CalculatedChannelAnalytics` remains a future orchestration responsibility. The future signal engine will interpret deterministic results through explicit business rules. The AI narrative engine will be the final consumer and will explain typed evidence rather than calculate metrics or signals.
 
 ## Dependency Direction
 
@@ -56,9 +58,9 @@ Dependencies flow downward through the pipeline. Downstream stages may depend on
 
 Raw API response shapes and Google SDK types must not cross the canonical domain-model boundary.
 
-## Current Implementation Status
+## Implementation Status
 
-Implemented deterministic calculators:
+### Implemented Calculators
 
 - ChannelAge
 - AverageViews
@@ -71,9 +73,12 @@ Implemented deterministic calculators:
 - ViewGrowthRate
 - ViewEngagementRate
 
-Planned stages and metrics:
+### Implemented Orchestration
 
 - Calculator Registry
+
+### Planned Pipeline Stages
+
 - CalculatedChannelAnalytics population
 - Signal Engine
 - AI Narrative Engine

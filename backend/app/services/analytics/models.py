@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict
 
 from app.services.youtube.models import Channel, Video
 
-MetricValueT = TypeVar("MetricValueT")
+MetricValueT = TypeVar("MetricValueT", covariant=True)
 
 
 class MetricType(str, Enum):
