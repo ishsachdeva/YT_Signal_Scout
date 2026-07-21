@@ -14,6 +14,8 @@ This directory contains all significant architectural decisions for the YT Signa
 | ADR | Title | Status | Date |
 |-----|-------|--------|------|
 | ADR-001 | Adopt a Modular Monolith Architecture | 🟢 Accepted | 2026-07-20 |
+| ADR-002 | Separate Raw Analytics, Deterministic Metrics, and Signal Generation | 🟢 Accepted | 2026-07-21 |
+| ADR-003 | YT-003 — Rich YouTube Domain Model Before Analytics Expansion | 🟢 Accepted | 2026-07-21 |
 
 ---
 

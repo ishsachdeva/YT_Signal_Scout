@@ -2,9 +2,18 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timedelta
+from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict, Field
+
+
+class PrivacyStatus(StrEnum):
+    """Canonical visibility states for a YouTube video."""
+
+    PUBLIC = "public"
+    UNLISTED = "unlisted"
+    PRIVATE = "private"
 
 
 class Thumbnail(BaseModel):
@@ -55,8 +64,15 @@ class Video(BaseModel):
     channel_title: str | None = None
     title: str
     description: str = ""
+    tags: tuple[str, ...] = ()
+    category_id: str | None = None
+    default_language: str | None = None
     published_at: datetime | None = None
     view_count: int | None = None
+    like_count: int | None = Field(default=None, ge=0)
+    comment_count: int | None = Field(default=None, ge=0)
+    duration: timedelta | None = None
+    privacy_status: PrivacyStatus | None = None
     thumbnails: tuple[Thumbnail, ...] = ()
 
 

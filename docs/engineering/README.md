@@ -25,6 +25,7 @@ New contributors should read the documents in the following order:
 | Document | Purpose |
 |----------|---------|
 | ENGINEERING_PRINCIPLES.md | Engineering philosophy and decision-making principles |
+| ARCHITECTURE.md | Current and target system architecture |
 | adr/ | Architecture Decision Records |
 
 ---
