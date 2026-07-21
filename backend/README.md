@@ -9,8 +9,8 @@ python -m pip install -r backend/requirements-dev.txt
 ```
 
 Copy `backend/.env.example` values into your process environment as needed. The application
-reads only `APP_NAME`, `APP_VERSION`, `ENVIRONMENT`, `DEBUG`, `API_V1_PREFIX`, and `LOG_LEVEL`.
-It does not load a `.env` file implicitly.
+reads only the variables documented in `.env.example`. It does not load a `.env` file
+implicitly.
 
 `DEBUG` is validated and retained as application configuration, but HTTP traceback responses
 remain disabled in every environment so internal exception details cannot reach clients.
@@ -29,6 +29,17 @@ outside API versioning:
 - `GET /health/ready` reports bootstrap readiness. M1 has no external dependency checks.
 
 Future product endpoints compose beneath `API_V1_PREFIX`, which defaults to `/api/v1`.
+
+## YouTube data acquisition
+
+Set `YOUTUBE_API_KEY` before constructing a `YouTubeClient`. `YOUTUBE_TIMEOUT`,
+`YOUTUBE_MAX_RETRIES`, and `YOUTUBE_PAGE_SIZE` control transport timeout, Google client retry
+attempts, and the default bounded page size. The service uses only documented YouTube Data
+API v3 endpoints and makes no API request until a service method is called.
+
+The acquisition layer is under `app/services/youtube`. Instantiate `YouTubeClient` from the
+application settings and inject it into `YouTubeService`; neither object is global or a
+singleton. Tests inject a mock Google resource and never contact YouTube.
 
 ## Test
 

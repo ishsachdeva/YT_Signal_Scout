@@ -16,6 +16,10 @@ class Settings:
     debug: bool = False
     api_v1_prefix: str = "/api/v1"
     log_level: str = "INFO"
+    youtube_api_key: str = ""
+    youtube_timeout: float = 10.0
+    youtube_max_retries: int = 3
+    youtube_page_size: int = 25
 
     def __post_init__(self) -> None:
         if not self.app_name.strip():
@@ -32,6 +36,12 @@ class Settings:
             raise ValueError("API_V1_PREFIX must not be '/' ")
         if self.log_level.upper() not in logging.getLevelNamesMapping():
             raise ValueError(f"Invalid LOG_LEVEL: {self.log_level}")
+        if self.youtube_timeout <= 0:
+            raise ValueError("YOUTUBE_TIMEOUT must be greater than zero")
+        if self.youtube_max_retries < 0:
+            raise ValueError("YOUTUBE_MAX_RETRIES must be zero or greater")
+        if not 1 <= self.youtube_page_size <= 50:
+            raise ValueError("YOUTUBE_PAGE_SIZE must be between 1 and 50")
 
         object.__setattr__(self, "log_level", self.log_level.upper())
 
@@ -46,6 +56,19 @@ class Settings:
             debug=_parse_boolean(source.get("DEBUG", "false")),
             api_v1_prefix=source.get("API_V1_PREFIX", defaults.api_v1_prefix),
             log_level=source.get("LOG_LEVEL", defaults.log_level),
+            youtube_api_key=source.get("YOUTUBE_API_KEY", defaults.youtube_api_key),
+            youtube_timeout=_parse_float(
+                source.get("YOUTUBE_TIMEOUT", str(defaults.youtube_timeout)),
+                name="YOUTUBE_TIMEOUT",
+            ),
+            youtube_max_retries=_parse_integer(
+                source.get("YOUTUBE_MAX_RETRIES", str(defaults.youtube_max_retries)),
+                name="YOUTUBE_MAX_RETRIES",
+            ),
+            youtube_page_size=_parse_integer(
+                source.get("YOUTUBE_PAGE_SIZE", str(defaults.youtube_page_size)),
+                name="YOUTUBE_PAGE_SIZE",
+            ),
         )
 
 
@@ -56,3 +79,17 @@ def _parse_boolean(value: str) -> bool:
     if normalized == "false":
         return False
     raise ValueError("DEBUG must be either 'true' or 'false'")
+
+
+def _parse_float(value: str, *, name: str) -> float:
+    try:
+        return float(value)
+    except ValueError as exception:
+        raise ValueError(f"{name} must be a number") from exception
+
+
+def _parse_integer(value: str, *, name: str) -> int:
+    try:
+        return int(value)
+    except ValueError as exception:
+        raise ValueError(f"{name} must be an integer") from exception

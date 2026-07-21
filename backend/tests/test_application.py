@@ -167,11 +167,19 @@ class SettingsTests(unittest.TestCase):
                 "DEBUG": "true",
                 "API_V1_PREFIX": "/v1",
                 "LOG_LEVEL": "warning",
+                "YOUTUBE_API_KEY": "test-key",
+                "YOUTUBE_TIMEOUT": "4.5",
+                "YOUTUBE_MAX_RETRIES": "2",
+                "YOUTUBE_PAGE_SIZE": "40",
                 "UNRELATED_SECRET": "must-not-be-read",
             }
         )
         self.assertTrue(settings.debug)
         self.assertEqual(settings.log_level, "WARNING")
+        self.assertEqual(settings.youtube_api_key, "test-key")
+        self.assertEqual(settings.youtube_timeout, 4.5)
+        self.assertEqual(settings.youtube_max_retries, 2)
+        self.assertEqual(settings.youtube_page_size, 40)
 
     def test_invalid_boolean_is_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "DEBUG"):
@@ -184,6 +192,14 @@ class SettingsTests(unittest.TestCase):
     def test_invalid_log_level_is_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "LOG_LEVEL"):
             Settings(log_level="verbose")
+
+    def test_invalid_youtube_configuration_is_rejected(self) -> None:
+        with self.assertRaisesRegex(ValueError, "YOUTUBE_TIMEOUT"):
+            Settings.from_environment({"YOUTUBE_TIMEOUT": "never"})
+        with self.assertRaisesRegex(ValueError, "YOUTUBE_MAX_RETRIES"):
+            Settings(youtube_max_retries=-1)
+        with self.assertRaisesRegex(ValueError, "YOUTUBE_PAGE_SIZE"):
+            Settings(youtube_page_size=51)
 
 
 if __name__ == "__main__":
