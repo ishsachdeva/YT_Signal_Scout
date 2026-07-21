@@ -25,14 +25,13 @@ class AnalyticsService:
     ) -> ChannelAnalytics:
         """Build an analytics dataset without calculating metrics or scores."""
         self._validate_channel(channel)
-        self._validate_videos(channel, videos)
+        self._validate_videos(videos)
         generated_at = self._clock()
         if generated_at.tzinfo is None or generated_at.utcoffset() is None:
             raise AnalyticsValidationError("generated_at must be timezone-aware")
         return ChannelAnalytics(
             channel=channel,
             videos=list(videos),
-            video_count=len(videos),
             generated_at=generated_at,
         )
 
@@ -44,12 +43,12 @@ class AnalyticsService:
             raise AnalyticsValidationError("channel id must not be empty")
 
     @staticmethod
-    def _validate_videos(channel: Channel, videos: list[Video]) -> None:
+    def _validate_videos(videos: list[Video]) -> None:
         if not isinstance(videos, list):
             raise AnalyticsValidationError("videos must be a list of Video objects")
         if not videos:
-            raise AnalyticsValidationError("videos must not be empty")
+            raise AnalyticsValidationError(
+                "Cannot build analytics for a channel with no videos"
+            )
         if not all(isinstance(video, Video) for video in videos):
             raise AnalyticsValidationError("videos must contain only Video objects")
-        if any(video.channel_id != channel.id for video in videos):
-            raise AnalyticsValidationError("videos must belong to the supplied channel")

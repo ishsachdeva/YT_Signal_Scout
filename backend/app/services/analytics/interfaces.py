@@ -8,7 +8,7 @@ from app.services.analytics.models import ChannelAnalytics
 from app.services.youtube.models import Channel, Video
 
 
-class AnalyticsProvider(Protocol):
+class AnalyticsBuilder(Protocol):
     """Contract implemented by analytics dataset builders."""
 
     def build_channel_analytics(

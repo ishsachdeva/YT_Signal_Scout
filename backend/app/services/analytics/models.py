@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict
 
 from app.services.youtube.models import Channel, Video
 
@@ -16,5 +16,8 @@ class ChannelAnalytics(BaseModel):
 
     channel: Channel
     videos: list[Video]
-    video_count: int = Field(ge=0)
     generated_at: datetime
+
+    @property
+    def video_count(self) -> int:
+        return len(self.videos)

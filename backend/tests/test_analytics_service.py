@@ -31,8 +31,36 @@ class AnalyticsServiceTests(unittest.TestCase):
         self.assertEqual(analytics.generated_at, self.generated_at)
 
     def test_empty_video_list_is_rejected(self) -> None:
-        with self.assertRaisesRegex(AnalyticsValidationError, "must not be empty"):
+        with self.assertRaisesRegex(
+            AnalyticsValidationError,
+            "Cannot build analytics for a channel with no videos",
+        ):
             self.service.build_channel_analytics(self.channel, [])
+
+    def test_video_count_is_derived_from_videos(self) -> None:
+        analytics = ChannelAnalytics(
+            channel=self.channel,
+            videos=self.videos,
+            generated_at=self.generated_at,
+        )
+
+        self.assertNotIn("video_count", ChannelAnalytics.model_fields)
+        self.assertEqual(analytics.video_count, len(analytics.videos))
+
+    def test_mixed_channel_video_dataset_is_accepted(self) -> None:
+        videos = [
+            self.videos[0],
+            Video(
+                id="video-2",
+                channel_id="another-channel",
+                title="Collaboration Video",
+            ),
+        ]
+
+        analytics = self.service.build_channel_analytics(self.channel, videos)
+
+        self.assertEqual(analytics.videos, videos)
+        self.assertEqual(analytics.video_count, 2)
 
     def test_invalid_channel_is_rejected(self) -> None:
         invalid_channel = Channel(id="", title="Example Channel")
