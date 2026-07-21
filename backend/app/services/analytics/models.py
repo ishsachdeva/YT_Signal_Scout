@@ -23,7 +23,7 @@ class MetricType(str, Enum):
     VIEWS_PER_DAY = "views_per_day"
     VIEW_DISTRIBUTION = "view_distribution"
     UPLOAD_CONSISTENCY = "upload_consistency"
-    OUTLIER = "outlier"
+    VIEW_OUTLIER = "view_outlier"
     ENGAGEMENT = "engagement"
 
 
@@ -56,3 +56,14 @@ class CalculatedChannelAnalytics(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     source_dataset: ChannelAnalytics
+
+
+class OutlierResult(BaseModel):
+    """Most significant high-performing and low-performing video z-scores."""
+
+    model_config = ConfigDict(frozen=True)
+
+    highest_video_id: str | None
+    highest_z_score: float
+    lowest_video_id: str | None
+    lowest_z_score: float
