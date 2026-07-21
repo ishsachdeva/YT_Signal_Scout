@@ -24,6 +24,7 @@ class MetricType(str, Enum):
     VIEW_DISTRIBUTION = "view_distribution"
     UPLOAD_CONSISTENCY = "upload_consistency"
     VIEW_OUTLIER = "view_outlier"
+    VIEW_GROWTH_RATE = "view_growth_rate"
     ENGAGEMENT = "engagement"
 
 
