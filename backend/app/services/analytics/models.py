@@ -51,14 +51,6 @@ class MetricResult(BaseModel, Generic[MetricValueT]):
     value: MetricValueT
 
 
-class CalculatedChannelAnalytics(BaseModel):
-    """Deterministic analytics derived from a raw channel dataset."""
-
-    model_config = ConfigDict(frozen=True)
-
-    source_dataset: ChannelAnalytics
-
-
 class OutlierResult(BaseModel):
     """Most significant high-performing and low-performing video z-scores."""
 
@@ -68,3 +60,21 @@ class OutlierResult(BaseModel):
     highest_z_score: float
     lowest_video_id: str | None
     lowest_z_score: float
+
+
+class CalculatedChannelAnalytics(BaseModel):
+    """Complete deterministic analytics derived from a channel dataset."""
+
+    model_config = ConfigDict(frozen=True)
+
+    source_dataset: ChannelAnalytics
+    channel_age: int
+    upload_frequency: float
+    average_views: float
+    median_views: float
+    views_per_day: float
+    view_distribution: float
+    upload_consistency: float
+    view_outlier: OutlierResult
+    view_growth_rate: float
+    view_engagement_rate: float | None

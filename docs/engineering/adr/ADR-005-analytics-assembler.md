@@ -233,8 +233,8 @@ The additional component is justified because it owns a distinct transformation 
 
 ### Affected modules
 
-- Future AnalyticsAssembler
-- Future strongly typed `CalculatedChannelAnalytics`
+- AnalyticsAssembler
+- Strongly typed `CalculatedChannelAnalytics`
 - Future Signal Engine
 - Future AI Narrative Engine
 

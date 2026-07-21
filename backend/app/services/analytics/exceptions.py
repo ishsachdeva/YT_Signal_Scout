@@ -11,3 +11,7 @@ class AnalyticsValidationError(AnalyticsError):
 
 class DuplicateCalculatorError(AnalyticsError):
     """More than one registered calculator produces the same metric."""
+
+
+class AnalyticsAssemblyError(AnalyticsError):
+    """Metric results cannot form a complete analytics aggregate."""

@@ -54,3 +54,9 @@ python -m unittest discover -s tests -v
 Callers inject calculators in the required execution order; the registry preserves that order,
 rejects duplicate metric identities, and returns an immutable tuple of results. Calculator
 failures propagate immediately and no partial result collection is returned.
+
+## Analytics assembly
+
+`AnalyticsAssembler` accepts metric results from any source, validates structural
+completeness and uniqueness, and explicitly maps them into immutable
+`CalculatedChannelAnalytics`. It does not execute calculators or interpret metric values.

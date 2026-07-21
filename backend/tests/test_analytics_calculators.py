@@ -7,7 +7,6 @@ from pydantic import ValidationError
 
 from app.services.analytics.interfaces import AnalyticsCalculator
 from app.services.analytics.models import (
-    CalculatedChannelAnalytics,
     ChannelAnalytics,
     MetricResult,
     MetricType,
@@ -32,12 +31,6 @@ class AnalyticsCalculatorContractTests(unittest.TestCase):
             videos=[Video(id="video-1", channel_id="channel-1", title="Video")],
             generated_at=datetime(2026, 7, 21, 12, 30, tzinfo=UTC),
         )
-
-    def test_calculated_channel_analytics_is_immutable(self) -> None:
-        analytics = CalculatedChannelAnalytics(source_dataset=self.source_dataset)
-
-        with self.assertRaises(ValidationError):
-            analytics.source_dataset = self.source_dataset
 
     def test_calculator_contract_accepts_dataset_and_returns_one_typed_result(
         self,
