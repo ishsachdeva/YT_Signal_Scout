@@ -69,10 +69,10 @@ Implemented deterministic calculators:
 - ViewDistribution
 - ViewOutlier
 - ViewGrowthRate
+- ViewEngagementRate
 
 Planned stages and metrics:
 
-- ViewEngagementRate
 - Calculator Registry
 - CalculatedChannelAnalytics population
 - Signal Engine

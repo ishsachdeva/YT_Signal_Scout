@@ -25,7 +25,7 @@ class MetricType(str, Enum):
     UPLOAD_CONSISTENCY = "upload_consistency"
     VIEW_OUTLIER = "view_outlier"
     VIEW_GROWTH_RATE = "view_growth_rate"
-    ENGAGEMENT = "engagement"
+    VIEW_ENGAGEMENT_RATE = "view_engagement_rate"
 
 
 class ChannelAnalytics(BaseModel):
