@@ -5,7 +5,15 @@ from unittest import TestCase
 
 from pydantic import ValidationError
 
-from app.services.youtube.models import PrivacyStatus, Video
+from app.services.youtube.models import (
+    AcquisitionSource,
+    PaginationProvenance,
+    PaginationStatus,
+    PrivacyStatus,
+    Video,
+    VideoAcquisitionProvenance,
+    VideoAcquisitionResult,
+)
 
 
 class VideoModelTests(TestCase):
@@ -65,3 +73,67 @@ class VideoModelTests(TestCase):
 
         with self.assertRaises(ValidationError):
             video.like_count = 1
+
+
+class VideoAcquisitionModelTests(TestCase):
+    """Verify acquisition collections and provenance cannot contradict."""
+
+    @staticmethod
+    def provenance() -> VideoAcquisitionProvenance:
+        return VideoAcquisitionProvenance(
+            source=AcquisitionSource.UPLOADS_PLAYLIST,
+            source_channel_id="channel-1",
+            discovery_request_capacity=2,
+            discovered_position_count=2,
+            discovered_unique_video_count=1,
+            enrichment_requested_unique_count=1,
+            enriched_unique_video_count=1,
+            enriched_output_position_count=2,
+            omitted_unique_video_count=0,
+            pagination=PaginationProvenance(
+                status=PaginationStatus.COMPLETE,
+                pages_fetched=1,
+                page_size_requested=2,
+                page_limit=1,
+                next_page_token_present=False,
+            ),
+        )
+
+    def test_duplicate_positions_and_unique_collection_are_valid_and_immutable(self) -> None:
+        video = Video(id="video-1", channel_id="channel-1", title="Video")
+        result = VideoAcquisitionResult(
+            resolved_discovery_videos=(video, video),
+            unique_canonical_videos=(video,),
+            provenance=self.provenance(),
+        )
+        self.assertIs(result.resolved_discovery_videos[0], result.resolved_discovery_videos[1])
+        with self.assertRaises(ValidationError):
+            result.unique_canonical_videos = ()
+
+    def test_pagination_status_must_match_token_presence(self) -> None:
+        with self.assertRaises(ValidationError):
+            PaginationProvenance(
+                status=PaginationStatus.COMPLETE,
+                pages_fetched=1,
+                page_size_requested=1,
+                page_limit=1,
+                next_page_token_present=True,
+            )
+
+    def test_result_rejects_non_unique_or_wrong_order_unique_collection(self) -> None:
+        first = Video(id="video-1", channel_id="channel-1", title="First")
+        second = Video(id="video-2", channel_id="channel-1", title="Second")
+        provenance = self.provenance().model_copy(
+            update={
+                "discovered_unique_video_count": 2,
+                "enrichment_requested_unique_count": 2,
+                "enriched_unique_video_count": 2,
+                "omitted_unique_video_count": 0,
+            }
+        )
+        with self.assertRaises(ValidationError):
+            VideoAcquisitionResult(
+                resolved_discovery_videos=(first, second),
+                unique_canonical_videos=(second, first),
+                provenance=provenance,
+            )

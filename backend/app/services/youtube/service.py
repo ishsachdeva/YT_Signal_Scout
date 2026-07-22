@@ -15,14 +15,19 @@ from app.services.youtube.exceptions import (
     YouTubeAPIError,
 )
 from app.services.youtube.models import (
+    AcquisitionSource,
     Channel,
     ChannelStatistics,
     LiveState,
     PageInfo,
+    PaginationProvenance,
+    PaginationStatus,
     PrivacyStatus,
     SearchResult,
     Thumbnail,
     Video,
+    VideoAcquisitionProvenance,
+    VideoAcquisitionResult,
     VideoAvailability,
     VideoFormat,
 )
@@ -76,21 +81,42 @@ class YouTubeService:
         page_size: int | None = None,
         region_code: str | None = None,
         relevance_language: str | None = None,
-    ) -> SearchResult:
+    ) -> VideoAcquisitionResult:
         """Search for public videos matching a query."""
+        size = self._page_size(page_size)
         payload = self._client.search(
             query=query,
             resource_type="video",
-            max_results=self._page_size(page_size),
+            max_results=size,
             page_token=page_token,
             region_code=region_code,
             relevance_language=relevance_language,
         )
-        return SearchResult(
-            items=self._enrich_videos(self._items(payload)),
-            page_info=self._page_info(payload),
-            next_page_token=self._optional_string(payload.get("nextPageToken")),
-            previous_page_token=self._optional_string(payload.get("prevPageToken")),
+        discovered_items = self._items(payload)
+        parsed_by_id: dict[str, Video] = {}
+        requested_ids: set[str] = set()
+        resolved_videos = self._enrich_videos(
+            discovered_items,
+            parsed_by_id=parsed_by_id,
+            requested_ids=requested_ids,
+        )
+        next_page_token = self._optional_string(payload.get("nextPageToken"))
+        return self._video_acquisition_result(
+            resolved_videos=resolved_videos,
+            parsed_by_id=parsed_by_id,
+            requested_ids=requested_ids,
+            source=AcquisitionSource.SEARCH,
+            source_channel_id=None,
+            discovery_request_capacity=size,
+            discovered_position_count=len(discovered_items),
+            pagination=PaginationProvenance(
+                status=self._pagination_status(next_page_token),
+                pages_fetched=1,
+                page_size_requested=size,
+                page_limit=1,
+                next_page_token_present=next_page_token is not None,
+                upstream_total_results=self._optional_total_results(payload),
+            ),
         )
 
     def get_channel(self, channel_id: str) -> Channel:
@@ -128,7 +154,7 @@ class YouTubeService:
         *,
         max_pages: int = 1,
         page_size: int | None = None,
-    ) -> SearchResult:
+    ) -> VideoAcquisitionResult:
         """List a bounded number of pages from a channel's uploads playlist."""
         if max_pages < 1:
             raise ValueError("max_pages must be one or greater")
@@ -137,40 +163,103 @@ class YouTubeService:
             raise YouTubeAPIError("YouTube response did not include an uploads playlist")
 
         size = self._page_size(page_size)
-        collected: list[Channel | Video] = []
+        collected: list[Video] = []
         parsed_by_id: dict[str, Video] = {}
         requested_ids: set[str] = set()
         page_token: str | None = None
-        previous_page_token: str | None = None
-        total_results = 0
+        upstream_total_results: int | None = None
+        discovered_position_count = 0
+        pages_fetched = 0
         for _ in range(max_pages):
             payload = self._client.list_playlist_items(
                 playlist_id=channel.uploads_playlist_id,
                 max_results=size,
                 page_token=page_token,
             )
+            discovered_items = self._items(payload)
+            discovered_position_count += len(discovered_items)
+            pages_fetched += 1
             collected.extend(
                 self._enrich_videos(
-                    self._items(payload),
+                    discovered_items,
                     parsed_by_id=parsed_by_id,
                     requested_ids=requested_ids,
                 )
             )
-            total_results = self._page_info(payload).total_results
-            previous_page_token = self._optional_string(payload.get("prevPageToken"))
+            upstream_total_results = self._optional_total_results(payload)
             page_token = self._optional_string(payload.get("nextPageToken"))
             if page_token is None:
                 break
 
-        return SearchResult(
-            items=tuple(collected),
-            page_info=PageInfo(total_results=total_results, results_per_page=len(collected)),
-            next_page_token=page_token,
-            previous_page_token=previous_page_token,
+        return self._video_acquisition_result(
+            resolved_videos=tuple(collected),
+            parsed_by_id=parsed_by_id,
+            requested_ids=requested_ids,
+            source=AcquisitionSource.UPLOADS_PLAYLIST,
+            source_channel_id=channel_id,
+            discovery_request_capacity=size * pages_fetched,
+            discovered_position_count=discovered_position_count,
+            pagination=PaginationProvenance(
+                status=self._pagination_status(page_token),
+                pages_fetched=pages_fetched,
+                page_size_requested=size,
+                page_limit=max_pages,
+                next_page_token_present=page_token is not None,
+                upstream_total_results=upstream_total_results,
+            ),
         )
 
     def _page_size(self, requested: int | None) -> int:
         return self._client.page_size if requested is None else requested
+
+    @staticmethod
+    def _pagination_status(next_page_token: str | None) -> PaginationStatus:
+        return (
+            PaginationStatus.TRUNCATED
+            if next_page_token is not None
+            else PaginationStatus.COMPLETE
+        )
+
+    @classmethod
+    def _video_acquisition_result(
+        cls,
+        *,
+        resolved_videos: tuple[Video, ...],
+        parsed_by_id: dict[str, Video],
+        requested_ids: set[str],
+        source: AcquisitionSource,
+        source_channel_id: str | None,
+        discovery_request_capacity: int,
+        discovered_position_count: int,
+        pagination: PaginationProvenance,
+    ) -> VideoAcquisitionResult:
+        unique_videos: list[Video] = []
+        seen_ids: set[str] = set()
+        for video in resolved_videos:
+            if video.id not in seen_ids:
+                seen_ids.add(video.id)
+                unique_videos.append(video)
+
+        enriched_unique_count = len(parsed_by_id)
+        requested_unique_count = len(requested_ids)
+        return VideoAcquisitionResult(
+            resolved_discovery_videos=resolved_videos,
+            unique_canonical_videos=tuple(unique_videos),
+            provenance=VideoAcquisitionProvenance(
+                source=source,
+                source_channel_id=source_channel_id,
+                discovery_request_capacity=discovery_request_capacity,
+                discovered_position_count=discovered_position_count,
+                discovered_unique_video_count=requested_unique_count,
+                enrichment_requested_unique_count=requested_unique_count,
+                enriched_unique_video_count=enriched_unique_count,
+                enriched_output_position_count=len(resolved_videos),
+                omitted_unique_video_count=(
+                    requested_unique_count - enriched_unique_count
+                ),
+                pagination=pagination,
+            ),
+        )
 
     def _enrich_videos(
         self,
@@ -451,6 +540,12 @@ class YouTubeService:
                 value.get("resultsPerPage", len(cls._items(payload))), "results per page"
             ),
         )
+
+    @classmethod
+    def _optional_total_results(cls, payload: JsonObject) -> int | None:
+        page_info = cls._mapping(payload.get("pageInfo"))
+        value = page_info.get("totalResults")
+        return None if value is None else cls._integer(value, "total results")
 
     @staticmethod
     def _items(payload: JsonObject) -> list[JsonObject]:

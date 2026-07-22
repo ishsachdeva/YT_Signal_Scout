@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 from datetime import UTC, datetime, timedelta
-from unittest.mock import MagicMock, call
+from unittest.mock import MagicMock, call, patch
 
 from app.services.youtube.client import YouTubeClient
 from app.services.youtube.exceptions import (
@@ -11,8 +11,10 @@ from app.services.youtube.exceptions import (
     YouTubeAPIError,
 )
 from app.services.youtube.models import (
+    AcquisitionSource,
     Channel,
     LiveState,
+    PaginationStatus,
     PrivacyStatus,
     Video,
     VideoAvailability,
@@ -133,7 +135,8 @@ class YouTubeServiceTests(unittest.TestCase):
 
         result = self.service.search_videos("engineering", page_size=10)
 
-        video = result.items[0]
+        video = result.resolved_discovery_videos[0]
+        self.assertIs(result.provenance.source, AcquisitionSource.SEARCH)
         self.assertIsInstance(video, Video)
         self.assertEqual(video.published_at, datetime(2026, 2, 3, 4, 5, 6, tzinfo=UTC))
         self.assertEqual(video.thumbnails[0].width, 320)
@@ -147,6 +150,16 @@ class YouTubeServiceTests(unittest.TestCase):
         self.assertIs(video.availability, VideoAvailability.AVAILABLE)
         self.assertIs(video.live_state, LiveState.NOT_LIVE)
         self.assertIs(video.format, VideoFormat.STANDARD)
+        self.assertEqual(result.provenance.pagination.page_size_requested, 10)
+        self.assertEqual(result.provenance.discovery_request_capacity, 10)
+        self.client.search.assert_called_once_with(
+            query="engineering",
+            resource_type="video",
+            max_results=10,
+            page_token=None,
+            region_code=None,
+            relevance_language=None,
+        )
         self.client.get_videos.assert_called_once_with(
             ["video-1"],
             parts=(
@@ -157,6 +170,57 @@ class YouTubeServiceTests(unittest.TestCase):
                 "liveStreamingDetails",
             ),
         )
+
+    def test_search_videos_reuses_default_page_size_for_request_and_provenance(
+        self,
+    ) -> None:
+        self.client.search.return_value = {
+            "items": [],
+            "pageInfo": {"totalResults": 0, "resultsPerPage": 0},
+        }
+
+        with patch.object(
+            self.service, "_page_size", wraps=self.service._page_size
+        ) as resolver:
+            result = self.service.search_videos("engineering")
+
+        resolver.assert_called_once_with(None)
+        self.client.search.assert_called_once_with(
+            query="engineering",
+            resource_type="video",
+            max_results=25,
+            page_token=None,
+            region_code=None,
+            relevance_language=None,
+        )
+        self.assertEqual(result.provenance.pagination.page_size_requested, 25)
+        self.assertEqual(result.provenance.discovery_request_capacity, 25)
+
+    def test_search_videos_passes_input_token_but_records_response_token_state(
+        self,
+    ) -> None:
+        self.client.search.return_value = {
+            "items": [],
+            "pageInfo": {"totalResults": 50, "resultsPerPage": 10},
+            "nextPageToken": "response-next-token",
+        }
+
+        result = self.service.search_videos(
+            "engineering", page_token="input-page-token", page_size=10
+        )
+
+        self.client.search.assert_called_once_with(
+            query="engineering",
+            resource_type="video",
+            max_results=10,
+            page_token="input-page-token",
+            region_code=None,
+            relevance_language=None,
+        )
+        self.assertIs(result.provenance.pagination.status, PaginationStatus.TRUNCATED)
+        self.assertTrue(result.provenance.pagination.next_page_token_present)
+        self.assertEqual(result.provenance.pagination.page_size_requested, 10)
+        self.assertEqual(result.provenance.discovery_request_capacity, 10)
 
     def test_search_video_enrichment_restores_discovery_order(self) -> None:
         self.client.search.return_value = {
@@ -169,7 +233,10 @@ class YouTubeServiceTests(unittest.TestCase):
 
         result = self.service.search_videos("engineering")
 
-        self.assertEqual([video.id for video in result.items], ["video-1", "video-2"])
+        self.assertEqual(
+            [video.id for video in result.resolved_discovery_videos],
+            ["video-1", "video-2"],
+        )
 
     def test_search_video_enrichment_preserves_duplicates_and_skips_omissions(
         self,
@@ -190,9 +257,20 @@ class YouTubeServiceTests(unittest.TestCase):
         result = self.service.search_videos("engineering")
 
         self.assertEqual(
-            [video.id for video in result.items], ["video-1", "video-1", "video-2"]
+            [video.id for video in result.resolved_discovery_videos],
+            ["video-1", "video-1", "video-2"],
         )
-        self.assertIs(result.items[0], result.items[1])
+        self.assertIs(
+            result.resolved_discovery_videos[0], result.resolved_discovery_videos[1]
+        )
+        self.assertEqual(
+            [video.id for video in result.unique_canonical_videos],
+            ["video-1", "video-2"],
+        )
+        self.assertEqual(result.provenance.discovered_position_count, 4)
+        self.assertEqual(result.provenance.discovered_unique_video_count, 3)
+        self.assertEqual(result.provenance.enriched_unique_video_count, 2)
+        self.assertEqual(result.provenance.omitted_unique_video_count, 1)
         self.client.get_videos.assert_called_once_with(
             ["video-1", "missing", "video-2"],
             parts=(
@@ -212,7 +290,8 @@ class YouTubeServiceTests(unittest.TestCase):
 
         result = self.service.search_videos("engineering")
 
-        self.assertEqual(result.items, ())
+        self.assertEqual(result.resolved_discovery_videos, ())
+        self.assertEqual(result.unique_canonical_videos, ())
         self.client.get_videos.assert_not_called()
 
     def test_search_enrichment_empty_response_skips_discovered_videos(self) -> None:
@@ -224,7 +303,7 @@ class YouTubeServiceTests(unittest.TestCase):
 
         result = self.service.search_videos("engineering")
 
-        self.assertEqual(result.items, ())
+        self.assertEqual(result.resolved_discovery_videos, ())
 
     def test_get_channel_parses_statistics_and_uploads_playlist(self) -> None:
         self.client.get_channels.return_value = {"items": [_channel_item()]}
@@ -491,11 +570,22 @@ class YouTubeServiceTests(unittest.TestCase):
 
         result = self.service.list_channel_videos("channel-1", max_pages=2, page_size=1)
 
-        self.assertEqual([item.id for item in result.items], ["video-1", "video-2"])
-        self.assertEqual(result.page_info.results_per_page, 2)
-        self.assertIsNone(result.next_page_token)
-        self.assertEqual(result.items[0].duration, timedelta(minutes=5, seconds=30))
-        self.assertIs(result.items[0].format, VideoFormat.STANDARD)
+        self.assertEqual(
+            [item.id for item in result.resolved_discovery_videos],
+            ["video-1", "video-2"],
+        )
+        self.assertIs(result.provenance.source, AcquisitionSource.UPLOADS_PLAYLIST)
+        self.assertIs(result.provenance.pagination.status, PaginationStatus.COMPLETE)
+        self.assertEqual(result.provenance.pagination.pages_fetched, 2)
+        self.assertEqual(result.provenance.pagination.upstream_total_results, 2)
+        self.assertFalse(result.provenance.pagination.next_page_token_present)
+        self.assertEqual(
+            result.resolved_discovery_videos[0].duration,
+            timedelta(minutes=5, seconds=30),
+        )
+        self.assertIs(
+            result.resolved_discovery_videos[0].format, VideoFormat.STANDARD
+        )
         self.client.list_playlist_items.assert_has_calls(
             [
                 call(playlist_id="uploads-1", max_results=1, page_token=None),
@@ -519,7 +609,8 @@ class YouTubeServiceTests(unittest.TestCase):
 
         result = self.service.list_channel_videos("channel-1", max_pages=1)
 
-        self.assertEqual(result.next_page_token, "remaining-page")
+        self.assertIs(result.provenance.pagination.status, PaginationStatus.TRUNCATED)
+        self.assertTrue(result.provenance.pagination.next_page_token_present)
         self.client.list_playlist_items.assert_called_once()
 
     def test_upload_enrichment_restores_order_preserves_duplicates_and_skips_omissions(
@@ -543,10 +634,13 @@ class YouTubeServiceTests(unittest.TestCase):
         result = self.service.list_channel_videos("channel-1")
 
         self.assertEqual(
-            [video.id for video in result.items], ["video-1", "video-1", "video-2"]
+            [video.id for video in result.resolved_discovery_videos],
+            ["video-1", "video-1", "video-2"],
         )
-        self.assertIs(result.items[0], result.items[1])
-        self.assertEqual(result.items[2].like_count, 40)
+        self.assertIs(
+            result.resolved_discovery_videos[0], result.resolved_discovery_videos[1]
+        )
+        self.assertEqual(result.resolved_discovery_videos[2].like_count, 40)
         self.client.get_videos.assert_called_once_with(
             ["video-1", "missing", "video-2"],
             parts=(
@@ -588,9 +682,12 @@ class YouTubeServiceTests(unittest.TestCase):
         result = self.service.list_channel_videos("channel-1", max_pages=2)
 
         self.assertEqual(
-            [video.id for video in result.items], ["video-1", "video-1", "video-2"]
+            [video.id for video in result.resolved_discovery_videos],
+            ["video-1", "video-1", "video-2"],
         )
-        self.assertIs(result.items[0], result.items[1])
+        self.assertIs(
+            result.resolved_discovery_videos[0], result.resolved_discovery_videos[1]
+        )
         self.assertEqual(
             [call.args[0] for call in self.client.get_videos.call_args_list],
             [["video-1"], ["video-2"]],
@@ -610,3 +707,4 @@ class YouTubeServiceTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+    PaginationStatus,

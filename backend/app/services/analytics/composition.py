@@ -7,6 +7,7 @@ from app.services.analytics.calculators.video.median_standard_video_vsr import (
     MedianStandardVideoVsrCalculator,
 )
 from app.services.analytics.eligibility import EligibleVideoClassifier
+from app.services.analytics.qualification import SubscriberRelativeQualificationService
 from app.services.analytics.subscriber_relative_orchestrator import (
     SubscriberRelativeAnalyticsOrchestrator,
 )
@@ -28,6 +29,7 @@ def build_subscriber_relative_analytics_service() -> (
     )
     return SubscriberRelativeAnalyticsService(
         classifier=EligibleVideoClassifier(),
+        qualification_service=SubscriberRelativeQualificationService(),
         orchestrator=orchestrator,
         result_assembler=SubscriberRelativeResultAssembler(),
     )

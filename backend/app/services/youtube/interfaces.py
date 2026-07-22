@@ -4,7 +4,13 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from app.services.youtube.models import Channel, ChannelStatistics, SearchResult, Video
+from app.services.youtube.models import (
+    Channel,
+    ChannelStatistics,
+    SearchResult,
+    Video,
+    VideoAcquisitionResult,
+)
 
 
 class VideoPlatformService(Protocol):
@@ -16,7 +22,7 @@ class VideoPlatformService(Protocol):
 
     def search_videos(
         self, query: str, *, page_token: str | None = None, page_size: int | None = None
-    ) -> SearchResult: ...
+    ) -> VideoAcquisitionResult: ...
 
     def get_channel(self, channel_id: str) -> Channel: ...
 
@@ -26,4 +32,4 @@ class VideoPlatformService(Protocol):
 
     def list_channel_videos(
         self, channel_id: str, *, max_pages: int = 1, page_size: int | None = None
-    ) -> SearchResult: ...
+    ) -> VideoAcquisitionResult: ...
