@@ -47,6 +47,13 @@ from app.services.backtesting.models import (
 from app.services.backtesting.service import (
     MedianStandardVideoVsrThresholdBacktester,
 )
+from app.services.backtesting.study_models import (
+    BacktestStudyArtifact,
+    BacktestStudyDecision,
+    BacktestStudyDefinition,
+    BacktestStudyReview,
+    BacktestStudyStatus,
+)
 from app.services.backtesting.validation import BacktestDatasetValidator
 
 __all__ = [
@@ -59,6 +66,11 @@ __all__ = [
     "BacktestExecutionResult",
     "BacktestExecutionService",
     "BacktestExecutionStructuralError",
+    "BacktestStudyArtifact",
+    "BacktestStudyDecision",
+    "BacktestStudyDefinition",
+    "BacktestStudyReview",
+    "BacktestStudyStatus",
     "BacktestDatasetValidator",
     "BacktestExclusion",
     "BacktestExclusionReason",

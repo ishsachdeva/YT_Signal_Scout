@@ -240,6 +240,29 @@ so equal requests produce equal results without reading a runtime clock. Study c
 the imported dataset identity/version to the existing ordered band and threshold sets. The service
 does not choose thresholds, interpret results, approve policy, or enter production composition.
 
+ADR-015 governs immutable threshold-study artifacts around this execution boundary:
+
+```text
+Versioned BacktestStudyDefinition
+        |
+        v
+BacktestExecutionResult
+(complete factual findings)
+        |
+        v
+Typed BacktestStudyReview records
+        |
+        v
+Immutable BacktestStudyArtifact
+(draft / executed / approved / rejected / archived)
+```
+
+Each artifact is a complete lifecycle snapshot rather than a mutable workflow entity. The existing
+`ThresholdBacktestReport` is the findings contract; governance does not copy selected candidate
+results into a new ranking model. Reviews identify the reviewer, decision, rationale, and time.
+Approval applies only to the research artifact and cannot publish policy or authorize production
+signal composition.
+
 The YouTube acquisition layer owns interaction with the external API and conversion from upstream response shapes into immutable canonical models. The canonical models expose only the subset of public YouTube data with expected long-term application value.
 
 ## Transport and Domain Boundary

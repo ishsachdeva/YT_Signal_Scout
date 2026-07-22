@@ -115,6 +115,11 @@ validated import result and one versioned study configuration bound to that data
 existing backtester once, and returns immutable factual metadata with the report. Execution does
 not choose thresholds, approve policy, generate signals, or participate in production startup.
 
+Governed threshold research is represented by immutable `BacktestStudyArtifact` snapshots. A
+versioned definition binds the study to an execution configuration; executed artifacts retain the
+complete factual report, and typed reviews may approve or reject only the research artifact.
+Study approval does not publish a threshold, authorize production policy, or activate a signal.
+
 ## Signal engine foundation
 
 The `app/services/signals` module is the interpretation boundary after deterministic
