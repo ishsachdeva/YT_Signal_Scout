@@ -16,6 +16,34 @@ class PrivacyStatus(StrEnum):
     PRIVATE = "private"
 
 
+class VideoAvailability(StrEnum):
+    """Canonical availability states for a YouTube video."""
+
+    AVAILABLE = "available"
+    UNAVAILABLE = "unavailable"
+    DELETED = "deleted"
+    UNKNOWN = "unknown"
+
+
+class LiveState(StrEnum):
+    """Canonical live-broadcast states for a YouTube video."""
+
+    NOT_LIVE = "not_live"
+    UPCOMING = "upcoming"
+    LIVE = "live"
+    COMPLETE = "complete"
+    UNKNOWN = "unknown"
+
+
+class VideoFormat(StrEnum):
+    """Canonical content formats used by format-specific analytics."""
+
+    SHORT = "short"
+    STANDARD = "standard"
+    LIVE_REPLAY = "live_replay"
+    UNKNOWN = "unknown"
+
+
 class Thumbnail(BaseModel):
     """A public thumbnail variant for a channel or video."""
 
@@ -73,6 +101,9 @@ class Video(BaseModel):
     comment_count: int | None = Field(default=None, ge=0)
     duration: timedelta | None = None
     privacy_status: PrivacyStatus | None = None
+    availability: VideoAvailability = VideoAvailability.UNKNOWN
+    live_state: LiveState = LiveState.UNKNOWN
+    format: VideoFormat = VideoFormat.UNKNOWN
     thumbnails: tuple[Thumbnail, ...] = ()
 
 
