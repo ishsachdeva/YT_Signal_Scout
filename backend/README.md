@@ -110,6 +110,11 @@ External historical research data enters through the strict versioned-JSON
 does not execute it. The schema and trust boundary are documented in
 [`docs/engineering/HISTORICAL_DATASET_FORMAT.md`](../docs/engineering/HISTORICAL_DATASET_FORMAT.md).
 
+`BacktestExecutionService` is the controlled synchronous execution boundary. It accepts one
+validated import result and one versioned study configuration bound to that dataset, invokes the
+existing backtester once, and returns immutable factual metadata with the report. Execution does
+not choose thresholds, approve policy, generate signals, or participate in production startup.
+
 ## Signal engine foundation
 
 The `app/services/signals` module is the interpretation boundary after deterministic

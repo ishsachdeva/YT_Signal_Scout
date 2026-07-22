@@ -1,13 +1,25 @@
 """Deterministic offline analytical backtesting contracts."""
 
 from app.services.backtesting.exceptions import (
+    BacktestExecutionConfigurationMismatchError,
+    BacktestExecutionDatasetMismatchError,
+    BacktestExecutionError,
+    BacktestExecutionStructuralError,
     BacktestValidationError,
     HistoricalDatasetDuplicateError,
     HistoricalDatasetImportError,
     HistoricalDatasetReadError,
     HistoricalDatasetSyntaxError,
     HistoricalDatasetValidationError,
+    InvalidBacktestExecutionRequestError,
     UnsupportedHistoricalDatasetSchemaError,
+)
+from app.services.backtesting.execution import BacktestExecutionService
+from app.services.backtesting.execution_models import (
+    BacktestExecutionConfiguration,
+    BacktestExecutionMetadata,
+    BacktestExecutionRequest,
+    BacktestExecutionResult,
 )
 from app.services.backtesting.import_models import (
     HISTORICAL_DATASET_SCHEMA_VERSION,
@@ -38,6 +50,15 @@ from app.services.backtesting.service import (
 from app.services.backtesting.validation import BacktestDatasetValidator
 
 __all__ = [
+    "BacktestExecutionConfiguration",
+    "BacktestExecutionConfigurationMismatchError",
+    "BacktestExecutionDatasetMismatchError",
+    "BacktestExecutionError",
+    "BacktestExecutionMetadata",
+    "BacktestExecutionRequest",
+    "BacktestExecutionResult",
+    "BacktestExecutionService",
+    "BacktestExecutionStructuralError",
     "BacktestDatasetValidator",
     "BacktestExclusion",
     "BacktestExclusionReason",
@@ -53,6 +74,7 @@ __all__ = [
     "HistoricalDatasetReadError",
     "HistoricalDatasetSyntaxError",
     "HistoricalDatasetValidationError",
+    "InvalidBacktestExecutionRequestError",
     "MedianStandardVideoVsrThresholdBacktester",
     "MedianVsrThresholdCandidate",
     "MedianVsrThresholdSet",

@@ -26,6 +26,7 @@ This directory contains all significant architectural decisions for the YT Signa
 | ADR-011 | Typed Subscriber-Relative Signal Evidence Layer | 🟢 Accepted | 2026-07-22 |
 | ADR-012 | Deterministic Offline Subscriber-Band Threshold Backtesting | 🟢 Accepted | 2026-07-22 |
 | ADR-013 | Govern Historical Research Dataset Import Through Strict Versioned JSON | 🟢 Accepted | 2026-07-22 |
+| ADR-014 | Controlled Deterministic Offline Backtest Execution | 🟢 Accepted | 2026-07-22 |
 
 ---
 

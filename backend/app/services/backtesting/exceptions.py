@@ -31,3 +31,23 @@ class HistoricalDatasetValidationError(HistoricalDatasetImportError):
 
 class HistoricalDatasetDuplicateError(HistoricalDatasetValidationError):
     """Raised when governed observation identity rules are violated."""
+
+
+class BacktestExecutionError(Exception):
+    """Base failure for controlled offline backtest execution."""
+
+
+class InvalidBacktestExecutionRequestError(BacktestExecutionError):
+    """Raised when execution does not receive its typed immutable request."""
+
+
+class BacktestExecutionDatasetMismatchError(BacktestExecutionError):
+    """Raised when execution output or configuration targets another dataset."""
+
+
+class BacktestExecutionConfigurationMismatchError(BacktestExecutionError):
+    """Raised when execution output does not match the requested configuration."""
+
+
+class BacktestExecutionStructuralError(BacktestExecutionError):
+    """Raised when the backtester rejects or returns an invalid structure."""

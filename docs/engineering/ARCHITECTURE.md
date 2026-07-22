@@ -217,6 +217,29 @@ YouTube, analytics, qualification, evidence, signals, or the backtester, and is 
 production composition. Schema version 1 is documented in
 [`HISTORICAL_DATASET_FORMAT.md`](HISTORICAL_DATASET_FORMAT.md).
 
+ADR-014 defines the controlled execution boundary that follows successful import:
+
+```text
+HistoricalDatasetImportResult + Versioned Study Configuration
+        |
+        v
+BacktestExecutionService
+(validates binding; owns synchronous sequencing)
+        |
+        v
+MedianStandardVideoVsrThresholdBacktester
+(owns factual calculations)
+        |
+        v
+BacktestExecutionResult
+(immutable factual metadata + ThresholdBacktestReport)
+```
+
+The execution service requires an explicit execution identity and timezone-aware execution time,
+so equal requests produce equal results without reading a runtime clock. Study configuration binds
+the imported dataset identity/version to the existing ordered band and threshold sets. The service
+does not choose thresholds, interpret results, approve policy, or enter production composition.
+
 The YouTube acquisition layer owns interaction with the external API and conversion from upstream response shapes into immutable canonical models. The canonical models expose only the subset of public YouTube data with expected long-term application value.
 
 ## Transport and Domain Boundary
