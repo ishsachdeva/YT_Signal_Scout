@@ -78,9 +78,9 @@ classifier, orchestrator, and result assembler once each, propagates failures un
 returns the completed aggregate without exposing pipeline internals. The application composition
 root constructs and registers the service with explicitly injected dependencies.
 
-### Approved Subscriber-Relative Qualification Extension
+### Subscriber-Relative Qualification and Evidence
 
-ADR-010 approves the next Path B boundary; it is not yet implemented:
+ADR-010 and ADR-011 define the implemented Path B result and typed evidence boundary:
 
 ```text
 VideoAcquisitionResult + canonical Channel
@@ -107,10 +107,18 @@ SubscriberRelativeAnalysisResult
 (qualification + SubscriberRelativeAnalytics)
                         |
                         v
-Qualified results only reach business signal evaluation
+SignalEvidenceBuilder
+(policy-free factual projection)
+                        |
+                        v
+SignalEvidenceBundle
+(qualification + typed metric evidence + shared provenance context)
+                        |
+                        v
+Future qualified business signal evaluation
 ```
 
-Acquisition owns a future immutable `VideoAcquisitionResult` containing discovery-position
+Acquisition owns an immutable `VideoAcquisitionResult` containing discovery-position
 videos, unique canonical videos, and typed provenance. Provenance distinguishes discovery request
 capacity, discovered positions and unique IDs, unique enrichment requests, unique enriched
 resources, reconstructed output positions, omissions, and pagination state. Upstream
@@ -132,9 +140,18 @@ submitted to `videos.list`. It measures enrichment response quality, not full-ch
 pagination coverage, canonical eligibility yield, or expected-population coverage. Pagination is
 a separate closed `COMPLETE` or `TRUNCATED` fact.
 
-Factual subscriber-relative calculators continue to run for unqualified datasets. A future
+Factual subscriber-relative calculators continue to run for unqualified datasets. The
 `SubscriberRelativeAnalysisResult` returns qualification and analytics together; downstream
 signal-facing orchestration must not pass bare unqualified analytics to business rules.
+
+`SignalEvidenceBuilder` deterministically projects that result into a complete immutable
+`SignalEvidenceBundle`. The bundle exposes qualification, eligible sample count, subscriber
+state, requested-ID resolution rate, and median standard-video VSR with closed identities,
+semantic units, and explicit availability. All evidence references one shared context containing
+the existing acquisition provenance and evaluation timestamp. It contains no signal identity,
+threshold, comparison, score, ranking, recommendation, or narrative. The existing emitted-signal
+`SignalEvidence`, `SignalRule`, and `SignalEngine` contracts remain unchanged until an approved
+production rule defines their subscriber-relative integration.
 
 The YouTube acquisition layer owns interaction with the external API and conversion from upstream response shapes into immutable canonical models. The canonical models expose only the subset of public YouTube data with expected long-term application value.
 
@@ -198,7 +215,7 @@ metric identities. `eligible_standard_video_count` records the classified standa
 unavailable for an empty basis or unavailable denominator. Each calculator returns exactly one
 typed metric result, and the Path B result assembler maps each result to one aggregate
 field. Neither calculator contains the minimum-five qualification or a signal threshold.
-Qualification policy and contracts are approved by ADR-010 but remain unimplemented.
+Qualification policy and contracts are implemented under ADR-010.
 
 The Calculator Registry owns only the homogeneous `ChannelAnalytics` calculator path. It executes
 an explicitly injected sequence once in registration order and returns an immutable result tuple.

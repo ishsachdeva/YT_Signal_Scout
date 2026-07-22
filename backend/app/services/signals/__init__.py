@@ -1,6 +1,16 @@
 """Business signal evaluation contracts and orchestration."""
 
 from app.services.signals.engine import SignalEngine
+from app.services.signals.evidence import (
+    EvidenceAvailability,
+    EvidenceFact,
+    EvidenceUnit,
+    MetricEvidence,
+    QualificationEvidence,
+    SignalEvidenceBundle,
+    SignalEvidenceContext,
+)
+from app.services.signals.evidence_builder import SignalEvidenceBuilder
 from app.services.signals.exceptions import (
     DuplicateSignalRuleError,
     InvalidSignalRuleOutputError,
@@ -23,6 +33,14 @@ __all__ = [
     "RuleId",
     "Signal",
     "SignalEngine",
+    "EvidenceAvailability",
+    "EvidenceFact",
+    "EvidenceUnit",
+    "MetricEvidence",
+    "QualificationEvidence",
+    "SignalEvidenceBuilder",
+    "SignalEvidenceBundle",
+    "SignalEvidenceContext",
     "SignalError",
     "SignalEvidence",
     "SignalPolarity",

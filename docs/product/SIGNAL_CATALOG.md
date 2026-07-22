@@ -1,10 +1,10 @@
 # YT Signal Scout — Signal Catalog v1
 
-**Catalog version:** 1.2
+**Catalog version:** 1.3
 **Status:** Active — No production signals approved  
 **Date:** 2026-07-22  
 **Owners:** Product and Analytics  
-**Architecture authority:** ADR-006, ADR-007, and ADR-010
+**Architecture authority:** ADR-006, ADR-007, ADR-010, and ADR-011
 
 ## 1. Purpose
 
@@ -999,11 +999,16 @@ For threshold comparisons, evidence normally requires:
 - source channel and snapshot timestamp;
 - rule ID and version through the containing signal.
 
-Current `SignalEvidence` supports metric, numeric/null observed value, channel, and snapshot. It
+Current emitted-signal `SignalEvidence` supports metric, numeric/null observed value, channel, and snapshot. It
 does **not** support comparator, operator, unit, sample size, video identity, eligibility basis,
 or canonical non-metric facts. This is a precise future contract gap, not authorization to add
-generic JSON. Evidence should evolve only for the first approved rule, using the smallest typed
+generic JSON. Emitted-signal evidence should evolve only for the first approved rule, using the smallest typed
 extension that satisfies that rule.
+
+ADR-011 separately defines a policy-free `SignalEvidenceBundle` built from
+`SubscriberRelativeAnalysisResult`. It exposes qualification and existing subscriber-relative
+facts with typed availability, units, and shared provenance before rule evaluation. It does not
+authorize a production rule, comparator, threshold, or expansion of emitted `SignalEvidence`.
 
 ## 15. Signal versioning policy
 
@@ -1061,7 +1066,7 @@ signals/analytics; it must not retroactively create, merge, or suppress rule out
 7. Approve cohort identity/versioning and benchmark ownership.
 8. Define repeated-snapshot velocity inputs and minimum history.
 9. Decide whether upload-cohort signals provide enough product value to approve.
-10. Approve evidence extensions only after threshold `T` is approved.
+10. Approve emitted-signal evidence extensions only after threshold `T` is approved.
 11. Define catalog approval workflow and record approver identities.
 
 ## 20. First implementable signal assessment
@@ -1106,9 +1111,9 @@ Now that `median_standard_video_vsr` calculation exists, Product and Analytics m
 ## 21. Recommended implementation sequence
 
 1. Keep the implemented acquisition and subscriber-relative analytics pipelines unchanged.
-2. Implement ADR-010 acquisition provenance and subscriber-relative qualification.
+2. Keep the ADR-011 typed evidence bundle policy-free and independent of signal thresholds.
 3. Backtest standard-video median VSR by subscriber band; approve threshold `T`.
-4. Extend `SignalEvidence` minimally for comparator, operator, unit, and sample size.
+4. Extend emitted `SignalEvidence` minimally for comparator, operator, unit, and sample size.
 5. Mark SIG-002 Approved and Implementable Now with approval metadata.
 6. Implement exactly one version-1 `SignalRule` and its boundary tests.
 7. Consider hit consistency, Shorts, replay, and breakout only after the reference rule.
