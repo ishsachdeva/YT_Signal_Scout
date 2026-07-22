@@ -61,6 +61,19 @@ failures propagate immediately and no partial result collection is returned.
 completeness and uniqueness, and explicitly maps them into immutable
 `CalculatedChannelAnalytics`. It does not execute calculators or interpret metric values.
 
+## Subscriber-relative analytics
+
+`SubscriberRelativeAnalyticsService` is the public entry point for the separate
+subscriber-relative execution path. It classifies one canonical `ChannelAnalytics` dataset,
+passes the immutable classification and explicit subscriber count through
+`SubscriberRelativeAnalyticsOrchestrator`, and delegates structural mapping to
+`SubscriberRelativeResultAssembler`. The production composition root constructs these injected
+dependencies once per application instance. The result is an immutable
+`SubscriberRelativeAnalytics` containing `eligible_standard_video_count` and
+`median_standard_video_vsr`.
+
+This path does not use `CalculatorRegistry` or `AnalyticsAssembler`.
+
 ## Signal engine foundation
 
 The `app/services/signals` module is the interpretation boundary after deterministic

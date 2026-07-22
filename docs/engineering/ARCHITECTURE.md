@@ -34,8 +34,7 @@ CalculatedChannelAnalytics
 
 ### Path B — Subscriber-relative analytics
 
-The classifier and two calculators are implemented. The orchestration and result-assembly stages
-shown below are approved but not implemented:
+The complete subscriber-relative analytics path is implemented and production-composed:
 
 ```text
 Canonical Data
@@ -48,7 +47,7 @@ EligibleVideoClassification
         |
         v
 SubscriberRelativeAnalyticsOrchestrator
-(future: owns sequencing and explicit input delivery)
+(owns sequencing and explicit input delivery)
         |
         +-- 1. EligibleStandardVideoCountCalculator(classification)
         |
@@ -59,16 +58,25 @@ Ordered Subscriber-Relative Metric Results
         |
         v
 SubscriberRelativeResultAssembler
-(future: owns mapping and structural validation)
+(owns mapping and structural validation)
+        |
+        v
+SubscriberRelativeAnalytics
+(immutable typed aggregate)
 ```
 
 The two calculators own only their calculations and are independent; their numeric order is
-deterministic invocation order, not a data dependency between them. The future
-`SubscriberRelativeAnalyticsOrchestrator` will obtain explicit inputs, invoke each calculator once
-in the documented order, and return a complete ordered result collection. It will not calculate
-metrics, apply eligibility policy, assemble aggregates, or interpret results. The future
-`SubscriberRelativeResultAssembler` will own mapping and structural validation. Neither the
+deterministic invocation order, not a data dependency between them. The
+`SubscriberRelativeAnalyticsOrchestrator` obtains explicit inputs, invokes each calculator once
+in the documented order, and returns a complete ordered result collection. It does not calculate
+metrics, apply eligibility policy, assemble aggregates, or interpret results. The
+`SubscriberRelativeResultAssembler` owns mapping and structural validation. Neither the
 existing Calculator Registry nor the existing Analytics Assembler participates in Path B.
+
+`SubscriberRelativeAnalyticsService` is the public application entry point. It invokes the
+classifier, orchestrator, and result assembler once each, propagates failures unchanged, and
+returns the completed aggregate without exposing pipeline internals. The application composition
+root constructs and registers the service with explicitly injected dependencies.
 
 The YouTube acquisition layer owns interaction with the external API and conversion from upstream response shapes into immutable canonical models. The canonical models expose only the subset of public YouTube data with expected long-term application value.
 
@@ -92,7 +100,7 @@ The implemented subscriber-relative facts are explicitly standard-video scoped a
 metric identities. `eligible_standard_video_count` records the classified standard-basis size.
 `median_standard_video_vsr` uses that basis and a visible positive subscriber count and returns
 unavailable for an empty basis or unavailable denominator. Each calculator returns exactly one
-typed metric result, and the future Path B result assembler will map each result to one aggregate
+typed metric result, and the Path B result assembler maps each result to one aggregate
 field. Neither calculator contains the minimum-five qualification or a signal threshold.
 Qualification remains a future typed concern.
 
@@ -105,8 +113,8 @@ are not executed. It does not register or execute subscriber-relative calculator
 The existing Analytics Assembler consumes Path A metric results, validates their completeness and
 uniqueness, and constructs `CalculatedChannelAnalytics`. The registry remains unaware of the
 aggregate, and the aggregate remains a pure immutable data contract without mapping or
-orchestration behavior. A future subscriber-relative result assembler will provide equivalent
-mapping-only ownership for Path B; it is not the existing assembler and is not yet implemented.
+orchestration behavior. The subscriber-relative result assembler provides equivalent mapping-only
+ownership for Path B; it is not the existing assembler.
 
 Independent signal rules interpret the completed aggregate through explicit, deterministic
 business policies. The signal engine owns only ordered orchestration: it snapshots the
@@ -160,11 +168,16 @@ Raw API response shapes and Google SDK types must not cross the canonical domain
 ### Implemented Orchestration
 
 - Calculator Registry
+- `SubscriberRelativeAnalyticsOrchestrator`
+- `SubscriberRelativeAnalyticsService`
+- Production subscriber-relative dependency composition
 
 ### Implemented Analytics Assembly
 
 - Analytics Assembler
 - CalculatedChannelAnalytics population
+- `SubscriberRelativeResultAssembler`
+- Immutable `SubscriberRelativeAnalytics` population
 
 ### Implemented Signal Foundation
 
@@ -176,8 +189,6 @@ Raw API response shapes and Google SDK types must not cross the canonical domain
 ### Planned Pipeline Stages
 
 - Complete canonical availability, live-state, and format acquisition mapping
-- Dedicated subscriber-relative analytics orchestration
-- Subscriber-relative result assembly and aggregate integration
 - Subscriber-relative qualification
 - Product-approved signal rules
 - AI Narrative Engine

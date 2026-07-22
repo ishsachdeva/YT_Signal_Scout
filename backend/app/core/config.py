@@ -11,7 +11,7 @@ from typing import Mapping
 @dataclass(frozen=True, slots=True)
 class Settings:
     app_name: str = "YT Signal Scout"
-    app_version: str = "0.1.0"
+    app_version: str = "0.5.0"
     environment: str = "development"
     debug: bool = False
     api_v1_prefix: str = "/api/v1"

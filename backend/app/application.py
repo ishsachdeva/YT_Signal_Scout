@@ -13,6 +13,9 @@ from app.api.router import build_api_router
 from app.core.config import Settings
 from app.core.exceptions import install_exception_handlers
 from app.core.logging import configure_logging
+from app.services.analytics.composition import (
+    build_subscriber_relative_analytics_service,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +34,9 @@ def create_application(settings: Settings | None = None) -> FastAPI:
     )
     application.state.settings = resolved_settings
     application.state.api_v1_prefix = resolved_settings.api_v1_prefix
+    application.state.subscriber_relative_analytics_service = (
+        build_subscriber_relative_analytics_service()
+    )
 
     install_exception_handlers(application)
     application.include_router(build_operational_router())

@@ -132,11 +132,11 @@ states are ineligible. Eligible VSR input also requires a present non-negative v
 views are valid and later produce VSR `0.0`; a missing count is excluded rather than converted to
 zero. Negative counts remain invalid canonical input.
 
-For backward-compatible canonical construction, new availability, live-state, and format fields
-will initially default to `UNKNOWN`. Such legacy/uncertain videos are safely excluded until
+For backward-compatible canonical construction, availability, live-state, and format fields
+default to `UNKNOWN`. Such legacy/uncertain videos are safely excluded until
 acquisition supplies resolved values.
 
-The planned canonical contract is:
+The implemented canonical contract is:
 
 | Field | Type / nullability | Default | Mapping and invariant | Immediate consumers |
 |---|---|---|---|---|
@@ -155,7 +155,7 @@ canonical construction, owns the stricter participation requirements.
 
 ### 4.4 Canonical live state and format
 
-Canonical live state will use a closed `LiveState` enum:
+Canonical live state uses a closed `LiveState` enum:
 
 ```text
 NOT_LIVE
@@ -165,7 +165,7 @@ COMPLETE
 UNKNOWN
 ```
 
-Canonical format will use a closed `VideoFormat` enum:
+Canonical format uses a closed `VideoFormat` enum:
 
 ```text
 SHORT
@@ -219,7 +219,7 @@ first subscriber-relative aggregate uses only the standard basis and is named ex
 
 ```text
 MetricType.MEDIAN_STANDARD_VIDEO_VSR
-CalculatedChannelAnalytics.median_standard_video_vsr: float | None
+SubscriberRelativeAnalytics.median_standard_video_vsr: float | None
 ```
 
 The generic product term “Median VSR” means a median within one explicitly named format cohort;
@@ -227,13 +227,13 @@ it does not authorize an all-format aggregate. Shorts and replay median metrics 
 
 ### 4.6 Eligibility result contract
 
-The next implementation milestone will introduce the following conceptual immutable contract:
+The implemented immutable contract is:
 
 ```text
 EligibleVideoClassification
-    standard_videos: tuple[Video, ...]
-    short_videos: tuple[Video, ...]
-    live_replay_videos: tuple[Video, ...]
+    eligible_standard_videos: tuple[Video, ...]
+    eligible_shorts: tuple[Video, ...]
+    eligible_livestream_replays: tuple[Video, ...]
     exclusions: tuple[VideoExclusion, ...]
     evaluated_at: datetime
     policy_version: int = 1
@@ -295,7 +295,7 @@ Public subscriber counts may be rounded. Analytics use the captured official pub
 estimation or correction. Results are deterministic relative to that snapshot, and future evidence
 and explanations must preserve the approximation limitation.
 
-The planned factual metric is:
+The implemented factual metric is:
 
 ```text
 median_standard_video_vsr = median(
@@ -309,7 +309,7 @@ basis or unavailable denominator returns `None`. No minimum-five gate belongs in
 Use Python's existing floating-point/statistics conventions with no display or threshold rounding.
 Median calculation is independent of source order.
 
-The aggregate will expose:
+The immutable `SubscriberRelativeAnalytics` aggregate exposes:
 
 ```text
 eligible_standard_video_count: int
@@ -330,11 +330,12 @@ MetricType.MEDIAN_STANDARD_VIDEO_VSR
 explicit subscriber count. They do not implement the homogeneous `ChannelAnalytics` input contract
 and do not execute through `CalculatorRegistry`.
 
-ADR-009 assigns their future sequencing and input delivery to a dedicated subscriber-relative
-analytics orchestrator. That orchestrator will invoke the count calculator first and the median
-calculator second, once each, and return ordered metric results. A separate future
-subscriber-relative result assembler will map each metric identity to exactly one typed result
-field. Neither future component is implemented.
+ADR-009 assigns their sequencing and input delivery to the implemented
+`SubscriberRelativeAnalyticsOrchestrator`. It invokes the count calculator first and the median
+calculator second, once each, and returns ordered metric results. The implemented
+`SubscriberRelativeResultAssembler` maps each metric identity to exactly one field on
+`SubscriberRelativeAnalytics`. `SubscriberRelativeAnalyticsService` connects classification,
+orchestration, and assembly, and the production composition root injects the complete path.
 
 ### 4.8 Duplicate IDs, retrieval completeness, and qualification
 
@@ -370,7 +371,7 @@ remains deferred to that design milestone.
 
 ## 5. Analytics inventory
 
-All fields below are exposed by `CalculatedChannelAnalytics`. `source_dataset` is snapshot
+All Path A fields below are exposed by `CalculatedChannelAnalytics`. `source_dataset` is snapshot
 provenance rather than a calculated metric; it contains the canonical `Channel`, videos, and
 `generated_at` timestamp.
 
@@ -387,11 +388,15 @@ provenance rather than a calculated metric; it contains the canonical `Channel`,
 | `view_growth_rate` | `float`, required | Newer-half mean lifetime views divided by older-half mean | `ViewGrowthRateCalculator`; upload-cohort performance ratio | At least one dated video with views; one video returns `1.0`; old mean zero yields `1.0` or infinity; lifetime exposure differs by video age | Upload-cohort comparison within one snapshot | Can support only a carefully named proposal; must not be called historical or snapshot growth |
 | `view_engagement_rate` | `float \| None` | Unweighted mean of `(likes + comments) / views` for videos with all three values and views greater than zero | `ViewEngagementRateCalculator`; observed public interaction rate | May be `None`; silently excludes ineligible rows; no explicit sample count, format separation, age adjustment, or benchmark | Current aggregate performance | Blocked for unusual-engagement policy by missing sample evidence and benchmark |
 
-Implemented but not yet orchestrated or assembled: `EligibleVideoClassification`,
-`EligibleStandardVideoCountCalculator`, and `MedianStandardVideoVsrCalculator`. The two calculators
-produce separate typed metric results for `eligible_standard_video_count` and nullable
-`median_standard_video_vsr`. These fields are not yet exposed by `CalculatedChannelAnalytics` or
-any subscriber-relative result aggregate.
+Path B exposes the following fields through immutable `SubscriberRelativeAnalytics`:
+
+| Metric | Type / nullability | Unit and input basis | Calculator and factual interpretation | Minimum data and limitations | Time basis | Signal support |
+|---|---|---|---|---|---|---|
+| `eligible_standard_video_count` | `int`, required | Count of the Eligible Video Policy v1 standard-video basis | `EligibleStandardVideoCountCalculator`; factual classified population size | Valid `EligibleVideoClassification`; zero is valid | Explicit eligibility evaluation time | Supports future qualification and sample evidence; no business meaning by itself |
+| `median_standard_video_vsr` | `float \| None` | Median standard-video views divided by explicit public subscriber count | `MedianStandardVideoVsrCalculator`; subscriber-relative reach midpoint | At least one eligible standard video and a positive subscriber count; otherwise `None` | Current captured views/subscribers over the evaluated eligibility basis | Factual prerequisite for SIG-002; threshold `T` remains unapproved |
+
+`SubscriberRelativeAnalyticsService` exposes the fully classified, orchestrated, and assembled
+Path B result. These metrics intentionally remain separate from `CalculatedChannelAnalytics`.
 
 ### 5.1 Capability distinctions
 
@@ -402,11 +407,12 @@ any subscriber-relative result aggregate.
 - **Distribution:** view distribution, view outlier, and upload consistency summarize variation
   inside the supplied collection.
 - **Repeated-snapshot growth:** not available.
-- **Subscriber-relative performance:** count and median VSR calculators are implemented, but their
-  results are not yet orchestrated, assembled, or available to downstream consumers.
+- **Subscriber-relative performance:** count and median standard-video VSR are available through
+  the composed `SubscriberRelativeAnalyticsService` as a typed immutable aggregate.
 - **Benchmark-relative performance:** not available.
 - **Ranking-relative performance:** not available.
-- **Eligible-video population:** not available as an explicit validated dataset or count.
+- **Eligible-video population:** available as immutable `EligibleVideoClassification` and the
+  assembled eligible standard-video count.
 
 ## 6. Product requirement mapping
 
@@ -416,9 +422,9 @@ UI/UX Specification, Security Specification, and Feature Catalogue under
 
 | Product concept | Source | Classification | Finding |
 |---|---|---|---|
-| High views relative to subscriber base | PRD §§1, 5, 8.2; FR-SCO-001 | Requires new canonical metrics | Subscriber count exists, but per-video/aggregate VSR and eligibility do not |
-| Median VSR | PRD §5 and §8.2; Eligible Video Policy v1 | Policy approved; implementation blocked | Standard-video basis and metric semantics are exact; canonical fields, classifier, and aggregate are absent |
-| Repeated video overperformance / hit consistency | PRD §5 and §8.2; Eligible Video Policy v1 | Partially supported by approved policy | VSR hit boundary is `>= 1.0`; classifier and VSR implementation are absent, and hit-share threshold `P` remains undefined |
+| High views relative to subscriber base | PRD §§1, 5, 8.2; FR-SCO-001 | Factual analytics implemented; signal policy blocked | Eligible standard-video count and median VSR are assembled; production threshold and qualification remain unapproved |
+| Median VSR | PRD §5 and §8.2; Eligible Video Policy v1 | Implemented factual analytics | Standard-video classification, calculation, orchestration, assembly, aggregate, and composed service are implemented |
+| Repeated video overperformance / hit consistency | PRD §5 and §8.2; Eligible Video Policy v1 | Partially supported by approved policy | VSR hit boundary is `>= 1.0`; classification exists, but qualifying-hit analytics and hit-share threshold `P` remain undefined |
 | Breakout video | PRD §9; FR-ALT-001; Feature Catalogue E04 | Ambiguous product policy | Product intent exists, but “materially exceeds baseline” and baseline are undefined |
 | Momentum score | PRD §8.2; TRD scoring sections | Requires cohort, snapshots, and ranking context | Components and weights are documented, but supporting cohort and history infrastructure are absent |
 | Observed velocity / acceleration | PRD §§5, 8.2; FR-SCO-003 | Requires repeated snapshots | Current views-per-day and upload-cohort ratio cannot substitute for public view-count deltas |
@@ -428,9 +434,9 @@ UI/UX Specification, Security Specification, and Feature Catalogue under
 | High views per day | Current analytics; related to PRD velocity intent | Partially supported | Metric exists, but it is lifetime age-normalized reach, not snapshot velocity; threshold/benchmark absent |
 | Declining performance | General monitoring intent | Ambiguous product policy | Upload-cohort ratio exists, but naming, boundary, and minimum sample need approval |
 | Cohort percentile | PRD §8.2 | Requires ranking/cohort context | Cohort definition is approved conceptually; no cohort service or values exist |
-| Qualification / insufficient data | PRD §8.1; Eligible Video Policy v1; FR-SCO-002 | Policy approved; infrastructure blocked | Sample/denominator/format ownership is exact; classifier and defensible completeness denominator are absent |
-| Confidence | PRD §8.3 | Requires new metrics and snapshots | Conditions are documented; current aggregate lacks eligible counts, completeness, anomaly state, and history |
-| Hidden subscriber handling | PRD guardrail GR-01 and §9 | Supported canonically, not analytically | Canonical channel retains hidden state; no VSR pipeline consumes it yet |
+| Qualification / insufficient data | PRD §8.1; Eligible Video Policy v1; FR-SCO-002 | Policy approved; infrastructure blocked | Classifier and eligible count exist; typed qualification and a defensible completeness denominator remain absent |
+| Confidence | PRD §8.3 | Requires new metrics and snapshots | Conditions are documented; subscriber-relative count exists, but completeness, anomaly state, and history remain absent |
+| Hidden subscriber handling | PRD guardrail GR-01 and §9 | Supported canonically and analytically | Canonical channel retains hidden state; callers supply unavailable subscriber count to the VSR pipeline, which returns `None` |
 | Stale snapshot | General traceability requirement | Ambiguous product policy | Timestamp exists; maximum acceptable age and evaluation clock policy are undefined |
 
 ## 7. Signal catalog schema
@@ -1015,11 +1021,12 @@ signals/analytics; it must not retroactively create, merge, or suppress rule out
 
 ## 20. First implementable signal assessment
 
-### Outcome C — Blocked by Missing Analytics
+### Outcome C — Blocked by Missing Product Policy
 
 The recommended first production signal is **SIG-002 High median subscriber-relative reach**.
 It most directly serves the product objective, is robust against a single hit, is easy to explain,
-and avoids misrepresenting upload-cohort comparison as growth. It is not currently implementable.
+and avoids misrepresenting upload-cohort comparison as growth. Its analytics prerequisites are
+implemented, but the production rule is not currently implementable.
 
 The prerequisite metric is `median_standard_video_vsr`:
 
@@ -1045,9 +1052,8 @@ Required inputs and rules:
 
 Existing average/median views cannot substitute because they ignore subscriber scale. Views per
 day cannot substitute because it measures age-normalized absolute reach. `view_growth_rate`
-cannot substitute because it compares upload cohorts. No current metric answers the core product
-question through the assembled analytics pipeline; the standalone median standard-video VSR
-calculator is implemented but not yet orchestrated or assembled.
+cannot substitute because it compares upload cohorts. The completed subscriber-relative pipeline
+now provides the typed median standard-video VSR fact without applying signal policy.
 
 Now that `median_standard_video_vsr` calculation exists, Product and Analytics must still approve
 `T` and exact evidence/boundary semantics before SIG-002 becomes Approved and Implementable Now.
@@ -1055,11 +1061,9 @@ Now that `median_standard_video_vsr` calculation exists, Product and Analytics m
 ## 21. Recommended implementation sequence
 
 1. Complete canonical video format/live/availability acquisition mapping under ADR-008.
-2. Keep the implemented classifier and narrow subscriber-relative calculators unchanged.
-3. Implement the dedicated subscriber-relative analytics orchestrator defined by ADR-009.
-4. Implement subscriber-relative result assembly and explicit aggregate mapping.
-5. Backtest standard-video median VSR by subscriber band; approve threshold `T`.
-6. Extend `SignalEvidence` minimally for comparator, operator, unit, and sample size.
-7. Mark SIG-002 Approved and Implementable Now with approval metadata.
-8. Implement exactly one version-1 `SignalRule` and its boundary tests.
-9. Consider hit consistency, Shorts, replay, and breakout only after the reference rule.
+2. Keep the implemented subscriber-relative analytics pipeline unchanged.
+3. Backtest standard-video median VSR by subscriber band; approve threshold `T`.
+4. Extend `SignalEvidence` minimally for comparator, operator, unit, and sample size.
+5. Mark SIG-002 Approved and Implementable Now with approval metadata.
+6. Implement exactly one version-1 `SignalRule` and its boundary tests.
+7. Consider hit consistency, Shorts, replay, and breakout only after the reference rule.
