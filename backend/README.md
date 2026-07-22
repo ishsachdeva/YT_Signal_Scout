@@ -47,6 +47,10 @@ metadata, and reconstructs results in discovery order. Duplicate positions are r
 same immutable canonical object. A resource omitted by `videos.list` is skipped; omission alone is
 not interpreted as deletion and never produces a placeholder.
 
+Both video-acquisition paths return an immutable `VideoAcquisitionResult`. It retains resolved
+discovery positions, a stable unique canonical-video collection, and typed population and
+pagination provenance. Subscriber-relative analytics consume only the unique canonical videos.
+
 ## Test
 
 ```text
@@ -69,16 +73,37 @@ completeness and uniqueness, and explicitly maps them into immutable
 
 ## Subscriber-relative analytics
 
-`SubscriberRelativeAnalyticsService` is the public entry point for the separate
-subscriber-relative execution path. It classifies one canonical `ChannelAnalytics` dataset,
-passes the immutable classification and explicit subscriber count through
-`SubscriberRelativeAnalyticsOrchestrator`, and delegates structural mapping to
-`SubscriberRelativeResultAssembler`. The production composition root constructs these injected
-dependencies once per application instance. The result is an immutable
-`SubscriberRelativeAnalytics` containing `eligible_standard_video_count` and
-`median_standard_video_vsr`.
+`SubscriberRelativeAnalyticsService.analyze(...)` is the public entry point for the separate
+subscriber-relative execution path. It accepts a canonical `Channel`, a
+`VideoAcquisitionResult`, and an explicit evaluation time. It constructs analytics from the
+unique canonical videos, classifies them once, qualifies the dataset once, invokes each factual
+calculator once, and delegates structural mapping to `SubscriberRelativeResultAssembler`.
+
+The result is an immutable `SubscriberRelativeAnalysisResult` containing both
+`SubscriberRelativeQualification` and factual `SubscriberRelativeAnalytics`. Calculators still
+run for unqualified datasets; qualification determines downstream usability rather than whether
+factual results exist. Normal qualification failures remain typed result values, while malformed
+structural input fails validation.
 
 This path does not use `CalculatorRegistry` or `AnalyticsAssembler`.
+
+## Signal evidence
+
+`SignalEvidenceBuilder` projects a `SubscriberRelativeAnalysisResult` into an immutable,
+policy-free `SignalEvidenceBundle`. The bundle exposes qualification and existing analytics facts
+with typed units, availability, evaluation time, and shared acquisition provenance. It performs
+no threshold comparison, signal evaluation, ranking, or recommendation.
+
+## Offline threshold research
+
+The `app/services/backtesting` package provides deterministic offline subscriber-band median-VSR
+threshold analysis. It accepts immutable historical observations and explicitly versioned band
+and candidate configurations, preserving structural failures and analytical exclusions as
+separate outcomes. It produces factual `ThresholdBacktestReport` objects and never selects a
+threshold or emits a signal.
+
+Backtesting is not registered in application startup and has no API, acquisition, network,
+persistence, or scheduled-execution integration.
 
 ## Signal engine foundation
 
@@ -87,8 +112,10 @@ analytics. `SignalRule` implementations consume the immutable analytics aggregat
 typed signals with structured metric evidence. `SignalEngine` only orchestrates an explicit
 ordered rule sequence; it is synchronous, stateless, fail-fast, and returns a tuple.
 
-There are currently no production rules. Product-approved taxonomy,
-thresholds, and a defensible confidence calculation are required before those are added.
+There are currently no production rules. SIG-002 remains blocked until governed research
+produces an explicitly approved production threshold policy. Any future production rule must use
+approved, versioned policy and typed evidence; confidence scoring, composite scoring, and ranking
+are outside the current release scope.
 Proposed and approved definitions are governed in
 [`docs/product/SIGNAL_CATALOG.md`](../docs/product/SIGNAL_CATALOG.md); catalog inclusion alone
 does not authorize production composition.

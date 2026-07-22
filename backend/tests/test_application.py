@@ -154,7 +154,7 @@ class ApplicationTests(unittest.TestCase):
 
 class SettingsTests(unittest.TestCase):
     def test_default_version_matches_release(self) -> None:
-        self.assertEqual(Settings().app_version, "0.5.0")
+        self.assertEqual(Settings().app_version, "0.6.0")
 
     def test_defaults_do_not_depend_on_process_environment_when_mapping_is_injected(self) -> None:
         with patch.dict(os.environ, {"APP_NAME": "Machine-specific"}, clear=True):
