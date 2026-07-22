@@ -60,3 +60,13 @@ failures propagate immediately and no partial result collection is returned.
 `AnalyticsAssembler` accepts metric results from any source, validates structural
 completeness and uniqueness, and explicitly maps them into immutable
 `CalculatedChannelAnalytics`. It does not execute calculators or interpret metric values.
+
+## Signal engine foundation
+
+The `app/services/signals` module is the interpretation boundary after deterministic
+analytics. `SignalRule` implementations consume the immutable analytics aggregate and emit
+typed signals with structured metric evidence. `SignalEngine` only orchestrates an explicit
+ordered rule sequence; it is synchronous, stateless, fail-fast, and returns a tuple.
+
+There are intentionally no production rules in this milestone. Product-approved taxonomy,
+thresholds, and a defensible confidence calculation are required before those are added.
