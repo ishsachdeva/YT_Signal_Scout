@@ -26,6 +26,11 @@ from app.services.backtesting.evaluation_models import (
     CriterionObservation,
     CriterionObservationStatus,
 )
+from app.services.backtesting.eligibility_models import (
+    EligibilityRequirementResult,
+    ProductionEligibilityAssessment,
+    PromotionRequirementKind,
+)
 from app.services.backtesting.import_models import (
     HISTORICAL_DATASET_SCHEMA_VERSION,
     HistoricalDatasetImportResult,
@@ -103,6 +108,7 @@ __all__ = [
     "CriterionObservationStatus",
     "DistributionSummary",
     "EvaluationCompletionRequirement",
+    "EligibilityRequirementResult",
     "HISTORICAL_DATASET_SCHEMA_VERSION",
     "HistoricalDatasetDuplicateError",
     "HistoricalDatasetImportError",
@@ -120,7 +126,9 @@ __all__ = [
     "MethodologyVersionRequirement",
     "MinimumEvaluationsRequirement",
     "ProductionPromotionPolicy",
+    "ProductionEligibilityAssessment",
     "PromotionRequirement",
+    "PromotionRequirementKind",
     "QualificationFailureCount",
     "QualificationCoverageSummary",
     "ResearchRecommendation",

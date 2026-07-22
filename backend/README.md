@@ -138,6 +138,13 @@ determines eligibility nor contains, publishes, registers, or activates a thresh
 Every valid policy contains exactly one requirement of each of these six kinds while preserving
 the explicitly supplied order.
 
+`ProductionEligibilityAssessment` is an immutable factual snapshot binding one promotion policy,
+one executed study, its governed evaluations, and one ordered satisfaction result per policy
+requirement. Eligibility and failed requirement IDs must agree exactly with those results. The
+assessment records no production approval and cannot publish, register, or activate a threshold.
+Until a separate governed approval artifact exists, the mandatory manual-approval result must
+remain unsatisfied, its requirement ID must remain failed, and eligibility must remain false.
+
 ## Signal engine foundation
 
 The `app/services/signals` module is the interpretation boundary after deterministic

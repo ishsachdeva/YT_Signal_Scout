@@ -300,6 +300,17 @@ eligibility result, promotion decision, evaluator, publisher, registry, runtime 
 integration. Research approval and recommendation remain necessary governance inputs rather than
 production authorization.
 
+ADR-019 defines immutable production-eligibility assessment after declarative promotion policy.
+`ProductionEligibilityAssessment` embeds one policy, one executed study, zero or more unique human
+evaluations bound to that exact study, and one ordered `EligibilityRequirementResult` for every
+policy requirement. Requirement result identity and kind must exactly match policy order.
+
+Failed requirement IDs preserve result order, and `eligible` is structurally valid only when every
+requirement result is satisfied. The assessment records an outcome but does not infer requirement
+satisfaction, perform manual approval, publish a threshold, modify inputs, or affect runtime state.
+Because no governed manual production-approval artifact exists, the manual-approval requirement
+cannot be satisfied: its result remains failed and every current assessment remains ineligible.
+
 The YouTube acquisition layer owns interaction with the external API and conversion from upstream response shapes into immutable canonical models. The canonical models expose only the subset of public YouTube data with expected long-term application value.
 
 ## Transport and Domain Boundary
