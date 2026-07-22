@@ -286,6 +286,20 @@ criteria cannot be marked not reviewed; needs clarification remains a valid huma
 Optional criteria may be marked not reviewed. The artifact has no score, weight, percentage,
 ranking, threshold selection, study approval, or production authority.
 
+ADR-018 defines a declarative production-promotion policy after human evaluation. The versioned
+`ProductionPromotionPolicy` contains a unique ordered set of typed prerequisites: an approved
+research study, exact methodology identity/version, positive minimum evaluation count, qualitative
+criterion completion, permitted existing research recommendations, and mandatory separate manual
+approval.
+Every valid policy contains exactly one requirement of each supported kind. Requirement order is
+explicitly supplied and preserved; policy validation neither sorts requirements nor inserts
+defaults.
+
+This policy states only what future eligibility assessment must require. It has no threshold value,
+eligibility result, promotion decision, evaluator, publisher, registry, runtime lookup, or signal
+integration. Research approval and recommendation remain necessary governance inputs rather than
+production authorization.
+
 The YouTube acquisition layer owns interaction with the external API and conversion from upstream response shapes into immutable canonical models. The canonical models expose only the subset of public YouTube data with expected long-term application value.
 
 ## Transport and Domain Boundary

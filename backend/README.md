@@ -130,6 +130,14 @@ methodology. It preserves the methodology's criterion order, records qualitative
 status and notes, and uses the existing research-only recommendation vocabulary. It contains no
 scores, weights, percentages, calculations, or production decision.
 
+`ProductionPromotionPolicy` declaratively versions the prerequisites that must be satisfied before
+an evaluated study could become eligible for a separate future production-promotion decision. Its
+typed requirements cover approved research status, exact methodology version, evaluation count,
+qualitative completion, research recommendation, and mandatory manual approval. The policy neither
+determines eligibility nor contains, publishes, registers, or activates a threshold.
+Every valid policy contains exactly one requirement of each of these six kinds while preserving
+the explicitly supplied order.
+
 ## Signal engine foundation
 
 The `app/services/signals` module is the interpretation boundary after deterministic
