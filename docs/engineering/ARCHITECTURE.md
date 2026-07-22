@@ -33,7 +33,13 @@ Analytics Assembler
 CalculatedChannelAnalytics
     |
     v
-Signal Engine
+    Independent Signal Rules
+    |
+    v
+    Signal Engine
+    |
+    v
+    Typed Signals
     |
     v
 AI Narrative Engine
@@ -55,7 +61,20 @@ The calculator registry owns an explicitly injected, ordered calculator sequence
 
 The analytics assembler consumes metric results, validates their completeness and uniqueness, and constructs `CalculatedChannelAnalytics`. The registry remains unaware of the aggregate, and the aggregate remains a pure immutable data contract without mapping or orchestration behavior.
 
-The future signal engine will interpret the completed aggregate through explicit business rules. The AI narrative engine remains a future final consumer and will explain typed evidence rather than calculate metrics or signals.
+Independent signal rules interpret the completed aggregate through explicit, deterministic
+business policies. The signal engine owns only ordered orchestration: it snapshots the
+injected rule sequence, rejects duplicate rule identities, preserves rule and per-rule output
+order, and fails fast without returning partial results. Signals are immutable,
+machine-readable interpretations carrying typed metric evidence and rule provenance.
+
+Signal identity and polarity remain separate concepts. Category and severity are deferred until
+approved production rules establish a real taxonomy and importance policy. Confidence is also
+deferred because the aggregate does not yet contain the cohort, sample-completeness, and
+observation inputs needed for a defensible policy. No production rule thresholds are
+implemented until product definitions approve them.
+
+The AI narrative engine remains a future final consumer and will explain typed evidence rather
+than calculate metrics or signals.
 
 ## Dependency Direction
 
@@ -87,9 +106,17 @@ Raw API response shapes and Google SDK types must not cross the canonical domain
 - Analytics Assembler
 - CalculatedChannelAnalytics population
 
+### Implemented Signal Foundation
+
+- Immutable typed signal and evidence contracts
+- Independent `SignalRule` protocol
+- Deterministic `SignalEngine` orchestration
+- Duplicate-rule protection and fail-fast execution
+
 ### Planned Pipeline Stages
 
-- Signal Engine
+- Product-approved signal rules
 - AI Narrative Engine
 
-See ADR-002 for analytics-layer separation and ADR-003 for the canonical YouTube domain-model decision.
+See ADR-002 for analytics-layer separation, ADR-003 for the canonical YouTube domain-model
+decision, and ADR-006 for signal evaluation semantics.
