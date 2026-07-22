@@ -10,6 +10,7 @@
 | Implementation status | Not implemented |
 | Catalog alignment | Pending |
 | Decision owner | Pending |
+| Required reviewers | Pending |
 | Decision date | Pending |
 | Decision reference | Pending |
 
@@ -135,14 +136,15 @@ State expected complexity and prohibit unnecessary I/O, caching, or recomputatio
 
 ## Open questions
 
-List every unresolved product, analytics, and architecture decision with an owner.
+List every unresolved decision with exactly one accountable owner, required reviewers, governing
+record, and category-specific pending marker from Decision Governance.
 
 ## Approval status
 
-Record Product, Analytics, and Architecture disposition with decision owner, decision date,
-decision reference, scope, and catalog status. Approval is version-controlled documentation
-metadata, not a separate approval artifact or runtime workflow. Never infer approval from document
-presence alone.
+Record the accountable owner's disposition, required review dispositions, decision date,
+decision reference, scope, and catalog status under Decision Governance. Approval is
+version-controlled documentation metadata, not a separate approval artifact or runtime workflow.
+Never infer approval from document presence alone.
 
 ## Implementation status
 
@@ -151,6 +153,10 @@ Record Not implemented, Blocked, Implementable Now, Implemented, or Deprecated a
 ## Related ADRs
 
 List accepted architecture decisions governing the signal.
+
+## Related governance
+
+Link Decision Governance and every governing Product Decision Record.
 
 ## Related analytics
 

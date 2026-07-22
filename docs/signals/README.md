@@ -8,14 +8,15 @@ before implementation. They do not authorize runtime composition by themselves.
 
 The [Signal Catalog](../product/SIGNAL_CATALOG.md) remains the authoritative approval registry and
 identity inventory. A specification in this directory elaborates one catalog entry. If the two
-documents disagree, implementation stops until Product, Analytics, and Architecture reconcile and
-version the governing documents.
+documents disagree, implementation stops under
+[Decision Governance](../governance/DECISION_GOVERNANCE.md) until the accountable owner resolves
+the conflict in the governing document.
 
 A production rule may be implemented only when:
 
 1. its specification has no blocking product or architecture decisions;
-2. Product and Analytics approve its observable behavior;
-3. Architecture approves any required contract evolution;
+2. the Product Owner approves its observable behavior after required Analytics Owner review;
+3. the Architecture Owner approves any required contract evolution;
 4. the matching catalog entry is Approved and Implementable Now; and
 5. identities, threshold provenance, comparator, equality behavior, qualification, evidence,
    limitations, and rule version are explicit.
@@ -23,8 +24,8 @@ A production rule may be implemented only when:
 Approval is recorded through version-controlled changes to the specification and Signal Catalog.
 No separate production-promotion or manual-approval artifact is required.
 
-Specifications use `PENDING PRODUCT DECISION` for unresolved business behavior. That marker is a
-hard implementation blocker, never a default or invitation for engineering inference.
+Specifications use the category-specific pending markers defined by Decision Governance. Each
+marker is a hard implementation blocker, never a default or invitation for engineering inference.
 
 ## Structure
 
@@ -40,8 +41,9 @@ Future specifications use stable catalog identifiers and filenames such as `SIG-
 - **Draft:** incomplete specification; implementation prohibited.
 - **Blocked:** structurally complete enough to expose unresolved decisions; implementation
   prohibited.
-- **Approved:** Product, Analytics, and Architecture approvals are recorded and catalog-aligned.
-- **Implementable Now:** approved with all required runtime contracts available.
+- **Approved:** the Product Owner has approved observable behavior after required reviews.
+- **Implementable Now:** the Architecture Owner has confirmed that all required runtime contracts
+  exist and the approved specification requires no inference.
 - **Deprecated:** unavailable for new production emission; historical meaning remains reserved.
 
 Approval and implementation readiness are separate. Research approval, eligibility, or a catalog

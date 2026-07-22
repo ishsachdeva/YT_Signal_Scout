@@ -1,9 +1,14 @@
 # YT Signal Scout — Signal Catalog v1
 
-**Catalog version:** 1.4
+**Catalog version:** 1.5
 **Status:** Active — No production signals approved  
 **Date:** 2026-07-22  
-**Owners:** Product and Analytics  
+**Accountable owner:** Product Owner
+
+**Required reviewer:** Analytics Owner
+
+**Governance authority:** [Decision Governance](../governance/DECISION_GOVERNANCE.md)
+
 **Architecture authority:** ADR-006, ADR-007, ADR-010, ADR-011, and ADR-012
 
 ## 1. Purpose
@@ -564,9 +569,10 @@ emit no production signal.
 equality is included in the proposed operator. No rounding before comparison. Zero or one; may
 coexist with SIG-001 and SIG-003.
 
-**Signal output:** Positive. Evidence: median VSR, observed ratio, `T`, `>=`, ratio unit, sample
-count, subscriber count, channel/snapshot, rule version. Current evidence has the same comparison
-and sample gaps described in SIG-001.
+**Signal output:** Positive. Proposed evidence includes median VSR, observed ratio, `T`, comparator,
+ratio unit, sample count, subscriber state, channel/snapshot provenance, and rule version. Exact
+business evidence meaning and cardinality remain **Pending Product Decision**. Current evidence
+has the same comparison and sample gaps described in SIG-001.
 
 **Explanation contract:** Say “typical eligible recent video views relative to current public
 subscribers.” Prohibit “subscriber growth,” “audience conversion,” and unqualified “viral.” AI
@@ -577,11 +583,14 @@ format exclusions, and traffic-source ambiguity. Median reduces but does not eli
 bias.
 
 **Dependencies:** Approved Eligible Video Policy v1; canonical model evolution; classifier;
-`ELIGIBLE_STANDARD_VIDEO_COUNT`; `MEDIAN_STANDARD_VIDEO_VSR`; evidence extension. Product and
-Analytics must approve `T` through cohort analysis, labelled review, and sensitivity testing.
+`ELIGIBLE_STANDARD_VIDEO_COUNT`; `MEDIAN_STANDARD_VIDEO_VSR`; evidence extension. The Product Owner
+must approve `T` after required Analytics Owner review of cohort analysis, labelled review, and
+sensitivity testing.
 
-**Approval:** Eligibility, denominator, standard basis, and null semantics are approved. Product
-and Analytics must approve `T`; Architecture reviews evidence evolution. Not implementable now.
+**Approval:** Eligibility, denominator, standard basis, and null semantics are approved. The
+Product Owner must approve `T`, comparator, equality behavior, and required business evidence after
+Analytics Owner and Architecture Owner review. The Architecture Owner subsequently owns evidence
+representation, input-boundary decisions, and Implementable Now readiness. Not implementable now.
 
 ### SIG-003 — Breakout eligible video
 
@@ -1066,8 +1075,8 @@ signals/analytics; it must not retroactively create, merge, or suppress rule out
 7. Approve cohort identity/versioning and benchmark ownership.
 8. Define repeated-snapshot velocity inputs and minimum history.
 9. Decide whether upload-cohort signals provide enough product value to approve.
-10. Approve emitted-signal evidence extensions only after threshold `T` is approved.
-11. Define catalog approval workflow and record approver identities.
+10. The Product Owner must approve emitted-signal evidence meaning only after threshold `T` is
+    approved; the Architecture Owner may then approve its typed representation.
 
 ## 20. First implementable signal assessment
 
@@ -1105,22 +1114,28 @@ day cannot substitute because it measures age-normalized absolute reach. `view_g
 cannot substitute because it compares upload cohorts. The completed subscriber-relative pipeline
 now provides the typed median standard-video VSR fact without applying signal policy.
 
-Now that `median_standard_video_vsr` calculation exists, Product and Analytics must still approve
-`T` and exact evidence/boundary semantics before SIG-002 becomes Approved and Implementable Now.
+Now that `median_standard_video_vsr` calculation exists, the Product Owner must still approve `T`,
+boundary semantics, and required business evidence after Analytics Owner and Architecture Owner
+review. The Architecture Owner must then approve the required runtime contracts before SIG-002 is
+Implementable Now.
 
 ADR-012 provides a deterministic offline capability for evaluating supplied historical snapshots
 across explicitly versioned subscriber bands and `>` or `>=` threshold candidates. This capability
 does not include a governed historical dataset, execute a study, select a candidate, recommend a
-threshold, or change SIG-002 from **Proposed / Blocked**. Product and Analytics review remains the
-only path to approving `T` and its equality boundary.
+threshold, or change SIG-002 from **Proposed / Blocked**. Product Owner approval after required
+Analytics Owner review remains the only path to approving `T` and its equality boundary.
 
 ## 21. Recommended implementation sequence
 
 1. Keep the implemented acquisition and subscriber-relative analytics pipelines unchanged.
 2. Keep the ADR-011 typed evidence bundle policy-free and independent of signal thresholds.
-3. Run the ADR-012 offline analysis on a governed historical dataset; Product and Analytics review
-   the complete candidate report and approve threshold `T` plus its equality boundary.
-4. Extend emitted `SignalEvidence` minimally for comparator, operator, unit, and sample size.
-5. Mark SIG-002 Approved and Implementable Now with approval metadata.
-6. Implement exactly one version-1 `SignalRule` and its boundary tests.
-7. Consider hit consistency, Shorts, replay, and breakout only after the reference rule.
+3. Run the ADR-012 offline analysis on a governed historical dataset; the Analytics Owner reviews
+   the complete candidate report and the Product Owner approves threshold `T` plus its equality
+   boundary.
+4. The Product Owner approves required business evidence meaning and cardinality after required
+   reviews.
+5. The Architecture Owner approves the smallest typed evidence and rule-input contracts.
+6. The Product Owner marks SIG-002 Approved, then the Architecture Owner marks it Implementable Now
+   with their respective decision references.
+7. Implement exactly one version-1 `SignalRule` and its boundary tests.
+8. Consider hit consistency, Shorts, replay, and breakout only after the reference rule.

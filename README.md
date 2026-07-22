@@ -13,7 +13,7 @@ Offline research is isolated in a deterministic backtesting package. It evaluate
 versioned subscriber bands and median-VSR threshold candidates and produces factual immutable
 reports; it does not select or recommend production policy. No production signal rule is
 approved, registered, or emitted. SIG-002 remains blocked pending governed research and explicit
-Product and Analytics approval.
+Product Owner decisions with required Analytics Owner review.
 
 Key documentation:
 
