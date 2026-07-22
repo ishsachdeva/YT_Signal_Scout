@@ -27,6 +27,7 @@ class MetricType(str, Enum):
     VIEW_GROWTH_RATE = "view_growth_rate"
     VIEW_ENGAGEMENT_RATE = "view_engagement_rate"
     ELIGIBLE_STANDARD_VIDEO_COUNT = "eligible_standard_video_count"
+    MEDIAN_STANDARD_VIDEO_VSR = "median_standard_video_vsr"
 
 
 class ChannelAnalytics(BaseModel):
