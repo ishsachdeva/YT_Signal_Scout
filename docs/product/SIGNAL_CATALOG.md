@@ -1,10 +1,10 @@
 # YT Signal Scout — Signal Catalog v1
 
-**Catalog version:** 1.1
+**Catalog version:** 1.2
 **Status:** Active — No production signals approved  
 **Date:** 2026-07-22  
 **Owners:** Product and Analytics  
-**Architecture authority:** ADR-006 and ADR-007
+**Architecture authority:** ADR-006, ADR-007, and ADR-010
 
 ## 1. Purpose
 
@@ -84,8 +84,8 @@ behavior requires a new eligibility-policy version and review under ADR-008.
 | Replay | Separate cohort or exclude by default | Live state and format expected | Completed livestreams map to `LIVE_REPLAY` | Completed livestream maps to `LIVE_REPLAY`; retained separately, excluded from standard median |
 | Upcoming/live | Not explicitly eligible | Live state expected | Canonical states are populated and excluded by the classifier | `UPCOMING` and `LIVE` are ineligible for v1 |
 | Uncertain format | Expose uncertainty | Format expected | Unresolved formats remain `UNKNOWN` | `UNKNOWN`; retained as exclusion and never reclassified downstream |
-| Retrieval completeness | At least 60% | Numerator/denominator provenance expected | Expected population absent | Qualification metadata outside classifier; threshold retained but infrastructure deferred |
-| Minimum sample | At least five eligible videos | Qualification gate | No qualification model | Median calculable from one; future qualification requires count `>= 5` |
+| Retrieval completeness | At least 60% | Numerator/denominator provenance expected | Enrichment facts exist transiently; no typed provenance result | Requested-ID resolution `>= 0.60` plus complete pagination; do not claim expected-population coverage |
+| Minimum sample | At least five eligible videos | Qualification gate | Classifier count exists; qualification model is not implemented | Median calculable from one; qualification requires count `>= 5` |
 | Subscriber visibility | Visible and greater than zero | Hidden state retained | Canonical count and hidden flag exist | Hidden, missing, zero, or missing statistics make VSR unavailable |
 | Subscriber rounding | Preserve limitation | Captured public value | No rounding flag | Use captured value without correction; evidence must disclose public-value limitation |
 | Format aggregation | Do not mix formats | Format-specific cohort expected | Classifier produces separate immutable format bases | Separate immutable standard, Shorts, and replay bases; first median is standard-only |
@@ -342,37 +342,73 @@ calculator second, once each, and returns ordered metric results. The implemente
 `SubscriberRelativeAnalytics`. `SubscriberRelativeAnalyticsService` connects classification,
 orchestration, and assembly, and the production composition root injects the complete path.
 
-### 4.8 Duplicate IDs, retrieval completeness, and qualification
+### 4.8 Duplicate IDs, requested-ID resolution, and qualification
 
 Duplicate video IDs in one analytics dataset are invalid because they change medians, hit counts,
 and completeness. Shared analytics dataset validation owns rejection; classifiers may assume
 unique IDs.
 
-Retrieval completeness is dataset/qualification metadata, not an individual eligibility rule. Its
-product threshold remains:
+Acquisition may discover the same ID at multiple positions. The approved future
+`VideoAcquisitionResult` preserves those discovery positions and also exposes one stable,
+first-seen canonical object per resolved unique ID. Only that unique collection may enter
+`ChannelAnalytics`; independently supplied duplicate analytics input remains a validation error.
+
+The approved acquisition-response metric is **requested-ID resolution rate**, not retrieval
+completeness:
 
 ```text
-retrieval_completeness >= 0.60
+requested_id_resolution_rate =
+    enriched_unique_video_count / enrichment_requested_unique_count
 ```
 
-Exactly 60% qualifies. A defensible denominator requires acquisition knowledge of the expected
-evaluation population, which current ingestion does not provide. Infrastructure for numerator,
-denominator, and provenance is therefore deferred. Completeness must never be calculated only from
-the videos that happened to be supplied.
+The numerator counts unique requested IDs returned and parsed into canonical resources. The
+denominator counts unique discovered IDs actually submitted to `videos.list`, excluding stable
+cross-page duplicates. Exactly 60% qualifies; compare the integer numerator and denominator
+without pre-comparison rounding. A zero denominator produces an undefined rate and no independent
+resolution failure; the eligible-sample requirement still fails.
 
-`SubscriberRelativeQualification` is a future typed concern separate from calculations and
-signals. It will cover:
+This rate does not measure complete channel retrieval. Discovery request capacity, discovery
+positions, unique discovered IDs, enriched output positions, eligibility yield, pagination
+coverage, and upstream `totalResults` are separate facts. Upstream `totalResults`, requested page
+size, eligible/discovered, and supplied/supplied are prohibited completeness denominators.
+
+Pagination is separately `COMPLETE` when no next-page token remains after the bounded acquisition
+and `TRUNCATED` when acquisition stops with a next-page token. Intentional page limits remain
+truncation for subscriber-relative qualification.
+
+Subscriber-relative qualification requires uploads-playlist provenance scoped to the canonical
+channel. General search provenance may span channels and cannot be partitioned or treated as a
+channel qualification denominator. Search-discovered candidates require a subsequent channel
+uploads acquisition.
+
+ADR-010 approves a future immutable `SubscriberRelativeQualification`. It covers:
 
 - eligible standard-video count `>= 5` (equality qualifies);
-- valid subscriber denominator;
-- retrieval completeness `>= 0.60` once available;
-- supported format basis;
-- snapshot provenance.
+- visible positive canonical subscriber count;
+- requested-ID resolution rate `>= 0.60` when defined;
+- complete pagination;
+- acquisition provenance and explicit evaluation time.
 
-Qualification is neither positive nor negative business meaning. Calculators return factual values
-whenever mathematically possible. Future rules must consume approved qualification state and must
-not recreate these gates independently. Whether qualification failures are exposed as Signals
-remains deferred to that design milestone.
+Hidden subscribers, unavailable subscribers, and zero subscribers are distinct normal failures.
+Negative subscriber counts and a hidden flag accompanied by a numeric count are invalid canonical
+input and raise validation errors. Missing publication, privacy, availability, format, or view
+facts remain classifier exclusions rather than a generic canonical-incomplete qualification
+reason.
+
+All applicable qualification failures accumulate in this fixed order:
+
+1. `ACQUISITION_TRUNCATED`
+2. `INSUFFICIENT_REQUESTED_ID_RESOLUTION`
+3. `SUBSCRIBER_COUNT_HIDDEN`
+4. `SUBSCRIBER_COUNT_UNAVAILABLE`
+5. `SUBSCRIBER_COUNT_NOT_POSITIVE`
+6. `INSUFFICIENT_ELIGIBLE_STANDARD_VIDEOS`
+
+Qualification is neither positive nor negative business meaning. Existing calculators continue
+to return factual analytics whenever mathematically possible, including for unqualified datasets.
+The future `SubscriberRelativeAnalysisResult` returns qualification and analytics together.
+Downstream signal evaluation must require `qualification.qualified`; rules must not recreate these
+gates. Whether qualification failures are themselves exposed as Signals remains deferred.
 
 ## 5. Analytics inventory
 
@@ -439,7 +475,7 @@ UI/UX Specification, Security Specification, and Feature Catalogue under
 | High views per day | Current analytics; related to PRD velocity intent | Partially supported | Metric exists, but it is lifetime age-normalized reach, not snapshot velocity; threshold/benchmark absent |
 | Declining performance | General monitoring intent | Ambiguous product policy | Upload-cohort ratio exists, but naming, boundary, and minimum sample need approval |
 | Cohort percentile | PRD §8.2 | Requires ranking/cohort context | Cohort definition is approved conceptually; no cohort service or values exist |
-| Qualification / insufficient data | PRD §8.1; Eligible Video Policy v1; FR-SCO-002 | Policy approved; infrastructure blocked | Classifier and eligible count exist; typed qualification and a defensible completeness denominator remain absent |
+| Qualification / insufficient data | PRD §8.1; Eligible Video Policy v1; FR-SCO-002 | Policy and contract approved; implementation pending | ADR-010 defines provenance, requested-ID resolution, pagination, subscriber state, ordered failures, and the analysis-result boundary |
 | Confidence | PRD §8.3 | Requires new metrics and snapshots | Conditions are documented; subscriber-relative count exists, but completeness, anomaly state, and history remain absent |
 | Hidden subscriber handling | PRD guardrail GR-01 and §9 | Supported canonically and analytically | Canonical channel retains hidden state; callers supply unavailable subscriber count to the VSR pipeline, which returns `None` |
 | Stale snapshot | General traceability requirement | Ambiguous product policy | Timestamp exists; maximum acceptable age and evaluation clock policy are undefined |
@@ -782,8 +818,9 @@ version 1; **Blocked**.
 **Business meaning:** Explains why a channel cannot enter subscriber-ratio scoring. It is a
 data-quality/qualification outcome, not negative performance.
 
-**Inputs:** Eligible standard-video count and exclusion reasons, retrieval completeness, visible
-subscriber state. Minimum five eligible videos is **Explicitly defined in existing requirements**
+**Inputs:** Eligible standard-video count and exclusion reasons, requested-ID resolution,
+pagination state, and visible subscriber state. Minimum five eligible videos is **Explicitly
+defined in existing requirements**
 (PRD §8.1) and assigned to qualification by Eligible Video Policy v1.
 
 **Deterministic policy:** If qualification failures later become signals, emit when
@@ -802,8 +839,9 @@ exclusion facts only.
 **Limitations:** Correctness depends entirely on explicit format, age, privacy, deletion, and
 retrieval rules. Incomplete acquisition may cause false insufficiency.
 
-**Dependencies:** The classifier and count are implemented; retrieval-completeness infrastructure
-and the decision whether qualification failures are signals remain outstanding. Not ready.
+**Dependencies:** The classifier and count are implemented; ADR-010 qualification and acquisition
+provenance remain to be implemented. The decision whether qualification failures are signals
+remains open. Not ready.
 
 **Approval:** Product confirms whether qualification failures are signals; Analytics approves the
 eligibility pipeline and exclusion evidence; Architecture reviews the result/evidence boundary.
@@ -891,13 +929,13 @@ policy.
 
 | Signal | Primary blocker |
 |---|---|
-| SIG-001 | Qualifying-hit analytics, qualification/evidence contract, and approved share threshold `P` |
-| SIG-002 | Qualification/evidence contract and threshold `T` |
+| SIG-001 | Qualifying-hit analytics, qualification implementation/evidence contract, and approved share threshold `P` |
+| SIG-002 | Qualification implementation/evidence contract and threshold `T` |
 | SIG-003 | Approved breakout baseline and significance policy |
 | SIG-005 | Eligible sample evidence and cohort benchmark |
 | SIG-006 | Cohort benchmark and eligibility/sample evidence |
-| SIG-010 | Retrieval-completeness infrastructure and evidence shape |
-| SIG-011 | Decision on qualification-result boundary and canonical-fact evidence |
+| SIG-010 | ADR-010 qualification implementation, decision to represent failures as signals, and evidence shape |
+| SIG-011 | Decision whether the qualification failure is also a Signal, plus canonical-fact evidence |
 
 Deferred supporting signals SIG-007, SIG-009, and SIG-012 should not displace core discovery
 work. Proposed SIG-004 and SIG-008 require approval and validation.
@@ -1015,8 +1053,10 @@ signals/analytics; it must not retroactively create, merge, or suppress rule out
 1. Approve median standard-video VSR threshold `T` and validation evidence.
 2. Approve hit-consistency share `P` and whether Bayesian adjustment belongs in metric or score.
 3. Define breakout baseline and materiality.
-4. Decide whether qualification outcomes are Signals or a separate typed result.
-5. Define a defensible retrieval-completeness denominator and provenance source.
+4. Decide whether qualification failures are also emitted as Signals; the typed qualification
+   result remains authoritative under ADR-010.
+5. Decide whether future expected-channel-population coverage is required and define its
+   denominator only if an authoritative source becomes available.
 6. Approve a future Shorts classifier only when stronger official public facts are available.
 7. Approve cohort identity/versioning and benchmark ownership.
 8. Define repeated-snapshot velocity inputs and minimum history.
@@ -1066,7 +1106,7 @@ Now that `median_standard_video_vsr` calculation exists, Product and Analytics m
 ## 21. Recommended implementation sequence
 
 1. Keep the implemented acquisition and subscriber-relative analytics pipelines unchanged.
-2. Define subscriber-relative qualification and retrieval-completeness provenance.
+2. Implement ADR-010 acquisition provenance and subscriber-relative qualification.
 3. Backtest standard-video median VSR by subscriber band; approve threshold `T`.
 4. Extend `SignalEvidence` minimally for comparator, operator, unit, and sample size.
 5. Mark SIG-002 Approved and Implementable Now with approval metadata.

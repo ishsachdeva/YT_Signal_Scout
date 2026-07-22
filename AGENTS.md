@@ -358,6 +358,11 @@ Always:
 - Interpret incomplete or contradictory upstream facts conservatively.
 - Skip resources omitted by `videos.list` without fabricating placeholders or inferring deletion.
 - Keep YouTube transport payloads and mapping heuristics out of analytics and eligibility code.
+- Preserve acquisition provenance across layer boundaries; do not reconstruct it from canonical
+  videos after acquisition.
+- Do not call requested-ID resolution or eligibility yield "retrieval completeness."
+- Keep qualification separate from individual-video eligibility, factual analytics, and signal
+  evaluation.
 
 ---
 

@@ -22,6 +22,7 @@ This directory contains all significant architectural decisions for the YT Signa
 | ADR-007 | Govern Production Signals Through a Versioned Signal Catalog | 🟢 Accepted | 2026-07-22 |
 | ADR-008 | Establish Explicit Format-Specific Eligible Video Bases for Subscriber-Relative Analytics | 🟢 Accepted | 2026-07-22 |
 | ADR-009 | Separate Subscriber-Relative Orchestration from the ChannelAnalytics Calculator Registry | 🟢 Accepted | 2026-07-22 |
+| ADR-010 | Acquisition Provenance and Subscriber-Relative Qualification | 🟢 Accepted | 2026-07-22 |
 
 ---
 

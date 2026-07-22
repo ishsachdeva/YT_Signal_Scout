@@ -78,6 +78,64 @@ classifier, orchestrator, and result assembler once each, propagates failures un
 returns the completed aggregate without exposing pipeline internals. The application composition
 root constructs and registers the service with explicitly injected dependencies.
 
+### Approved Subscriber-Relative Qualification Extension
+
+ADR-010 approves the next Path B boundary; it is not yet implemented:
+
+```text
+VideoAcquisitionResult + canonical Channel
+        |
+        v
+Unique Canonical ChannelAnalytics
+        |
+        v
+EligibleVideoClassifier
+(individual-video policy; executes once)
+        |
+        v
+EligibleVideoClassification
+        |
+        +-------------------------------+
+        |                               |
+        v                               v
+SubscriberRelativeQualification   Subscriber-Relative Calculators
+(dataset usability)               (factual analytics always run)
+        |                               |
+        +---------------+---------------+
+                        v
+SubscriberRelativeAnalysisResult
+(qualification + SubscriberRelativeAnalytics)
+                        |
+                        v
+Qualified results only reach business signal evaluation
+```
+
+Acquisition owns a future immutable `VideoAcquisitionResult` containing discovery-position
+videos, unique canonical videos, and typed provenance. Provenance distinguishes discovery request
+capacity, discovered positions and unique IDs, unique enrichment requests, unique enriched
+resources, reconstructed output positions, omissions, and pagination state. Upstream
+`totalResults` remains informational and is never treated as an expected-population denominator.
+
+Search provenance is query-scoped and may span channels, so it cannot qualify one channel.
+Subscriber-relative qualification accepts only uploads-playlist provenance scoped to the same
+canonical channel. Search may discover a candidate channel, but that channel's uploads acquisition
+must run before qualification.
+
+Qualification owns dataset-level usability only. It consumes the one eligibility classification,
+canonical subscriber state, acquisition provenance, and evaluation time. It applies complete
+pagination, an inclusive 60% requested-ID resolution threshold, a visible positive subscriber
+count, and at least five eligible standard videos. It does not repeat age, privacy, availability,
+format, live-state, publication, or view-count rules owned by the classifier.
+
+The requested-ID resolution rate is unique canonical resources resolved divided by unique IDs
+submitted to `videos.list`. It measures enrichment response quality, not full-channel retrieval,
+pagination coverage, canonical eligibility yield, or expected-population coverage. Pagination is
+a separate closed `COMPLETE` or `TRUNCATED` fact.
+
+Factual subscriber-relative calculators continue to run for unqualified datasets. A future
+`SubscriberRelativeAnalysisResult` returns qualification and analytics together; downstream
+signal-facing orchestration must not pass bare unqualified analytics to business rules.
+
 The YouTube acquisition layer owns interaction with the external API and conversion from upstream response shapes into immutable canonical models. The canonical models expose only the subset of public YouTube data with expected long-term application value.
 
 ## Transport and Domain Boundary
@@ -140,7 +198,7 @@ metric identities. `eligible_standard_video_count` records the classified standa
 unavailable for an empty basis or unavailable denominator. Each calculator returns exactly one
 typed metric result, and the Path B result assembler maps each result to one aggregate
 field. Neither calculator contains the minimum-five qualification or a signal threshold.
-Qualification remains a future typed concern.
+Qualification policy and contracts are approved by ADR-010 but remain unimplemented.
 
 The Calculator Registry owns only the homogeneous `ChannelAnalytics` calculator path. It executes
 an explicitly injected sequence once in registration order and returns an immutable result tuple.
@@ -226,7 +284,7 @@ Raw API response shapes and Google SDK types must not cross the canonical domain
 
 ### Planned Pipeline Stages
 
-- Subscriber-relative qualification
+- Acquisition provenance and subscriber-relative qualification implementation under ADR-010
 - Product-approved signal rules
 - AI Narrative Engine
 
