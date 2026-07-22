@@ -88,6 +88,44 @@ For example, YouTube's `duration="PT5M30S"` transport value becomes `timedelta(m
 
 This boundary prevents external naming and serialization formats from leaking into deterministic calculators, signals, or narratives.
 
+### Canonical Video Acquisition
+
+`search.list` and `playlistItems.list` discover candidate video IDs; their payloads do not provide
+all canonical eligibility facts. `YouTubeService` stably deduplicates those IDs and requests
+complete `videos.list` resources with `snippet`, `statistics`, `contentDetails`, `status`, and
+`liveStreamingDetails`. The same complete-resource parser is used by search, uploads acquisition,
+and direct `get_video()` retrieval.
+
+```text
+search.list / playlistItems.list
+                |
+                v
+discovered video IDs (source ordered)
+                |
+                v
+stable request deduplication
+                |
+                v
+videos.list complete resources
+                |
+                v
+canonical Video parsing
+                |
+                v
+source-order reconstruction
+```
+
+Each unique discovered ID is requested once per acquisition and each returned unique resource is
+parsed once. Duplicate discovery positions remain in the output and may reuse the same immutable
+canonical `Video`. Reconstruction follows the original ID sequence rather than upstream response
+order. If `videos.list` omits an ID, acquisition skips that position, preserves the relative order
+of remaining resources, creates no placeholder, and does not infer deletion from omission alone.
+
+Canonical parsing maps duration, privacy, availability, live state, tags, category ID, default
+language, likes, and comments from official resource fields. Completed livestreams map to
+`LIVE_REPLAY`; resolved non-live videos with duration strictly greater than three minutes map to
+`STANDARD`; every other unresolved format remains `UNKNOWN`. Acquisition never infers `SHORT`.
+
 The analytics layer consumes those canonical models. Shared validation establishes calculator preconditions, and each deterministic calculator produces exactly one typed metric without orchestration, scoring, signal detection, or AI behavior.
 
 Eligible Video Policy v1 establishes an explicit classification boundary for subscriber-relative
@@ -188,7 +226,6 @@ Raw API response shapes and Google SDK types must not cross the canonical domain
 
 ### Planned Pipeline Stages
 
-- Complete canonical availability, live-state, and format acquisition mapping
 - Subscriber-relative qualification
 - Product-approved signal rules
 - AI Narrative Engine

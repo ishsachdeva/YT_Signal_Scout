@@ -340,6 +340,25 @@ Update GIT_CONVENTIONS.md.
 
 Keep documentation synchronized with implementation.
 
+When a milestone changes current behavior or implementation status, audit the relevant repository
+Markdown and reconcile verified stale claims. Preserve accepted ADRs as historical decision
+records unless the decision itself is superseded.
+
+---
+
+# YouTube Acquisition Rules
+
+The YouTube acquisition layer owns transport-to-domain conversion. Discovery responses identify
+candidate video IDs; complete `videos.list` resources supply canonical `Video` facts.
+
+Always:
+
+- Preserve discovery order when reconstructing enriched results.
+- Deduplicate upstream requests stably while preserving duplicate output positions.
+- Interpret incomplete or contradictory upstream facts conservatively.
+- Skip resources omitted by `videos.list` without fabricating placeholders or inferring deletion.
+- Keep YouTube transport payloads and mapping heuristics out of analytics and eligibility code.
+
 ---
 
 # Git Workflow
@@ -365,6 +384,10 @@ Every completed feature should be:
 - Testable
 
 Business logic should be testable independently of HTTP.
+
+For backend changes, run the full pytest suite, compile the backend, and check the Git diff for
+whitespace errors. Run additional formatters, linters, and type checkers only when configured in
+the repository.
 
 ---
 

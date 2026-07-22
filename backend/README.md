@@ -41,11 +41,17 @@ The acquisition layer is under `app/services/youtube`. Instantiate `YouTubeClien
 application settings and inject it into `YouTubeService`; neither object is global or a
 singleton. Tests inject a mock Google resource and never contact YouTube.
 
+Video search and uploads-playlist responses are discovery inputs. `YouTubeService` extracts and
+stably deduplicates their video IDs, requests complete `videos.list` resources, parses canonical
+metadata, and reconstructs results in discovery order. Duplicate positions are retained using the
+same immutable canonical object. A resource omitted by `videos.list` is skipped; omission alone is
+not interpreted as deletion and never produces a placeholder.
+
 ## Test
 
 ```text
 cd backend
-python -m unittest discover -s tests -v
+python -m pytest
 ```
 
 ## Analytics calculator registry
@@ -81,7 +87,7 @@ analytics. `SignalRule` implementations consume the immutable analytics aggregat
 typed signals with structured metric evidence. `SignalEngine` only orchestrates an explicit
 ordered rule sequence; it is synchronous, stateless, fail-fast, and returns a tuple.
 
-There are intentionally no production rules in this milestone. Product-approved taxonomy,
+There are currently no production rules. Product-approved taxonomy,
 thresholds, and a defensible confidence calculation are required before those are added.
 Proposed and approved definitions are governed in
 [`docs/product/SIGNAL_CATALOG.md`](../docs/product/SIGNAL_CATALOG.md); catalog inclusion alone

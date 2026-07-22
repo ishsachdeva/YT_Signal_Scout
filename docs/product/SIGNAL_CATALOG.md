@@ -61,34 +61,34 @@ Signal Engine                 ordered execution only
 ## 4. Eligible Video Policy v1
 
 This section is the authoritative product policy for video eligibility in subscriber-relative
-analytics. The policy is approved for implementation. The classifier, canonical fields, and
-metrics described here are not yet implemented. A change to any boundary, classification rule,
-or missing-data behavior requires a new eligibility-policy version and review under ADR-008.
+analytics. The policy, classifier, canonical fields, and subscriber-relative metrics described
+here are approved and implemented. A change to any boundary, classification rule, or missing-data
+behavior requires a new eligibility-policy version and review under ADR-008.
 
 ### 4.1 Conflict and gap resolution
 
 | Topic | Existing product requirement | Existing TRD expectation | Current implementation | Ratified v1 decision |
 |---|---|---|---|---|
-| Lower age | Exclude videos younger than 24 hours | Configured maximum/minimum age implied | Optional `published_at`; no eligibility step | Inclusive lower bound: exactly 24 elapsed hours is eligible |
-| Upper age | Exclude videos older than 90 days | Acquisition stops beyond maximum age | No eligibility step | Inclusive upper bound: exactly 90 elapsed days is eligible |
+| Lower age | Exclude videos younger than 24 hours | Configured maximum/minimum age implied | Classifier enforces the approved elapsed-time boundary | Inclusive lower bound: exactly 24 elapsed hours is eligible |
+| Upper age | Exclude videos older than 90 days | Acquisition stops beyond maximum age | Classifier enforces the approved elapsed-time boundary | Inclusive upper bound: exactly 90 elapsed days is eligible |
 | Evaluation time | Timestamped analytics required | Immutable snapshot timestamps | `ChannelAnalytics.generated_at` exists | Classifier receives explicit timezone-aware `evaluation_time`; normal value is `generated_at` |
-| Future timestamp | Not specified | Canonical publication time expected | Some calculators reject it | Validation failure, never a normal exclusion |
-| Missing publication | Eligible videos are recent published videos | Canonical video includes publication time | Field is optional | Ineligible/incomplete; never guessed. Available published videos should carry it after canonical evolution |
+| Future timestamp | Not specified | Canonical publication time expected | Classifier and time-dependent calculators reject it | Validation failure, never a normal exclusion |
+| Missing publication | Eligible videos are recent published videos | Canonical video includes publication time | Field remains optional and missing values are excluded | Ineligible/incomplete; never guessed. Available published videos should carry it when supplied upstream |
 | Privacy | Eligible means public | Availability modeled separately | `PrivacyStatus` or `None` | Only `PUBLIC`; private, unlisted, and unknown are ineligible |
-| Availability | Deleted/private marked unavailable | `availability` expected | No availability field | Closed `VideoAvailability`; only `AVAILABLE` continues |
+| Availability | Deleted/private marked unavailable | `availability` expected | Closed canonical field populated conservatively by acquisition | Closed `VideoAvailability`; only `AVAILABLE` continues |
 | View count | Retrievable statistics required | Snapshot view count expected | Optional non-negative value | Missing is ineligible; zero is valid; negative is invalid canonical input |
-| Duplicate IDs | Duplicate discovery entities collapse | Idempotent persistence expected | Dataset accepts duplicates | Shared analytics validation rejects duplicate video IDs |
-| Shorts | Separate from standard videos | `format_class` expected | Duration exists; no aspect ratio or format | Closed `VideoFormat`; no duration-only Shorts claim; unresolved cases are `UNKNOWN` |
-| Standard video | Separate cohort | `format_class` expected | Not represented | v1 safely resolves non-live videos longer than three minutes as `STANDARD`; shorter/equal unresolved videos are `UNKNOWN` |
-| Live state | Replays separate/excluded | `live_state` expected | Not represented | Closed `LiveState` mapped by acquisition from official public live metadata |
-| Replay | Separate cohort or exclude by default | Live state and format expected | Not represented | Completed livestream maps to `LIVE_REPLAY`; retained separately, excluded from standard median |
-| Upcoming/live | Not explicitly eligible | Live state expected | Not represented | `UPCOMING` and `LIVE` are ineligible for v1 |
-| Uncertain format | Expose uncertainty | Format expected | Not represented | `UNKNOWN`; retained as exclusion and never reclassified downstream |
+| Duplicate IDs | Duplicate discovery entities collapse | Idempotent persistence expected | Acquisition deduplicates requests while preserving discovery positions; analytics rejects duplicate IDs | Shared analytics validation rejects duplicate video IDs |
+| Shorts | Separate from standard videos | `format_class` expected | Closed `VideoFormat`; acquisition never infers `SHORT` | Closed `VideoFormat`; no duration-only Shorts claim; unresolved cases are `UNKNOWN` |
+| Standard video | Separate cohort | `format_class` expected | Non-live videos longer than three minutes map to `STANDARD` | v1 safely resolves non-live videos longer than three minutes as `STANDARD`; shorter/equal unresolved videos are `UNKNOWN` |
+| Live state | Replays separate/excluded | `live_state` expected | Closed `LiveState` populated from official public live metadata | Closed `LiveState` mapped by acquisition from official public live metadata |
+| Replay | Separate cohort or exclude by default | Live state and format expected | Completed livestreams map to `LIVE_REPLAY` | Completed livestream maps to `LIVE_REPLAY`; retained separately, excluded from standard median |
+| Upcoming/live | Not explicitly eligible | Live state expected | Canonical states are populated and excluded by the classifier | `UPCOMING` and `LIVE` are ineligible for v1 |
+| Uncertain format | Expose uncertainty | Format expected | Unresolved formats remain `UNKNOWN` | `UNKNOWN`; retained as exclusion and never reclassified downstream |
 | Retrieval completeness | At least 60% | Numerator/denominator provenance expected | Expected population absent | Qualification metadata outside classifier; threshold retained but infrastructure deferred |
 | Minimum sample | At least five eligible videos | Qualification gate | No qualification model | Median calculable from one; future qualification requires count `>= 5` |
 | Subscriber visibility | Visible and greater than zero | Hidden state retained | Canonical count and hidden flag exist | Hidden, missing, zero, or missing statistics make VSR unavailable |
 | Subscriber rounding | Preserve limitation | Captured public value | No rounding flag | Use captured value without correction; evidence must disclose public-value limitation |
-| Format aggregation | Do not mix formats | Format-specific cohort expected | No format basis | Separate immutable standard, Shorts, and replay bases; first median is standard-only |
+| Format aggregation | Do not mix formats | Format-specific cohort expected | Classifier produces separate immutable format bases | Separate immutable standard, Shorts, and replay bases; first median is standard-only |
 
 ### 4.2 Evaluation time and age
 
@@ -114,7 +114,7 @@ eligible_age = 24 hours <= video_age <= 90 days
 
 ### 4.3 Canonical availability, privacy, and statistics
 
-Canonical video availability will use a closed `VideoAvailability` enum:
+Canonical video availability uses a closed `VideoAvailability` enum:
 
 ```text
 AVAILABLE
@@ -176,6 +176,11 @@ UNKNOWN
 
 Acquisition/domain construction owns YouTube-specific mapping. Analytics consumes these canonical
 types and never repeats transport heuristics.
+
+Discovery through `search.list` and `playlistItems.list` is enriched with complete `videos.list`
+resources before canonical construction. Requests are stably deduplicated, output order and
+duplicate positions follow discovery order, and each returned unique resource is parsed once.
+Omitted resources are skipped without placeholders or deletion inference.
 
 The v1 live mapping uses official public video metadata:
 
@@ -797,8 +802,8 @@ exclusion facts only.
 **Limitations:** Correctness depends entirely on explicit format, age, privacy, deletion, and
 retrieval rules. Incomplete acquisition may cause false insufficiency.
 
-**Dependencies:** Implementation of the approved classifier/count and retrieval-completeness
-infrastructure. The decision whether qualification failures are signals remains open. Not ready.
+**Dependencies:** The classifier and count are implemented; retrieval-completeness infrastructure
+and the decision whether qualification failures are signals remain outstanding. Not ready.
 
 **Approval:** Product confirms whether qualification failures are signals; Analytics approves the
 eligibility pipeline and exclusion evidence; Architecture reviews the result/evidence boundary.
@@ -886,12 +891,12 @@ policy.
 
 | Signal | Primary blocker |
 |---|---|
-| SIG-001 | Canonical/classifier/VSR implementation and approved share threshold `P` |
-| SIG-002 | Canonical/classifier/median implementation, evidence contract, and threshold `T` |
-| SIG-003 | Classifier implementation plus approved breakout baseline and significance policy |
+| SIG-001 | Qualifying-hit analytics, qualification/evidence contract, and approved share threshold `P` |
+| SIG-002 | Qualification/evidence contract and threshold `T` |
+| SIG-003 | Approved breakout baseline and significance policy |
 | SIG-005 | Eligible sample evidence and cohort benchmark |
 | SIG-006 | Cohort benchmark and eligibility/sample evidence |
-| SIG-010 | Classifier/count implementation, retrieval-completeness infrastructure, and evidence shape |
+| SIG-010 | Retrieval-completeness infrastructure and evidence shape |
 | SIG-011 | Decision on qualification-result boundary and canonical-fact evidence |
 
 Deferred supporting signals SIG-007, SIG-009, and SIG-012 should not displace core discovery
@@ -1060,8 +1065,8 @@ Now that `median_standard_video_vsr` calculation exists, Product and Analytics m
 
 ## 21. Recommended implementation sequence
 
-1. Complete canonical video format/live/availability acquisition mapping under ADR-008.
-2. Keep the implemented subscriber-relative analytics pipeline unchanged.
+1. Keep the implemented acquisition and subscriber-relative analytics pipelines unchanged.
+2. Define subscriber-relative qualification and retrieval-completeness provenance.
 3. Backtest standard-video median VSR by subscriber band; approve threshold `T`.
 4. Extend `SignalEvidence` minimally for comparator, operator, unit, and sample size.
 5. Mark SIG-002 Approved and Implementable Now with approval metadata.
