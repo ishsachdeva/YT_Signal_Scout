@@ -81,7 +81,14 @@ class YouTubeService:
     def get_video(self, video_id: str) -> Video:
         """Retrieve public metadata, statistics, and content details for one video."""
         payload = self._client.get_videos(
-            [video_id], parts=("snippet", "statistics", "contentDetails")
+            [video_id],
+            parts=(
+                "snippet",
+                "statistics",
+                "contentDetails",
+                "status",
+                "liveStreamingDetails",
+            ),
         )
         items = self._items(payload)
         if not items:

@@ -129,7 +129,14 @@ class YouTubeServiceTests(unittest.TestCase):
         self.assertEqual(video.id, "video-1")
         self.assertEqual(video.view_count, 100)
         self.client.get_videos.assert_called_once_with(
-            ["video-1"], parts=("snippet", "statistics", "contentDetails")
+            ["video-1"],
+            parts=(
+                "snippet",
+                "statistics",
+                "contentDetails",
+                "status",
+                "liveStreamingDetails",
+            ),
         )
 
     def test_missing_video_raises_normalized_exception(self) -> None:

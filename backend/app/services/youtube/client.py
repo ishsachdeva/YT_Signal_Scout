@@ -114,7 +114,7 @@ class YouTubeClient:
         if not 1 <= len(video_ids) <= 50:
             raise ValueError("video_ids must contain between 1 and 50 IDs")
         request = self._resource.videos().list(
-            part=",".join(parts), id=",".join(video_ids), maxResults=len(video_ids)
+            part=",".join(parts), id=",".join(video_ids)
         )
         return self._execute(request)
 

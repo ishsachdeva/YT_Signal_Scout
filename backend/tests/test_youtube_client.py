@@ -62,18 +62,44 @@ class YouTubeClientTests(unittest.TestCase):
         self.resource.videos.return_value.list.return_value = self.request
 
         result = self.client.get_videos(
-            ["video-1"], parts=("snippet", "statistics", "contentDetails")
+            ["video-1"],
+            parts=(
+                "snippet",
+                "statistics",
+                "contentDetails",
+                "status",
+                "liveStreamingDetails",
+            ),
         )
 
         self.assertEqual(result["items"], [])
         self.resource.videos.return_value.list.assert_called_once_with(
-            part="snippet,statistics,contentDetails", id="video-1", maxResults=1
+            part=(
+                "snippet,statistics,contentDetails,status,liveStreamingDetails"
+            ),
+            id="video-1",
         )
         self.request.execute.assert_called_once_with(num_retries=4)
+
+    def test_get_videos_preserves_fifty_id_batch_without_max_results(self) -> None:
+        self.resource.videos.return_value.list.return_value = self.request
+        video_ids = [f"video-{index}" for index in range(50)]
+
+        self.client.get_videos(video_ids, parts=("snippet",))
+
+        self.resource.videos.return_value.list.assert_called_once_with(
+            part="snippet",
+            id=",".join(video_ids),
+        )
 
     def test_get_videos_requires_between_one_and_fifty_ids(self) -> None:
         with self.assertRaisesRegex(ValueError, "between 1 and 50"):
             self.client.get_videos([], parts=("snippet",))
+        with self.assertRaisesRegex(ValueError, "between 1 and 50"):
+            self.client.get_videos(
+                [f"video-{index}" for index in range(51)],
+                parts=("snippet",),
+            )
 
     def test_timeout_is_normalized(self) -> None:
         self.request.execute.side_effect = socket.timeout("private transport detail")
