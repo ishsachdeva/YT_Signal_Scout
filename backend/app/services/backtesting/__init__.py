@@ -44,6 +44,12 @@ from app.services.backtesting.models import (
     ThresholdBacktestReport,
     ThresholdEvaluationResult,
 )
+from app.services.backtesting.methodology_models import (
+    ResearchRecommendation,
+    ThresholdEvaluationCriterion,
+    ThresholdEvaluationMethodology,
+    ThresholdEvaluationMetric,
+)
 from app.services.backtesting.service import (
     MedianStandardVideoVsrThresholdBacktester,
 )
@@ -92,12 +98,16 @@ __all__ = [
     "MedianVsrThresholdSet",
     "QualificationFailureCount",
     "QualificationCoverageSummary",
+    "ResearchRecommendation",
     "SubscriberBandBacktestResult",
     "SubscriberBandDefinition",
     "SubscriberBandSet",
     "SubscriberRelativeBacktestDataset",
     "SubscriberRelativeBacktestObservation",
     "ThresholdBacktestReport",
+    "ThresholdEvaluationCriterion",
+    "ThresholdEvaluationMethodology",
+    "ThresholdEvaluationMetric",
     "ThresholdEvaluationResult",
     "UnsupportedHistoricalDatasetSchemaError",
 ]

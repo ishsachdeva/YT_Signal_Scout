@@ -263,6 +263,17 @@ results into a new ranking model. Reviews identify the reviewer, decision, ratio
 Approval applies only to the research artifact and cannot publish policy or authorize production
 signal composition.
 
+ADR-016 defines evaluation methodology separately from both execution facts and study reviews.
+`ThresholdEvaluationMethodology` is an immutable, versioned, ordered collection of criteria whose
+metrics map only to facts already present in `ThresholdBacktestReport`: qualification coverage,
+median-VSR availability, threshold-eligible support, median-VSR distribution, candidate hit rate,
+exclusions, and qualification-failure counts. It performs no evaluation and contains no weights,
+scores, ranking, optimization, or calculated summary.
+
+The methodology also closes research recommendations to further investigation, insufficient
+evidence, candidate worth reviewing, and readiness for human review. These dispositions have no
+production authority and cannot publish a threshold, approve policy, or activate SIG-002.
+
 The YouTube acquisition layer owns interaction with the external API and conversion from upstream response shapes into immutable canonical models. The canonical models expose only the subset of public YouTube data with expected long-term application value.
 
 ## Transport and Domain Boundary

@@ -28,6 +28,7 @@ This directory contains all significant architectural decisions for the YT Signa
 | ADR-013 | Govern Historical Research Dataset Import Through Strict Versioned JSON | 🟢 Accepted | 2026-07-22 |
 | ADR-014 | Controlled Deterministic Offline Backtest Execution | 🟢 Accepted | 2026-07-22 |
 | ADR-015 | Govern Threshold Research Through Immutable Study Artifacts | 🟢 Accepted | 2026-07-22 |
+| ADR-016 | Define Versioned Factual Threshold Evaluation Methodology | 🟢 Accepted | 2026-07-22 |
 
 ---
 

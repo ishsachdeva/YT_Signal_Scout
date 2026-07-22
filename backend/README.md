@@ -120,6 +120,11 @@ versioned definition binds the study to an execution configuration; executed art
 complete factual report, and typed reviews may approve or reject only the research artifact.
 Study approval does not publish a threshold, authorize production policy, or activate a signal.
 
+`ThresholdEvaluationMethodology` defines an ordered, versioned set of factual report concepts that
+human reviewers must inspect and the closed research-only recommendations they may record. It
+contains no weights, scores, calculated summary, ranking, threshold recommendation, or production
+approval state.
+
 ## Signal engine foundation
 
 The `app/services/signals` module is the interpretation boundary after deterministic
