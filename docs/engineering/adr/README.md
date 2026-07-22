@@ -21,6 +21,7 @@ This directory contains all significant architectural decisions for the YT Signa
 | ADR-006 | Separate Deterministic Analytics from Business Signal Evaluation | 🟢 Accepted | 2026-07-22 |
 | ADR-007 | Govern Production Signals Through a Versioned Signal Catalog | 🟢 Accepted | 2026-07-22 |
 | ADR-008 | Establish Explicit Format-Specific Eligible Video Bases for Subscriber-Relative Analytics | 🟢 Accepted | 2026-07-22 |
+| ADR-009 | Separate Subscriber-Relative Orchestration from the ChannelAnalytics Calculator Registry | 🟢 Accepted | 2026-07-22 |
 
 ---
 

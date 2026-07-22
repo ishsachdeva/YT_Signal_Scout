@@ -325,12 +325,16 @@ MetricType.MEDIAN_STANDARD_VIDEO_VSR
 ```
 
 `EligibleStandardVideoCountCalculator` returns only the integer count.
-`MedianStandardVideoVsrCalculator` returns only the nullable median. Both consume the same
-versioned classifier contract through explicit dependency injection, while each remains compatible
-with the existing one-result-per-metric calculator protocol. The initial bounded implementation
-may classify independently in each calculator; it must not introduce generalized orchestration
-solely to avoid that small deterministic cost. The assembler maps each metric identity to exactly
-one aggregate field.
+`MedianStandardVideoVsrCalculator` returns only the nullable median. Both consume one precomputed
+`EligibleVideoClassification` through narrow typed inputs; the median calculator also receives the
+explicit subscriber count. They do not implement the homogeneous `ChannelAnalytics` input contract
+and do not execute through `CalculatorRegistry`.
+
+ADR-009 assigns their future sequencing and input delivery to a dedicated subscriber-relative
+analytics orchestrator. That orchestrator will invoke the count calculator first and the median
+calculator second, once each, and return ordered metric results. A separate future
+subscriber-relative result assembler will map each metric identity to exactly one typed result
+field. Neither future component is implemented.
 
 ### 4.8 Duplicate IDs, retrieval completeness, and qualification
 
@@ -383,10 +387,11 @@ provenance rather than a calculated metric; it contains the canonical `Channel`,
 | `view_growth_rate` | `float`, required | Newer-half mean lifetime views divided by older-half mean | `ViewGrowthRateCalculator`; upload-cohort performance ratio | At least one dated video with views; one video returns `1.0`; old mean zero yields `1.0` or infinity; lifetime exposure differs by video age | Upload-cohort comparison within one snapshot | Can support only a carefully named proposal; must not be called historical or snapshot growth |
 | `view_engagement_rate` | `float \| None` | Unweighted mean of `(likes + comments) / views` for videos with all three values and views greater than zero | `ViewEngagementRateCalculator`; observed public interaction rate | May be `None`; silently excludes ineligible rows; no explicit sample count, format separation, age adjustment, or benchmark | Current aggregate performance | Blocked for unusual-engagement policy by missing sample evidence and benchmark |
 
-Planned under Eligible Video Policy v1, but not implemented: an explicit format-specific
-classification result, `eligible_standard_video_count`, and nullable
-`median_standard_video_vsr`. The two aggregate fields will be populated from separate typed metric
-results. They must not be listed as current analytics until code and tests exist.
+Implemented but not yet orchestrated or assembled: `EligibleVideoClassification`,
+`EligibleStandardVideoCountCalculator`, and `MedianStandardVideoVsrCalculator`. The two calculators
+produce separate typed metric results for `eligible_standard_video_count` and nullable
+`median_standard_video_vsr`. These fields are not yet exposed by `CalculatedChannelAnalytics` or
+any subscriber-relative result aggregate.
 
 ### 5.1 Capability distinctions
 
@@ -397,7 +402,8 @@ results. They must not be listed as current analytics until code and tests exist
 - **Distribution:** view distribution, view outlier, and upload consistency summarize variation
   inside the supplied collection.
 - **Repeated-snapshot growth:** not available.
-- **Subscriber-relative performance:** not available as a calculated metric.
+- **Subscriber-relative performance:** count and median VSR calculators are implemented, but their
+  results are not yet orchestrated, assembled, or available to downstream consumers.
 - **Benchmark-relative performance:** not available.
 - **Ranking-relative performance:** not available.
 - **Eligible-video population:** not available as an explicit validated dataset or count.
@@ -1040,19 +1046,20 @@ Required inputs and rules:
 Existing average/median views cannot substitute because they ignore subscriber scale. Views per
 day cannot substitute because it measures age-normalized absolute reach. `view_growth_rate`
 cannot substitute because it compares upload cohorts. No current metric answers the core product
-question.
+question through the assembled analytics pipeline; the standalone median standard-video VSR
+calculator is implemented but not yet orchestrated or assembled.
 
-After `median_standard_video_vsr` exists, Product and Analytics must approve `T` and exact
-evidence/boundary semantics before SIG-002 becomes Approved and Implementable Now.
+Now that `median_standard_video_vsr` calculation exists, Product and Analytics must still approve
+`T` and exact evidence/boundary semantics before SIG-002 becomes Approved and Implementable Now.
 
 ## 21. Recommended implementation sequence
 
-1. Evolve canonical video format/live/availability fields and acquisition mapping per ADR-008.
-2. Add shared duplicate/timestamp validation and immutable eligibility classification.
-3. Implement separate `ELIGIBLE_STANDARD_VIDEO_COUNT` and `MEDIAN_STANDARD_VIDEO_VSR` calculators
-   and aggregate fields; integrate each typed result through the registry and assembler.
-4. Backtest standard-video median VSR by subscriber band; approve threshold `T`.
-5. Extend `SignalEvidence` minimally for comparator, operator, unit, and sample size.
-6. Mark SIG-002 Approved and Implementable Now with approval metadata.
-7. Implement exactly one version-1 `SignalRule` and its boundary tests.
-8. Consider hit consistency, Shorts, replay, and breakout only after the reference rule.
+1. Complete canonical video format/live/availability acquisition mapping under ADR-008.
+2. Keep the implemented classifier and narrow subscriber-relative calculators unchanged.
+3. Implement the dedicated subscriber-relative analytics orchestrator defined by ADR-009.
+4. Implement subscriber-relative result assembly and explicit aggregate mapping.
+5. Backtest standard-video median VSR by subscriber band; approve threshold `T`.
+6. Extend `SignalEvidence` minimally for comparator, operator, unit, and sample size.
+7. Mark SIG-002 Approved and Implementable Now with approval metadata.
+8. Implement exactly one version-1 `SignalRule` and its boundary tests.
+9. Consider hit consistency, Shorts, replay, and breakout only after the reference rule.

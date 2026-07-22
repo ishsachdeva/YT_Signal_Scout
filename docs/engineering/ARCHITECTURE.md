@@ -6,72 +6,69 @@ YT Signal Scout is a modular monolith with explicit module boundaries. Applicati
 
 ## Analytics Pipeline
 
-The overall current and target pipeline is shown below; implementation status is listed
-separately later in this document:
+Analytics has two explicit deterministic execution paths. They share canonical source facts and
+typed metric results, but they do not share an execution registry.
+
+### Path A — Homogeneous ChannelAnalytics calculators
+
+This implemented path contains calculators with the common
+`calculate(ChannelAnalytics) -> MetricResult` contract:
 
 ```text
-YouTube API
-    |
-    v
-Raw API DTOs
-    |
-    v
-Canonical Domain Models
-    |
-    v
-Validation
-    |
-    v
-Deterministic Calculators
-    |
-    v
+ChannelAnalytics
+        |
+        v
+ChannelAnalytics Calculators
+        |
+        v
 Calculator Registry
-    |
-    v
+(ordered homogeneous execution)
+        |
+        v
 Analytics Assembler
-    |
-    v
+(mapping and structural validation)
+        |
+        v
 CalculatedChannelAnalytics
-    |
-    v
-    Independent Signal Rules
-    |
-    v
-    Signal Engine
-    |
-    v
-    Typed Signals
-    |
-    v
-AI Narrative Engine
 ```
 
-Within the deterministic-calculator stage, the approved but unimplemented
-subscriber-relative path is:
+### Path B — Subscriber-relative analytics
+
+The classifier and two calculators are implemented. The orchestration and result-assembly stages
+shown below are approved but not implemented:
 
 ```text
-Validated ChannelAnalytics
+Canonical Data
         |
         v
-Eligible Video Classification
+EligibleVideoClassifier
         |
         v
-Format-Specific Eligible Video Bases
+EligibleVideoClassification
         |
-        +----------------------------+
-        |                            |
-        v                            v
-Eligible Standard             Median Standard
-Video Count Calculator        Video VSR Calculator
-        |                            |
-        +------------+---------------+
-                     |
-                     v
-             Calculator Registry
-                     |
-                     v
-            Analytics Assembler
+        v
+SubscriberRelativeAnalyticsOrchestrator
+(future: owns sequencing and explicit input delivery)
+        |
+        +-- 1. EligibleStandardVideoCountCalculator(classification)
+        |
+        +-- 2. MedianStandardVideoVsrCalculator(classification, subscriber_count)
+        |
+        v
+Ordered Subscriber-Relative Metric Results
+        |
+        v
+SubscriberRelativeResultAssembler
+(future: owns mapping and structural validation)
 ```
+
+The two calculators own only their calculations and are independent; their numeric order is
+deterministic invocation order, not a data dependency between them. The future
+`SubscriberRelativeAnalyticsOrchestrator` will obtain explicit inputs, invoke each calculator once
+in the documented order, and return a complete ordered result collection. It will not calculate
+metrics, apply eligibility policy, assemble aggregates, or interpret results. The future
+`SubscriberRelativeResultAssembler` will own mapping and structural validation. Neither the
+existing Calculator Registry nor the existing Analytics Assembler participates in Path B.
 
 The YouTube acquisition layer owns interaction with the external API and conversion from upstream response shapes into immutable canonical models. The canonical models expose only the subset of public YouTube data with expected long-term application value.
 
@@ -85,24 +82,31 @@ This boundary prevents external naming and serialization formats from leaking in
 
 The analytics layer consumes those canonical models. Shared validation establishes calculator preconditions, and each deterministic calculator produces exactly one typed metric without orchestration, scoring, signal detection, or AI behavior.
 
-Eligible Video Policy v1 approves a future explicit classification boundary for
-subscriber-relative analytics. Canonical acquisition will own closed availability, live-state,
-and format mapping. Analytics will consume those canonical facts with an explicit evaluation time
-and produce immutable, source-ordered standard, Shorts, and livestream-replay bases. Unknown
-classification is excluded rather than guessed. This boundary and the subscriber-relative
-calculators are planned, not implemented.
+Eligible Video Policy v1 establishes an explicit classification boundary for subscriber-relative
+analytics. Canonical acquisition owns closed availability, live-state, and format mapping. The
+classifier consumes those canonical facts with an explicit evaluation time and produces immutable,
+source-ordered standard, Shorts, and livestream-replay bases. Unknown classification is excluded
+rather than guessed.
 
-The first planned subscriber-relative facts are explicitly standard-video scoped and use separate
+The implemented subscriber-relative facts are explicitly standard-video scoped and use separate
 metric identities. `eligible_standard_video_count` records the classified standard-basis size.
 `median_standard_video_vsr` uses that basis and a visible positive subscriber count and returns
 unavailable for an empty basis or unavailable denominator. Each calculator returns exactly one
-typed metric result, and the assembler maps each result to one aggregate field. Neither calculator
-contains the minimum-five qualification or a signal threshold. Qualification remains a future
-typed concern.
+typed metric result, and the future Path B result assembler will map each result to one aggregate
+field. Neither calculator contains the minimum-five qualification or a signal threshold.
+Qualification remains a future typed concern.
 
-The Calculator Registry owns an explicitly injected, ordered calculator sequence. It executes each calculator once in registration order and returns an immutable result tuple. Duplicate metric identities are rejected during construction. Execution is fail-fast: calculator exceptions propagate unchanged, no partial result collection is returned, and later calculators are not executed.
+The Calculator Registry owns only the homogeneous `ChannelAnalytics` calculator path. It executes
+an explicitly injected sequence once in registration order and returns an immutable result tuple.
+Duplicate metric identities are rejected during construction. Execution is fail-fast: calculator
+exceptions propagate unchanged, no partial result collection is returned, and later calculators
+are not executed. It does not register or execute subscriber-relative calculators.
 
-The Analytics Assembler consumes metric results, validates their completeness and uniqueness, and constructs `CalculatedChannelAnalytics`. The registry remains unaware of the aggregate, and the aggregate remains a pure immutable data contract without mapping or orchestration behavior.
+The existing Analytics Assembler consumes Path A metric results, validates their completeness and
+uniqueness, and constructs `CalculatedChannelAnalytics`. The registry remains unaware of the
+aggregate, and the aggregate remains a pure immutable data contract without mapping or
+orchestration behavior. A future subscriber-relative result assembler will provide equivalent
+mapping-only ownership for Path B; it is not the existing assembler and is not yet implemented.
 
 Independent signal rules interpret the completed aggregate through explicit, deterministic
 business policies. The signal engine owns only ordered orchestration: it snapshots the
@@ -144,6 +148,14 @@ Raw API response shapes and Google SDK types must not cross the canonical domain
 - ViewOutlier
 - ViewGrowthRate
 - ViewEngagementRate
+- EligibleStandardVideoCount
+- MedianStandardVideoVsr
+
+### Implemented Eligibility
+
+- Immutable `EligibleVideoClassification` and exclusions
+- Deterministic `EligibleVideoClassifier`
+- Ordered standard-video, Shorts, and livestream-replay bases
 
 ### Implemented Orchestration
 
@@ -163,13 +175,14 @@ Raw API response shapes and Google SDK types must not cross the canonical domain
 
 ### Planned Pipeline Stages
 
-- Canonical availability, live-state, and format mapping
-- Eligible Video Policy v1 classifier and format-specific bases
-- Eligible standard-video count and median standard-video VSR analytics and aggregate integration
+- Complete canonical availability, live-state, and format acquisition mapping
+- Dedicated subscriber-relative analytics orchestration
+- Subscriber-relative result assembly and aggregate integration
 - Subscriber-relative qualification
 - Product-approved signal rules
 - AI Narrative Engine
 
 See ADR-002 for analytics-layer separation, ADR-003 for the canonical YouTube domain-model
-decision, ADR-006 for signal evaluation semantics, ADR-007 for Signal Catalog governance, and
-ADR-008 for format-specific eligible-video bases.
+decision, ADR-006 for signal evaluation semantics, ADR-007 for Signal Catalog governance,
+ADR-008 for format-specific eligible-video bases, and ADR-009 for the separate
+subscriber-relative orchestration boundary.
