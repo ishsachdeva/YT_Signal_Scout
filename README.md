@@ -17,6 +17,8 @@ Product and Analytics approval.
 
 Key documentation:
 
+- [Decision Governance](docs/governance/DECISION_GOVERNANCE.md) defines repository-wide decision
+  accountability, approval, review, lifecycle, and traceability.
 - [Signal Catalog v1](docs/product/SIGNAL_CATALOG.md) governs proposed and approved signal policy.
 - [Backend README](backend/README.md) contains setup and test commands.
 - [Changelog](CHANGELOG.md) records release capabilities and boundaries.

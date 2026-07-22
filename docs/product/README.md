@@ -14,6 +14,7 @@ source documents.
 | `source/03_UI_UX_Spec_YT_Signal_Scout.docx` | User experience and presentation requirements |
 | `source/04_Security_Spec_YT_Signal_Scout.docx` | Security, privacy, and compliance requirements |
 | `source/05_Feature_Catalogue_YT_Signal_Scout.docx` | Delivery backlog and acceptance intent |
+| `../governance/DECISION_GOVERNANCE.md` | Repository-wide decision ownership, approval, review, lifecycle, and traceability |
 | `SIGNAL_CATALOG.md` | Authoritative signal policy, Eligible Video Policy v1, readiness, and threshold provenance |
 
 Where an original source document states a configurable or incomplete signal condition, the

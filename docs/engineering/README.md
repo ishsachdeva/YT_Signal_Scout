@@ -15,9 +15,10 @@ New contributors should read the documents in the following order:
 3. UI/UX Specification
 4. Security Specification
 5. Feature Catalogue
-6. Signal Catalog
-7. Engineering Principles
-8. Architecture Decision Records (ADRs)
+6. Decision Governance
+7. Signal Catalog
+8. Engineering Principles
+9. Architecture Decision Records (ADRs)
 
 ---
 
@@ -25,6 +26,7 @@ New contributors should read the documents in the following order:
 
 | Document | Purpose |
 |----------|---------|
+| ../governance/DECISION_GOVERNANCE.md | Repository-wide decision ownership, approval, review, lifecycle, and traceability |
 | ENGINEERING_PRINCIPLES.md | Engineering philosophy and decision-making principles |
 | ARCHITECTURE.md | Current and target system architecture |
 | adr/ | Architecture Decision Records |
