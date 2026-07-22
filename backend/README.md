@@ -70,3 +70,6 @@ ordered rule sequence; it is synchronous, stateless, fail-fast, and returns a tu
 
 There are intentionally no production rules in this milestone. Product-approved taxonomy,
 thresholds, and a defensible confidence calculation are required before those are added.
+Proposed and approved definitions are governed in
+[`docs/product/SIGNAL_CATALOG.md`](../docs/product/SIGNAL_CATALOG.md); catalog inclusion alone
+does not authorize production composition.
