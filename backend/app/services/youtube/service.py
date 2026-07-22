@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Callable, Mapping
-from datetime import datetime
+from datetime import datetime, timedelta
+from decimal import Decimal
 from typing import Any
 
 from app.services.youtube.client import JsonObject, YouTubeClient
@@ -15,11 +17,22 @@ from app.services.youtube.exceptions import (
 from app.services.youtube.models import (
     Channel,
     ChannelStatistics,
+    LiveState,
     PageInfo,
+    PrivacyStatus,
     SearchResult,
     Thumbnail,
     Video,
+    VideoAvailability,
+    VideoFormat,
 )
+
+_DURATION_PATTERN = re.compile(
+    r"^P(?:(?P<days>\d+)D)?"
+    r"(?:T(?:(?P<hours>\d+)H)?(?:(?P<minutes>\d+)M)?"
+    r"(?:(?P<seconds>\d+(?:\.\d+)?)S)?)?$"
+)
+_STANDARD_VIDEO_MINIMUM_DURATION = timedelta(minutes=3)
 
 
 class YouTubeService:
@@ -93,7 +106,7 @@ class YouTubeService:
         items = self._items(payload)
         if not items:
             raise VideoNotFoundError(f"YouTube video '{video_id}' was not found")
-        return self._parse_video(items[0])
+        return self._parse_video_resource(items[0])
 
     def get_channel_statistics(self, channel_id: str) -> ChannelStatistics:
         """Retrieve the current public statistics for one channel."""
@@ -184,6 +197,49 @@ class YouTubeService:
 
     @classmethod
     def _parse_video(cls, item: JsonObject) -> Video:
+        return cls._build_video(item)
+
+    @classmethod
+    def _parse_video_resource(cls, item: JsonObject) -> Video:
+        """Parse one complete videos.list resource into canonical facts."""
+        snippet = cls._mapping(item.get("snippet"))
+        statistics = cls._mapping(item.get("statistics"))
+        content_details = cls._mapping(item.get("contentDetails"))
+        status = cls._mapping(item.get("status"))
+        live_details = cls._mapping(item.get("liveStreamingDetails"))
+
+        duration = cls._duration(content_details.get("duration"))
+        live_state = cls._live_state(snippet, live_details)
+        return cls._build_video(
+            item,
+            tags=cls._string_tuple(snippet.get("tags"), "video tags"),
+            category_id=cls._optional_string(snippet.get("categoryId")),
+            default_language=cls._optional_string(snippet.get("defaultLanguage")),
+            like_count=cls._optional_integer(statistics.get("likeCount")),
+            comment_count=cls._optional_integer(statistics.get("commentCount")),
+            duration=duration,
+            privacy_status=cls._privacy_status(status.get("privacyStatus")),
+            availability=cls._availability(status.get("uploadStatus")),
+            live_state=live_state,
+            video_format=cls._video_format(live_state, duration),
+        )
+
+    @classmethod
+    def _build_video(
+        cls,
+        item: JsonObject,
+        *,
+        tags: tuple[str, ...] = (),
+        category_id: str | None = None,
+        default_language: str | None = None,
+        like_count: int | None = None,
+        comment_count: int | None = None,
+        duration: timedelta | None = None,
+        privacy_status: PrivacyStatus | None = None,
+        availability: VideoAvailability = VideoAvailability.UNKNOWN,
+        live_state: LiveState = LiveState.UNKNOWN,
+        video_format: VideoFormat = VideoFormat.UNKNOWN,
+    ) -> Video:
         snippet = cls._mapping(item.get("snippet"))
         identifier = item.get("id")
         if isinstance(identifier, Mapping):
@@ -198,12 +254,115 @@ class YouTubeService:
             channel_title=cls._optional_string(snippet.get("channelTitle")),
             title=cls._required_string(snippet.get("title"), "video title"),
             description=cls._optional_string(snippet.get("description")) or "",
+            tags=tags,
+            category_id=category_id,
+            default_language=default_language,
             published_at=cls._datetime(snippet.get("publishedAt")),
             view_count=cls._optional_integer(
                 cls._mapping(item.get("statistics")).get("viewCount")
             ),
+            like_count=like_count,
+            comment_count=comment_count,
+            duration=duration,
+            privacy_status=privacy_status,
+            availability=availability,
+            live_state=live_state,
+            format=video_format,
             thumbnails=cls._thumbnails(snippet.get("thumbnails")),
         )
+
+    @staticmethod
+    def _duration(value: object) -> timedelta | None:
+        if value is None:
+            return None
+        if not isinstance(value, str):
+            raise YouTubeAPIError("YouTube response contained an invalid video duration")
+        match = _DURATION_PATTERN.fullmatch(value)
+        if match is None or not any(match.groupdict().values()):
+            raise YouTubeAPIError("YouTube response contained an invalid video duration")
+
+        seconds = Decimal(match.group("seconds") or "0")
+        microseconds = seconds * 1_000_000
+        if microseconds != microseconds.to_integral_value():
+            raise YouTubeAPIError("YouTube response contained an invalid video duration")
+        try:
+            return timedelta(
+                days=int(match.group("days") or 0),
+                hours=int(match.group("hours") or 0),
+                minutes=int(match.group("minutes") or 0),
+                microseconds=int(microseconds),
+            )
+        except OverflowError as exception:
+            raise YouTubeAPIError(
+                "YouTube response contained an invalid video duration"
+            ) from exception
+
+    @staticmethod
+    def _privacy_status(value: object) -> PrivacyStatus | None:
+        try:
+            return PrivacyStatus(value)
+        except (TypeError, ValueError):
+            return None
+
+    @staticmethod
+    def _availability(value: object) -> VideoAvailability:
+        if value == "deleted":
+            return VideoAvailability.DELETED
+        if value in {None, "processed"}:
+            return VideoAvailability.AVAILABLE
+        return VideoAvailability.UNKNOWN
+
+    @classmethod
+    def _live_state(
+        cls,
+        snippet: Mapping[str, Any],
+        live_details: Mapping[str, Any],
+    ) -> LiveState:
+        broadcast_content = snippet.get("liveBroadcastContent")
+        actual_start = cls._datetime(live_details.get("actualStartTime"))
+        actual_end = cls._datetime(live_details.get("actualEndTime"))
+        scheduled_start = cls._datetime(live_details.get("scheduledStartTime"))
+
+        if actual_end is not None:
+            if actual_start is None or broadcast_content in {"live", "upcoming"}:
+                return LiveState.UNKNOWN
+            return LiveState.COMPLETE
+        if broadcast_content == "live":
+            return LiveState.LIVE if actual_start is not None else LiveState.UNKNOWN
+        if broadcast_content == "upcoming":
+            if actual_start is None and scheduled_start is not None:
+                return LiveState.UPCOMING
+            return LiveState.UNKNOWN
+        if broadcast_content == "none":
+            if actual_start is None and scheduled_start is None:
+                return LiveState.NOT_LIVE
+            return LiveState.UNKNOWN
+        return LiveState.UNKNOWN
+
+    @staticmethod
+    def _video_format(
+        live_state: LiveState,
+        duration: timedelta | None,
+    ) -> VideoFormat:
+        if live_state is LiveState.COMPLETE:
+            return VideoFormat.LIVE_REPLAY
+        if (
+            live_state is LiveState.NOT_LIVE
+            and duration is not None
+            and duration > _STANDARD_VIDEO_MINIMUM_DURATION
+        ):
+            return VideoFormat.STANDARD
+        return VideoFormat.UNKNOWN
+
+    @staticmethod
+    def _string_tuple(value: object, field: str) -> tuple[str, ...]:
+        if value is None:
+            return ()
+        if not isinstance(value, list) or not all(
+            isinstance(item, str) for item in value
+        ):
+            raise YouTubeAPIError(f"YouTube response contained invalid {field}")
+        return tuple(value)
 
     @classmethod
     def _parse_statistics(cls, value: Mapping[str, Any]) -> ChannelStatistics:
