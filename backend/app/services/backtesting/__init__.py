@@ -21,6 +21,11 @@ from app.services.backtesting.execution_models import (
     BacktestExecutionRequest,
     BacktestExecutionResult,
 )
+from app.services.backtesting.evaluation_models import (
+    BacktestStudyEvaluation,
+    CriterionObservation,
+    CriterionObservationStatus,
+)
 from app.services.backtesting.import_models import (
     HISTORICAL_DATASET_SCHEMA_VERSION,
     HistoricalDatasetImportResult,
@@ -75,6 +80,7 @@ __all__ = [
     "BacktestStudyArtifact",
     "BacktestStudyDecision",
     "BacktestStudyDefinition",
+    "BacktestStudyEvaluation",
     "BacktestStudyReview",
     "BacktestStudyStatus",
     "BacktestDatasetValidator",
@@ -82,6 +88,8 @@ __all__ = [
     "BacktestExclusionReason",
     "BacktestValidationError",
     "ComparisonOperator",
+    "CriterionObservation",
+    "CriterionObservationStatus",
     "DistributionSummary",
     "HISTORICAL_DATASET_SCHEMA_VERSION",
     "HistoricalDatasetDuplicateError",

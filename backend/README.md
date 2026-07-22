@@ -125,6 +125,11 @@ human reviewers must inspect and the closed research-only recommendations they m
 contains no weights, scores, calculated summary, ranking, threshold recommendation, or production
 approval state.
 
+`BacktestStudyEvaluation` records one immutable human evaluation of an executed study using one
+methodology. It preserves the methodology's criterion order, records qualitative observation
+status and notes, and uses the existing research-only recommendation vocabulary. It contains no
+scores, weights, percentages, calculations, or production decision.
+
 ## Signal engine foundation
 
 The `app/services/signals` module is the interpretation boundary after deterministic

@@ -274,6 +274,18 @@ The methodology also closes research recommendations to further investigation, i
 evidence, candidate worth reviewing, and readiness for human review. These dispositions have no
 production authority and cannot publish a threshold, approve policy, or activate SIG-002.
 
+ADR-017 defines the immutable human evaluation artifact that binds one executed
+`BacktestStudyArtifact` to one `ThresholdEvaluationMethodology`. It records reviewer identity, an
+explicit timestamp, one ordered qualitative observation for every methodology criterion, and one
+methodology-permitted `ResearchRecommendation`. Criterion identity and metric pairs must exactly
+match methodology order; observations are never sorted or calculated.
+
+Observation states are limited to reviewed, not reviewed, and needs clarification. Notes are human
+text and the metric enum is the evidence reference back to the existing report concept. Required
+criteria cannot be marked not reviewed; needs clarification remains a valid human observation.
+Optional criteria may be marked not reviewed. The artifact has no score, weight, percentage,
+ranking, threshold selection, study approval, or production authority.
+
 The YouTube acquisition layer owns interaction with the external API and conversion from upstream response shapes into immutable canonical models. The canonical models expose only the subset of public YouTube data with expected long-term application value.
 
 ## Transport and Domain Boundary
