@@ -6,7 +6,8 @@ YT Signal Scout is a modular monolith with explicit module boundaries. Applicati
 
 ## Analytics Pipeline
 
-The target analytics architecture is:
+The overall current and target pipeline is shown below; implementation status is listed
+separately later in this document:
 
 ```text
 YouTube API
@@ -45,6 +46,33 @@ CalculatedChannelAnalytics
 AI Narrative Engine
 ```
 
+Within the deterministic-calculator stage, the approved but unimplemented
+subscriber-relative path is:
+
+```text
+Validated ChannelAnalytics
+        |
+        v
+Eligible Video Classification
+        |
+        v
+Format-Specific Eligible Video Bases
+        |
+        +----------------------------+
+        |                            |
+        v                            v
+Eligible Standard             Median Standard
+Video Count Calculator        Video VSR Calculator
+        |                            |
+        +------------+---------------+
+                     |
+                     v
+             Calculator Registry
+                     |
+                     v
+            Analytics Assembler
+```
+
 The YouTube acquisition layer owns interaction with the external API and conversion from upstream response shapes into immutable canonical models. The canonical models expose only the subset of public YouTube data with expected long-term application value.
 
 ## Transport and Domain Boundary
@@ -57,9 +85,24 @@ This boundary prevents external naming and serialization formats from leaking in
 
 The analytics layer consumes those canonical models. Shared validation establishes calculator preconditions, and each deterministic calculator produces exactly one typed metric without orchestration, scoring, signal detection, or AI behavior.
 
-The calculator registry owns an explicitly injected, ordered calculator sequence. It executes each calculator once in registration order and returns an immutable result tuple. Duplicate metric identities are rejected during construction. Execution is fail-fast: calculator exceptions propagate unchanged, no partial result collection is returned, and later calculators are not executed.
+Eligible Video Policy v1 approves a future explicit classification boundary for
+subscriber-relative analytics. Canonical acquisition will own closed availability, live-state,
+and format mapping. Analytics will consume those canonical facts with an explicit evaluation time
+and produce immutable, source-ordered standard, Shorts, and livestream-replay bases. Unknown
+classification is excluded rather than guessed. This boundary and the subscriber-relative
+calculators are planned, not implemented.
 
-The analytics assembler consumes metric results, validates their completeness and uniqueness, and constructs `CalculatedChannelAnalytics`. The registry remains unaware of the aggregate, and the aggregate remains a pure immutable data contract without mapping or orchestration behavior.
+The first planned subscriber-relative facts are explicitly standard-video scoped and use separate
+metric identities. `eligible_standard_video_count` records the classified standard-basis size.
+`median_standard_video_vsr` uses that basis and a visible positive subscriber count and returns
+unavailable for an empty basis or unavailable denominator. Each calculator returns exactly one
+typed metric result, and the assembler maps each result to one aggregate field. Neither calculator
+contains the minimum-five qualification or a signal threshold. Qualification remains a future
+typed concern.
+
+The Calculator Registry owns an explicitly injected, ordered calculator sequence. It executes each calculator once in registration order and returns an immutable result tuple. Duplicate metric identities are rejected during construction. Execution is fail-fast: calculator exceptions propagate unchanged, no partial result collection is returned, and later calculators are not executed.
+
+The Analytics Assembler consumes metric results, validates their completeness and uniqueness, and constructs `CalculatedChannelAnalytics`. The registry remains unaware of the aggregate, and the aggregate remains a pure immutable data contract without mapping or orchestration behavior.
 
 Independent signal rules interpret the completed aggregate through explicit, deterministic
 business policies. The signal engine owns only ordered orchestration: it snapshots the
@@ -120,8 +163,13 @@ Raw API response shapes and Google SDK types must not cross the canonical domain
 
 ### Planned Pipeline Stages
 
+- Canonical availability, live-state, and format mapping
+- Eligible Video Policy v1 classifier and format-specific bases
+- Eligible standard-video count and median standard-video VSR analytics and aggregate integration
+- Subscriber-relative qualification
 - Product-approved signal rules
 - AI Narrative Engine
 
 See ADR-002 for analytics-layer separation, ADR-003 for the canonical YouTube domain-model
-decision, ADR-006 for signal evaluation semantics, and ADR-007 for Signal Catalog governance.
+decision, ADR-006 for signal evaluation semantics, ADR-007 for Signal Catalog governance, and
+ADR-008 for format-specific eligible-video bases.
