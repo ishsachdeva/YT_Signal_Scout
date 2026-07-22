@@ -153,6 +153,41 @@ threshold, comparison, score, ranking, recommendation, or narrative. The existin
 `SignalEvidence`, `SignalRule`, and `SignalEngine` contracts remain unchanged until an approved
 production rule defines their subscriber-relative integration.
 
+### Offline Subscriber-Band Threshold Research
+
+ADR-012 defines a separate offline research path. It is not part of application startup or
+production signal evaluation:
+
+```text
+Versioned Historical Backtest Dataset
+        |
+        v
+BacktestDatasetValidator
+        |
+        v
+Versioned Subscriber Bands + Median-VSR Threshold Candidates
+        |
+        v
+MedianStandardVideoVsrThresholdBacktester
+        |
+        v
+ThresholdBacktestReport
+        |
+        v
+External Product / Analytics Review
+```
+
+Historical observations carry a positive factual subscriber count beside the immutable
+`SubscriberRelativeAnalysisResult`; the count is not reconstructed from VSR or added to
+production qualification/evidence contracts. Bands and candidates are explicit ordered,
+versioned research configuration. Structural invalidity fails fast, while unqualified analysis,
+unavailable median VSR, and unmatched bands remain typed exclusions. Reports contain factual
+coverage, distributions, and results for every configured band/candidate pair. They never select
+or recommend a threshold, emit a signal, or change catalog approval.
+
+The backtesting package has no acquisition, persistence, API, scheduler, AI, or production
+composition dependency. `SignalEngine` remains production rule orchestration only.
+
 The YouTube acquisition layer owns interaction with the external API and conversion from upstream response shapes into immutable canonical models. The canonical models expose only the subset of public YouTube data with expected long-term application value.
 
 ## Transport and Domain Boundary

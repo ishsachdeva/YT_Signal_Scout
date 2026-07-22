@@ -1,10 +1,10 @@
 # YT Signal Scout — Signal Catalog v1
 
-**Catalog version:** 1.3
+**Catalog version:** 1.4
 **Status:** Active — No production signals approved  
 **Date:** 2026-07-22  
 **Owners:** Product and Analytics  
-**Architecture authority:** ADR-006, ADR-007, ADR-010, and ADR-011
+**Architecture authority:** ADR-006, ADR-007, ADR-010, ADR-011, and ADR-012
 
 ## 1. Purpose
 
@@ -1108,11 +1108,18 @@ now provides the typed median standard-video VSR fact without applying signal po
 Now that `median_standard_video_vsr` calculation exists, Product and Analytics must still approve
 `T` and exact evidence/boundary semantics before SIG-002 becomes Approved and Implementable Now.
 
+ADR-012 provides a deterministic offline capability for evaluating supplied historical snapshots
+across explicitly versioned subscriber bands and `>` or `>=` threshold candidates. This capability
+does not include a governed historical dataset, execute a study, select a candidate, recommend a
+threshold, or change SIG-002 from **Proposed / Blocked**. Product and Analytics review remains the
+only path to approving `T` and its equality boundary.
+
 ## 21. Recommended implementation sequence
 
 1. Keep the implemented acquisition and subscriber-relative analytics pipelines unchanged.
 2. Keep the ADR-011 typed evidence bundle policy-free and independent of signal thresholds.
-3. Backtest standard-video median VSR by subscriber band; approve threshold `T`.
+3. Run the ADR-012 offline analysis on a governed historical dataset; Product and Analytics review
+   the complete candidate report and approve threshold `T` plus its equality boundary.
 4. Extend emitted `SignalEvidence` minimally for comparator, operator, unit, and sample size.
 5. Mark SIG-002 Approved and Implementable Now with approval metadata.
 6. Implement exactly one version-1 `SignalRule` and its boundary tests.

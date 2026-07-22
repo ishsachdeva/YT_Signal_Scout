@@ -24,6 +24,7 @@ This directory contains all significant architectural decisions for the YT Signa
 | ADR-009 | Separate Subscriber-Relative Orchestration from the ChannelAnalytics Calculator Registry | 🟢 Accepted | 2026-07-22 |
 | ADR-010 | Acquisition Provenance and Subscriber-Relative Qualification | 🟢 Accepted | 2026-07-22 |
 | ADR-011 | Typed Subscriber-Relative Signal Evidence Layer | 🟢 Accepted | 2026-07-22 |
+| ADR-012 | Deterministic Offline Subscriber-Band Threshold Backtesting | 🟢 Accepted | 2026-07-22 |
 
 ---
 
