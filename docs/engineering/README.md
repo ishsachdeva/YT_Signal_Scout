@@ -15,8 +15,9 @@ New contributors should read the documents in the following order:
 3. UI/UX Specification
 4. Security Specification
 5. Feature Catalogue
-6. Engineering Principles
-7. Architecture Decision Records (ADRs)
+6. Signal Catalog
+7. Engineering Principles
+8. Architecture Decision Records (ADRs)
 
 ---
 
@@ -27,6 +28,7 @@ New contributors should read the documents in the following order:
 | ENGINEERING_PRINCIPLES.md | Engineering philosophy and decision-making principles |
 | ARCHITECTURE.md | Current and target system architecture |
 | adr/ | Architecture Decision Records |
+| ../product/SIGNAL_CATALOG.md | Governed signal definitions, readiness, and threshold provenance |
 
 ---
 

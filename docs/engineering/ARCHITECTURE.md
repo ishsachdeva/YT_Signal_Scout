@@ -73,6 +73,11 @@ deferred because the aggregate does not yet contain the cohort, sample-completen
 observation inputs needed for a defensible policy. No production rule thresholds are
 implemented until product definitions approve them.
 
+Signal policy is governed by the documentation-first Signal Catalog. A production rule must
+trace to an approved, implementation-ready catalog entry with matching machine identities,
+version, condition, boundaries, evidence, and limitations. Proposed or blocked entries are not
+production authorization. The catalog is not loaded at runtime and is not a generic rule DSL.
+
 The AI narrative engine remains a future final consumer and will explain typed evidence rather
 than calculate metrics or signals.
 
@@ -119,4 +124,4 @@ Raw API response shapes and Google SDK types must not cross the canonical domain
 - AI Narrative Engine
 
 See ADR-002 for analytics-layer separation, ADR-003 for the canonical YouTube domain-model
-decision, and ADR-006 for signal evaluation semantics.
+decision, ADR-006 for signal evaluation semantics, and ADR-007 for Signal Catalog governance.
