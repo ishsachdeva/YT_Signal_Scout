@@ -33,6 +33,13 @@ _DURATION_PATTERN = re.compile(
     r"(?:(?P<seconds>\d+(?:\.\d+)?)S)?)?$"
 )
 _STANDARD_VIDEO_MINIMUM_DURATION = timedelta(minutes=3)
+_VIDEO_RESOURCE_PARTS = (
+    "snippet",
+    "statistics",
+    "contentDetails",
+    "status",
+    "liveStreamingDetails",
+)
 
 
 class YouTubeService:
@@ -79,7 +86,12 @@ class YouTubeService:
             region_code=region_code,
             relevance_language=relevance_language,
         )
-        return self._parse_result(payload, self._parse_video)
+        return SearchResult(
+            items=self._enrich_videos(self._items(payload)),
+            page_info=self._page_info(payload),
+            next_page_token=self._optional_string(payload.get("nextPageToken")),
+            previous_page_token=self._optional_string(payload.get("prevPageToken")),
+        )
 
     def get_channel(self, channel_id: str) -> Channel:
         """Retrieve public metadata, statistics, and uploads ID for one channel."""
@@ -95,13 +107,7 @@ class YouTubeService:
         """Retrieve public metadata, statistics, and content details for one video."""
         payload = self._client.get_videos(
             [video_id],
-            parts=(
-                "snippet",
-                "statistics",
-                "contentDetails",
-                "status",
-                "liveStreamingDetails",
-            ),
+            parts=_VIDEO_RESOURCE_PARTS,
         )
         items = self._items(payload)
         if not items:
@@ -132,6 +138,8 @@ class YouTubeService:
 
         size = self._page_size(page_size)
         collected: list[Channel | Video] = []
+        parsed_by_id: dict[str, Video] = {}
+        requested_ids: set[str] = set()
         page_token: str | None = None
         previous_page_token: str | None = None
         total_results = 0
@@ -141,7 +149,13 @@ class YouTubeService:
                 max_results=size,
                 page_token=page_token,
             )
-            collected.extend(self._parse_video(item) for item in self._items(payload))
+            collected.extend(
+                self._enrich_videos(
+                    self._items(payload),
+                    parsed_by_id=parsed_by_id,
+                    requested_ids=requested_ids,
+                )
+            )
             total_results = self._page_info(payload).total_results
             previous_page_token = self._optional_string(payload.get("prevPageToken"))
             page_token = self._optional_string(payload.get("nextPageToken"))
@@ -157,6 +171,36 @@ class YouTubeService:
 
     def _page_size(self, requested: int | None) -> int:
         return self._client.page_size if requested is None else requested
+
+    def _enrich_videos(
+        self,
+        discovered_items: list[JsonObject],
+        *,
+        parsed_by_id: dict[str, Video] | None = None,
+        requested_ids: set[str] | None = None,
+    ) -> tuple[Video, ...]:
+        discovered_ids = tuple(self._video_id(item) for item in discovered_items)
+        parsed = {} if parsed_by_id is None else parsed_by_id
+        requested = set() if requested_ids is None else requested_ids
+        unique_ids: list[str] = []
+        for video_id in discovered_ids:
+            if video_id not in requested:
+                requested.add(video_id)
+                unique_ids.append(video_id)
+
+        if unique_ids:
+            payload = self._client.get_videos(unique_ids, parts=_VIDEO_RESOURCE_PARTS)
+            unique_id_set = set(unique_ids)
+            for item in self._items(payload):
+                video_id = self._video_id(item)
+                if video_id in unique_id_set and video_id not in parsed:
+                    parsed[video_id] = self._parse_video_resource(item)
+
+        return tuple(
+            parsed[video_id]
+            for video_id in discovered_ids
+            if video_id in parsed
+        )
 
     def _parse_result(
         self,
@@ -194,10 +238,6 @@ class YouTubeService:
                 else None
             ),
         )
-
-    @classmethod
-    def _parse_video(cls, item: JsonObject) -> Video:
-        return cls._build_video(item)
 
     @classmethod
     def _parse_video_resource(cls, item: JsonObject) -> Video:
@@ -241,15 +281,8 @@ class YouTubeService:
         video_format: VideoFormat = VideoFormat.UNKNOWN,
     ) -> Video:
         snippet = cls._mapping(item.get("snippet"))
-        identifier = item.get("id")
-        if isinstance(identifier, Mapping):
-            identifier = identifier.get("videoId")
-        if not identifier:
-            identifier = cls._mapping(item.get("contentDetails")).get("videoId")
-        if not identifier:
-            identifier = cls._mapping(snippet.get("resourceId")).get("videoId")
         return Video(
-            id=cls._required_string(identifier, "video id"),
+            id=cls._video_id(item),
             channel_id=cls._required_string(snippet.get("channelId"), "video channel id"),
             channel_title=cls._optional_string(snippet.get("channelTitle")),
             title=cls._required_string(snippet.get("title"), "video title"),
@@ -270,6 +303,18 @@ class YouTubeService:
             format=video_format,
             thumbnails=cls._thumbnails(snippet.get("thumbnails")),
         )
+
+    @classmethod
+    def _video_id(cls, item: JsonObject) -> str:
+        identifier = item.get("id")
+        if isinstance(identifier, Mapping):
+            identifier = identifier.get("videoId")
+        if not identifier:
+            identifier = cls._mapping(item.get("contentDetails")).get("videoId")
+        if not identifier:
+            snippet = cls._mapping(item.get("snippet"))
+            identifier = cls._mapping(snippet.get("resourceId")).get("videoId")
+        return cls._required_string(identifier, "video id")
 
     @staticmethod
     def _duration(value: object) -> timedelta | None:

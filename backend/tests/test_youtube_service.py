@@ -129,6 +129,7 @@ class YouTubeServiceTests(unittest.TestCase):
             "items": [_video_item("video-1")],
             "pageInfo": {"totalResults": 1, "resultsPerPage": 1},
         }
+        self.client.get_videos.return_value = {"items": [_videos_resource()]}
 
         result = self.service.search_videos("engineering", page_size=10)
 
@@ -136,6 +137,94 @@ class YouTubeServiceTests(unittest.TestCase):
         self.assertIsInstance(video, Video)
         self.assertEqual(video.published_at, datetime(2026, 2, 3, 4, 5, 6, tzinfo=UTC))
         self.assertEqual(video.thumbnails[0].width, 320)
+        self.assertEqual(video.duration, timedelta(minutes=5, seconds=30))
+        self.assertEqual(video.tags, ("engineering", "python"))
+        self.assertEqual(video.category_id, "28")
+        self.assertEqual(video.default_language, "en")
+        self.assertEqual(video.like_count, 40)
+        self.assertEqual(video.comment_count, 4)
+        self.assertIs(video.privacy_status, PrivacyStatus.PUBLIC)
+        self.assertIs(video.availability, VideoAvailability.AVAILABLE)
+        self.assertIs(video.live_state, LiveState.NOT_LIVE)
+        self.assertIs(video.format, VideoFormat.STANDARD)
+        self.client.get_videos.assert_called_once_with(
+            ["video-1"],
+            parts=(
+                "snippet",
+                "statistics",
+                "contentDetails",
+                "status",
+                "liveStreamingDetails",
+            ),
+        )
+
+    def test_search_video_enrichment_restores_discovery_order(self) -> None:
+        self.client.search.return_value = {
+            "items": [_video_item("video-1"), _video_item("video-2")],
+            "pageInfo": {"totalResults": 2, "resultsPerPage": 2},
+        }
+        self.client.get_videos.return_value = {
+            "items": [_videos_resource("video-2"), _videos_resource("video-1")]
+        }
+
+        result = self.service.search_videos("engineering")
+
+        self.assertEqual([video.id for video in result.items], ["video-1", "video-2"])
+
+    def test_search_video_enrichment_preserves_duplicates_and_skips_omissions(
+        self,
+    ) -> None:
+        self.client.search.return_value = {
+            "items": [
+                _video_item("video-1"),
+                _video_item("missing"),
+                _video_item("video-1"),
+                _video_item("video-2"),
+            ],
+            "pageInfo": {"totalResults": 4, "resultsPerPage": 4},
+        }
+        self.client.get_videos.return_value = {
+            "items": [_videos_resource("video-2"), _videos_resource("video-1")]
+        }
+
+        result = self.service.search_videos("engineering")
+
+        self.assertEqual(
+            [video.id for video in result.items], ["video-1", "video-1", "video-2"]
+        )
+        self.assertIs(result.items[0], result.items[1])
+        self.client.get_videos.assert_called_once_with(
+            ["video-1", "missing", "video-2"],
+            parts=(
+                "snippet",
+                "statistics",
+                "contentDetails",
+                "status",
+                "liveStreamingDetails",
+            ),
+        )
+
+    def test_empty_search_result_does_not_request_enrichment(self) -> None:
+        self.client.search.return_value = {
+            "items": [],
+            "pageInfo": {"totalResults": 0, "resultsPerPage": 0},
+        }
+
+        result = self.service.search_videos("engineering")
+
+        self.assertEqual(result.items, ())
+        self.client.get_videos.assert_not_called()
+
+    def test_search_enrichment_empty_response_skips_discovered_videos(self) -> None:
+        self.client.search.return_value = {
+            "items": [_video_item("missing")],
+            "pageInfo": {"totalResults": 1, "resultsPerPage": 1},
+        }
+        self.client.get_videos.return_value = {"items": []}
+
+        result = self.service.search_videos("engineering")
+
+        self.assertEqual(result.items, ())
 
     def test_get_channel_parses_statistics_and_uploads_playlist(self) -> None:
         self.client.get_channels.return_value = {"items": [_channel_item()]}
@@ -395,12 +484,18 @@ class YouTubeServiceTests(unittest.TestCase):
                 "prevPageToken": "page-1",
             },
         ]
+        self.client.get_videos.side_effect = [
+            {"items": [_videos_resource("video-1")]},
+            {"items": [_videos_resource("video-2")]},
+        ]
 
         result = self.service.list_channel_videos("channel-1", max_pages=2, page_size=1)
 
         self.assertEqual([item.id for item in result.items], ["video-1", "video-2"])
         self.assertEqual(result.page_info.results_per_page, 2)
         self.assertIsNone(result.next_page_token)
+        self.assertEqual(result.items[0].duration, timedelta(minutes=5, seconds=30))
+        self.assertIs(result.items[0].format, VideoFormat.STANDARD)
         self.client.list_playlist_items.assert_has_calls(
             [
                 call(playlist_id="uploads-1", max_results=1, page_token=None),
@@ -418,16 +513,96 @@ class YouTubeServiceTests(unittest.TestCase):
             "pageInfo": {"totalResults": 3, "resultsPerPage": 1},
             "nextPageToken": "remaining-page",
         }
+        self.client.get_videos.return_value = {
+            "items": [_videos_resource("video-1")]
+        }
 
         result = self.service.list_channel_videos("channel-1", max_pages=1)
 
         self.assertEqual(result.next_page_token, "remaining-page")
         self.client.list_playlist_items.assert_called_once()
 
+    def test_upload_enrichment_restores_order_preserves_duplicates_and_skips_omissions(
+        self,
+    ) -> None:
+        self.client.get_channels.return_value = {"items": [_channel_item()]}
+        discovered = []
+        for video_id in ("video-1", "missing", "video-1", "video-2"):
+            item = _video_item(video_id)
+            item["id"] = None
+            item["contentDetails"] = {"videoId": video_id}
+            discovered.append(item)
+        self.client.list_playlist_items.return_value = {
+            "items": discovered,
+            "pageInfo": {"totalResults": 4, "resultsPerPage": 4},
+        }
+        self.client.get_videos.return_value = {
+            "items": [_videos_resource("video-2"), _videos_resource("video-1")]
+        }
+
+        result = self.service.list_channel_videos("channel-1")
+
+        self.assertEqual(
+            [video.id for video in result.items], ["video-1", "video-1", "video-2"]
+        )
+        self.assertIs(result.items[0], result.items[1])
+        self.assertEqual(result.items[2].like_count, 40)
+        self.client.get_videos.assert_called_once_with(
+            ["video-1", "missing", "video-2"],
+            parts=(
+                "snippet",
+                "statistics",
+                "contentDetails",
+                "status",
+                "liveStreamingDetails",
+            ),
+        )
+
+    def test_upload_enrichment_deduplicates_across_pages(self) -> None:
+        self.client.get_channels.return_value = {"items": [_channel_item()]}
+        first = _video_item("video-1")
+        first["id"] = None
+        first["contentDetails"] = {"videoId": "video-1"}
+        duplicate = _video_item("video-1")
+        duplicate["id"] = None
+        duplicate["contentDetails"] = {"videoId": "video-1"}
+        second = _video_item("video-2")
+        second["id"] = None
+        second["contentDetails"] = {"videoId": "video-2"}
+        self.client.list_playlist_items.side_effect = [
+            {
+                "items": [first],
+                "pageInfo": {"totalResults": 3, "resultsPerPage": 1},
+                "nextPageToken": "page-2",
+            },
+            {
+                "items": [duplicate, second],
+                "pageInfo": {"totalResults": 3, "resultsPerPage": 2},
+            },
+        ]
+        self.client.get_videos.side_effect = [
+            {"items": [_videos_resource("video-1")]},
+            {"items": [_videos_resource("video-2")]},
+        ]
+
+        result = self.service.list_channel_videos("channel-1", max_pages=2)
+
+        self.assertEqual(
+            [video.id for video in result.items], ["video-1", "video-1", "video-2"]
+        )
+        self.assertIs(result.items[0], result.items[1])
+        self.assertEqual(
+            [call.args[0] for call in self.client.get_videos.call_args_list],
+            [["video-1"], ["video-2"]],
+        )
+
     def test_malformed_payload_is_normalized(self) -> None:
         self.client.search.return_value = {
             "items": [{"id": {"videoId": "video-1"}, "snippet": {}}],
             "pageInfo": {},
+        }
+        self.client.get_videos.return_value = {
+            "items": [{"id": "video-1", "snippet": {}}]
         }
         with self.assertRaisesRegex(YouTubeAPIError, "video channel id"):
             self.service.search_videos("engineering")
