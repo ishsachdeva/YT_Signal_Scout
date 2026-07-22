@@ -152,8 +152,28 @@ class AnalyticsAssemblerTests(unittest.TestCase):
                 [object()],  # type: ignore[list-item]
             )
 
-    def test_every_metric_type_requires_explicit_assembler_support(self) -> None:
-        self.assertEqual(_SUPPORTED_METRICS, frozenset(MetricType))
+    def test_supported_metrics_match_current_aggregate_contract(self) -> None:
+        self.assertEqual(
+            _SUPPORTED_METRICS,
+            frozenset(
+                {
+                    MetricType.CHANNEL_AGE,
+                    MetricType.UPLOAD_FREQUENCY,
+                    MetricType.AVERAGE_VIEWS,
+                    MetricType.MEDIAN_VIEWS,
+                    MetricType.VIEWS_PER_DAY,
+                    MetricType.VIEW_DISTRIBUTION,
+                    MetricType.UPLOAD_CONSISTENCY,
+                    MetricType.VIEW_OUTLIER,
+                    MetricType.VIEW_GROWTH_RATE,
+                    MetricType.VIEW_ENGAGEMENT_RATE,
+                }
+            ),
+        )
+        self.assertNotIn(
+            MetricType.ELIGIBLE_STANDARD_VIDEO_COUNT,
+            _SUPPORTED_METRICS,
+        )
 
 
 class CalculatedChannelAnalyticsTests(unittest.TestCase):
