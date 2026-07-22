@@ -64,6 +64,15 @@ class OutlierResult(BaseModel):
     lowest_z_score: float
 
 
+class SubscriberRelativeAnalytics(BaseModel):
+    """Completed subscriber-relative analytics result."""
+
+    model_config = ConfigDict(frozen=True)
+
+    eligible_standard_video_count: int
+    median_standard_video_vsr: float | None
+
+
 class CalculatedChannelAnalytics(BaseModel):
     """Complete deterministic analytics derived from a channel dataset."""
 
