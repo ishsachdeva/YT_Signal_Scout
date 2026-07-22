@@ -188,6 +188,35 @@ or recommend a threshold, emit a signal, or change catalog approval.
 The backtesting package has no acquisition, persistence, API, scheduler, AI, or production
 composition dependency. `SignalEngine` remains production rule orchestration only.
 
+ADR-013 governs external historical input before that research path. A strict versioned JSON
+document enters only through `HistoricalDatasetImporter`, which validates a schema manifest and
+existing immutable `SubscriberRelativeBacktestObservation` records. It rejects unknown fields,
+coercive primitive substitutions, inconsistent nested analysis, and duplicate identities, then
+sorts observations by stable ID and returns `HistoricalDatasetImportResult` with the canonical
+`SubscriberRelativeBacktestDataset`.
+
+```text
+Versioned Historical Dataset JSON
+        |
+        v
+HistoricalDatasetImporter
+(strict schema/domain validation; no partial import)
+        |
+        v
+HistoricalDatasetImportResult
+        |
+        v
+SubscriberRelativeBacktestDataset
+        |
+        v
+Future controlled offline execution
+```
+
+Import validates structure and consistency but cannot prove factual custody. It does not invoke
+YouTube, analytics, qualification, evidence, signals, or the backtester, and is not registered in
+production composition. Schema version 1 is documented in
+[`HISTORICAL_DATASET_FORMAT.md`](HISTORICAL_DATASET_FORMAT.md).
+
 The YouTube acquisition layer owns interaction with the external API and conversion from upstream response shapes into immutable canonical models. The canonical models expose only the subset of public YouTube data with expected long-term application value.
 
 ## Transport and Domain Boundary

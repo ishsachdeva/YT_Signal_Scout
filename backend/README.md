@@ -105,6 +105,11 @@ threshold or emits a signal.
 Backtesting is not registered in application startup and has no API, acquisition, network,
 persistence, or scheduled-execution integration.
 
+External historical research data enters through the strict versioned-JSON
+`HistoricalDatasetImporter`; successful import returns the existing immutable backtest dataset but
+does not execute it. The schema and trust boundary are documented in
+[`docs/engineering/HISTORICAL_DATASET_FORMAT.md`](../docs/engineering/HISTORICAL_DATASET_FORMAT.md).
+
 ## Signal engine foundation
 
 The `app/services/signals` module is the interpretation boundary after deterministic

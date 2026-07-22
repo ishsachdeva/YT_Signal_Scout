@@ -1,6 +1,20 @@
 """Deterministic offline analytical backtesting contracts."""
 
-from app.services.backtesting.exceptions import BacktestValidationError
+from app.services.backtesting.exceptions import (
+    BacktestValidationError,
+    HistoricalDatasetDuplicateError,
+    HistoricalDatasetImportError,
+    HistoricalDatasetReadError,
+    HistoricalDatasetSyntaxError,
+    HistoricalDatasetValidationError,
+    UnsupportedHistoricalDatasetSchemaError,
+)
+from app.services.backtesting.import_models import (
+    HISTORICAL_DATASET_SCHEMA_VERSION,
+    HistoricalDatasetImportResult,
+    HistoricalDatasetManifest,
+)
+from app.services.backtesting.importer import HistoricalDatasetImporter
 from app.services.backtesting.models import (
     BacktestExclusion,
     BacktestExclusionReason,
@@ -30,6 +44,15 @@ __all__ = [
     "BacktestValidationError",
     "ComparisonOperator",
     "DistributionSummary",
+    "HISTORICAL_DATASET_SCHEMA_VERSION",
+    "HistoricalDatasetDuplicateError",
+    "HistoricalDatasetImportError",
+    "HistoricalDatasetImporter",
+    "HistoricalDatasetImportResult",
+    "HistoricalDatasetManifest",
+    "HistoricalDatasetReadError",
+    "HistoricalDatasetSyntaxError",
+    "HistoricalDatasetValidationError",
     "MedianStandardVideoVsrThresholdBacktester",
     "MedianVsrThresholdCandidate",
     "MedianVsrThresholdSet",
@@ -42,4 +65,5 @@ __all__ = [
     "SubscriberRelativeBacktestObservation",
     "ThresholdBacktestReport",
     "ThresholdEvaluationResult",
+    "UnsupportedHistoricalDatasetSchemaError",
 ]
