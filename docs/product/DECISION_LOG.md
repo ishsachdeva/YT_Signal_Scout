@@ -203,6 +203,23 @@ persistence time. Manifest existence, digest verification, evidence sufficiency,
 and downstream use remain open. **Related:** [Domain Model](DOMAIN_MODEL.md), [Opportunity Engine](OPPORTUNITY_ENGINE.md),
 Feature ES-001, and ADR-035.
 
+### PD-014: Authorize the immutable Qualification Context foundation
+
+**Classification:** Product Decision. **Date:** 2026-07-24. **Status:** Decided for the foundational
+Qualification Context milestone. **Decision:** Authorize one immutable, versioned, identity-only
+evaluation request containing an opaque context identity/version; Opportunity Candidate, Evidence
+Snapshot, and Creator Profile identities; an opaque Qualification Policy identity/version; an
+explicit UTC-normalized evaluation timestamp; and optional bounded human-readable description.
+**Rationale:** A future Qualification Engine requires a reproducible statement of exactly what is
+requested for evaluation, using which evidence basis and creator context, under which policy, at
+which instant, without embedding domain objects or performing evaluation. **Implication:** The
+context performs no identity resolution, evidence validation, evaluation, qualification, scoring,
+ranking, recommendation, confidence assessment, persistence, retrieval, registry, or workflow. It
+does not define a Qualification Policy or establish that any supplied identity exists. Policy
+definition, binding validation, evaluation behavior, and qualification results remain open.
+**Related:** [Domain Model](DOMAIN_MODEL.md), [Opportunity Engine](OPPORTUNITY_ENGINE.md), Feature
+QC-001, and ADR-036.
+
 ## Open decisions
 
 Opportunity qualification and lifecycle, evidence sufficiency, reference-set independence,
@@ -226,3 +243,4 @@ constraints, or measurable targets. Reconcile the Feature Registry after every m
 | 1.5 | 2026-07-24 | Authorized the canonical payload-free Evidence Reference foundation. |
 | 1.6 | 2026-07-24 | Authorized the ordered immutable Evidence Manifest snapshot foundation. |
 | 1.7 | 2026-07-24 | Authorized the integrity-pinned Evidence Snapshot manifest binding. |
+| 1.8 | 2026-07-24 | Authorized the identity-only Qualification Context foundation. |

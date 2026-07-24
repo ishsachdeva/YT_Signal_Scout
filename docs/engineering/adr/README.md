@@ -48,6 +48,7 @@ This directory contains all significant architectural decisions for the YT Signa
 | ADR-033 | Establish the Evidence Reference Domain Boundary | 🟢 Accepted | 2026-07-24 |
 | ADR-034 | Establish the Evidence Manifest Domain Boundary | 🟢 Accepted | 2026-07-24 |
 | ADR-035 | Establish the Integrity-Pinned Evidence Snapshot Domain Boundary | 🟢 Accepted | 2026-07-24 |
+| ADR-036 | Establish the Qualification Context Domain Boundary | 🟢 Accepted | 2026-07-24 |
 
 ---
 

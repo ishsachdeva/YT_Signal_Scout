@@ -73,6 +73,18 @@ discovery, analytics, qualification, confidence, recommendation, lifecycle, pers
 behavior. It has no Opportunity, Candidate, Evidence Reference, research, signals, HTTP, framework,
 external-service, or startup dependency.
 
+### Qualification Context boundary
+
+ADR-036 defines `app.services.qualification_context` as a deterministic identity-only request
+boundary. One immutable schema-versioned context binds its identity/version to one Opportunity
+Candidate identity, Evidence Snapshot identity, Creator Profile identity, versioned Qualification
+Policy identity, and UTC-normalized evaluation instant, with optional bounded description and
+compact UTF-8 JSON plus SHA-256 content identity. It imports only identifier types from Candidate,
+Snapshot, and Profile. It embeds no referenced object and performs no lookup, validation,
+evaluation, qualification, scoring, ranking, recommendation, persistence, registry, or workflow.
+It has no Opportunity, Evidence Manifest, Evidence Reference, analytics, signals, research, HTTP,
+framework, external-service, or startup dependency.
+
 ## Analytics Pipeline
 
 ### Governed Channel Intelligence

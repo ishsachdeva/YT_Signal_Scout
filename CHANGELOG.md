@@ -4,6 +4,21 @@ This file records user-visible and architectural changes to YT Signal Scout by r
 
 ## Unreleased
 
+### Qualification Context Domain Foundation
+
+- Added an immutable schema-versioned, identity-only request binding one Opportunity Candidate,
+  Evidence Snapshot, Creator Profile, versioned Qualification Policy identity, and UTC evaluation
+  instant, with optional description.
+- Added strict primitive, version, identifier, timestamp, prohibited-field, canonical JSON,
+  SHA-256, public-export, dependency-isolation, and startup-isolation coverage under PD-014 and
+  ADR-036.
+
+### Release boundaries
+
+- No referenced object, policy definition, evaluation, qualification, score, rank, recommendation,
+  confidence, result, retrieval, registry, persistence, API, workflow, AI, external service, or
+  startup behavior was added.
+
 ### Evidence Snapshot Domain Foundation
 
 - Added an immutable schema-versioned, time-specific binding from one snapshot identity/version to

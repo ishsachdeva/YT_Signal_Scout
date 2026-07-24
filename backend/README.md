@@ -86,6 +86,16 @@ References, never calculates or verifies the supplied manifest digest, and perfo
 retrieval, validation, discovery, analytics, qualification, confidence, lifecycle, recommendation,
 persistence, I/O, AI, or startup behavior.
 
+## Qualification Context
+
+`app.services.qualification_context` exposes the immutable schema-versioned evaluation-request
+identity approved by PD-014 and ADR-036. It binds one context identity/version to supplied
+Opportunity Candidate, Evidence Snapshot, and Creator Profile identities, a versioned Qualification
+Policy identity, and a UTC-normalized evaluation instant, with optional bounded description.
+Strict validation, compact sorted-key UTF-8 JSON, and SHA-256 provide deterministic context
+identity. The module embeds no referenced objects, creates no policy, and performs no evaluation,
+qualification, scoring, ranking, recommendation, lookup, persistence, I/O, or startup behavior.
+
 ## YouTube data acquisition
 
 Set `YOUTUBE_API_KEY` before constructing a `YouTubeClient`. `YOUTUBE_TIMEOUT`,
