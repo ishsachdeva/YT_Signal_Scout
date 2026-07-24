@@ -269,6 +269,12 @@ Counts MUST be reported overall and per subscriber band. Borderline, Unknown, un
 median-unavailable, and unmatched-band observations are excluded from the confusion matrix and
 reported separately.
 
+Before any aggregation, ADR-025's immutable labelled-evaluation boundary records exactly one
+prediction-versus-final-label fact for every governed observation in canonical order. Its True
+Positive, True Negative, False Positive, and False Negative values are observation categories,
+not totals; Borderline/Unknown truth and explicitly unavailable predictions remain Unknown or Not
+Evaluated. Aggregation, metrics, intervals, and interpretation remain later protocol stages.
+
 ### 6.3 Required metrics
 
 For every candidate, report:
@@ -486,9 +492,12 @@ close any SIG-002 Product or Architecture gap.
 - ADR-022: immutable ground-truth label artifacts, canonical import, and dataset/evidence binding.
 - ADR-023: immutable evidence-pack and labelling-rubric definitions, concrete evidence snapshots,
   canonical integrity, and exact label-artifact binding.
+- ADR-024 and ADR-025: governed non-analytical study execution followed by immutable
+  observation-level prediction-versus-truth facts before aggregation.
 
 ## 12. Version history
 
 | Version | Date | Change | Approval reference |
 |---|---|---|---|
 | 1 | 2026-07-24 | Initial canonical SIG-002 research protocol | Documentation milestone v0.9.1 |
+| 2 | 2026-07-24 | Added governed execution and observation-level labelled evaluation boundaries | ADR-024 and ADR-025 |

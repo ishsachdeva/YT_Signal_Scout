@@ -12,6 +12,8 @@ or authorize runtime behavior.
 - [Governed Study Execution Contract](../engineering/STUDY_EXECUTION_FORMAT.md) defines the
   deterministic input-validation and non-analytical execution boundary used before later research
   analysis.
+- [Labelled Evaluation Contract](../engineering/LABELLED_EVALUATION_FORMAT.md) defines the factual
+  per-observation comparison boundary used before any statistical aggregation.
 
 Study-specific datasets, configurations, executions, reports, labels, and reviews are not stored
 here unless a separately approved milestone explicitly adds them.

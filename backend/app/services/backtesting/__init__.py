@@ -11,6 +11,9 @@ from app.services.backtesting.exceptions import (
     EvidencePackReadError,
     EvidencePackSyntaxError,
     EvidencePackValidationError,
+    EvaluationDigestMismatchError,
+    EvaluationError,
+    EvaluationValidationError,
     GroundTruthLabelBindingError,
     GroundTruthLabelDigestMismatchError,
     GroundTruthLabelDuplicateError,
@@ -160,6 +163,26 @@ from app.services.backtesting.study_models import (
     BacktestStudyStatus,
 )
 from app.services.backtesting.validation import BacktestDatasetValidator
+from app.services.backtesting.labelled_evaluation import (
+    EvaluationValidator,
+    LabelledEvaluationService,
+)
+from app.services.backtesting.labelled_evaluation_canonicalizer import (
+    EvaluationCanonicalizer,
+)
+from app.services.backtesting.labelled_evaluation_models import (
+    LABELLED_EVALUATION_SCHEMA_VERSION,
+    EvaluationConfiguration,
+    EvaluationDefinition,
+    EvaluationManifest,
+    EvaluationMetadata,
+    EvaluationOutcome,
+    EvaluationRequest,
+    EvaluationResult,
+    ObservationEvaluation,
+    ObservationPrediction,
+    PredictedOutcome,
+)
 from app.services.backtesting.study_execution import (
     StudyExecutionService,
     StudyExecutionValidator,
@@ -180,6 +203,23 @@ from app.services.backtesting.study_execution_models import (
 )
 
 __all__ = [
+    "LABELLED_EVALUATION_SCHEMA_VERSION",
+    "EvaluationCanonicalizer",
+    "EvaluationConfiguration",
+    "EvaluationDefinition",
+    "EvaluationDigestMismatchError",
+    "EvaluationError",
+    "EvaluationManifest",
+    "EvaluationMetadata",
+    "EvaluationOutcome",
+    "EvaluationRequest",
+    "EvaluationResult",
+    "EvaluationValidationError",
+    "EvaluationValidator",
+    "LabelledEvaluationService",
+    "ObservationEvaluation",
+    "ObservationPrediction",
+    "PredictedOutcome",
     "STUDY_EXECUTION_SCHEMA_VERSION",
     "StudyConfiguration",
     "StudyDefinition",

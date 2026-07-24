@@ -6,6 +6,20 @@ This file records user-visible and architectural changes to YT Signal Scout by r
 
 ### Added
 
+- Deterministic Labelled Evaluation schema version 1 with immutable definitions, configuration,
+  predictions, per-observation outcomes, metadata, manifests, and results.
+- Exact cohort, dataset, execution, ground-truth, ordering, vocabulary, version, and digest
+  validation plus canonical SHA-256 result serialization.
+
+### Release boundaries
+
+- No evaluation was executed and no aggregate, metric, confusion-matrix total, threshold,
+  recommendation, Product decision, persistence, API, workflow, or runtime behavior was created.
+
+## 0.9.5 - 2026-07-24
+
+### Added
+
 - Governed Study Definition and Execution schema version 1 with immutable configuration, input
   bundle, request, metadata, context, manifest, and result contracts.
 - Pure synchronous study orchestration with cohort-wide dataset, observation, evidence, rubric,

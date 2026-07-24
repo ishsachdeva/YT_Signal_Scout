@@ -31,6 +31,8 @@ Key documentation:
   decision states, reason codes, and exact evidence-definition binding.
 - [Study Execution Format](docs/engineering/STUDY_EXECUTION_FORMAT.md) defines deterministic
   governed-input validation and immutable non-analytical execution artifacts.
+- [Labelled Evaluation Format](docs/engineering/LABELLED_EVALUATION_FORMAT.md) defines immutable
+  per-observation prediction-versus-truth outcomes without aggregation.
 - [Signal Catalog v1](docs/product/SIGNAL_CATALOG.md) governs proposed and approved signal policy.
 - [Backend README](backend/README.md) contains setup and test commands.
 - [Changelog](CHANGELOG.md) records release capabilities and boundaries.

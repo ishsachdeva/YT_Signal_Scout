@@ -163,3 +163,19 @@ class StudyExecutionValidationError(StudyExecutionError):
 
 class StudyExecutionDigestMismatchError(StudyExecutionValidationError):
     """Raised when canonical execution content differs from its digest."""
+
+
+class EvaluationError(Exception):
+    """Base failure for deterministic observation-level evaluation."""
+
+
+class EvaluationValidationError(EvaluationError):
+    """Raised when labelled-evaluation inputs do not bind exactly."""
+
+    def __init__(self, issues: tuple[str, ...]) -> None:
+        self.issues = issues
+        super().__init__("labelled evaluation validation failed: " + "; ".join(issues))
+
+
+class EvaluationDigestMismatchError(EvaluationValidationError):
+    """Raised when canonical evaluation content differs from its digest."""

@@ -346,6 +346,12 @@ digests, then returns immutable metadata, binding context, and a canonical execu
 Unlike the ADR-014 backtest service, it invokes no threshold backtester and produces no report,
 metric, interpretation, or policy recommendation.
 
+ADR-025 adds the next separate research layer: deterministic observation-level labelled
+evaluation. It binds one supplied prediction to every exact dataset observation and final governed
+label, then records only the categorical relationship (true/false positive/negative, Unknown, or
+Not Evaluated). These are per-observation facts, not aggregate confusion-matrix counts. The layer
+contains no totals, rates, statistics, threshold evaluation, recommendation, or runtime behavior.
+
 ADR-016 defines evaluation methodology separately from both execution facts and study reviews.
 `ThresholdEvaluationMethodology` is an immutable, versioned, ordered collection of criteria whose
 metrics map only to facts already present in `ThresholdBacktestReport`: qualification coverage,

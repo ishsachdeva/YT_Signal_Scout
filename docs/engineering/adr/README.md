@@ -37,6 +37,7 @@ This directory contains all significant architectural decisions for the YT Signa
 | ADR-022 | Govern Ground-Truth Labels as Immutable Dataset-Bound Artifacts | 🟢 Accepted | 2026-07-24 |
 | ADR-023 | Govern Reviewer Evidence Packs and Labelling Rubrics | 🟢 Accepted | 2026-07-24 |
 | ADR-024 | Govern Study Definition and Execution | 🟢 Accepted | 2026-07-24 |
+| ADR-025 | Deterministic Observation-Level Labelled Evaluation | 🟢 Accepted | 2026-07-24 |
 
 ---
 

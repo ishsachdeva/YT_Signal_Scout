@@ -136,6 +136,13 @@ does not run threshold analysis or calculate research metrics. See
 [`docs/engineering/STUDY_EXECUTION_FORMAT.md`](../docs/engineering/STUDY_EXECUTION_FORMAT.md) and
 ADR-024.
 
+`LabelledEvaluationService` consumes that completed execution together with its exact dataset,
+Ground Truth Label Set, and one ordered supplied prediction per observation. It emits immutable
+per-observation factual outcomes only. It never aggregates counts or calculates research metrics.
+See
+[`docs/engineering/LABELLED_EVALUATION_FORMAT.md`](../docs/engineering/LABELLED_EVALUATION_FORMAT.md)
+and ADR-025.
+
 `BacktestExecutionService` is the controlled synchronous execution boundary. It accepts one
 validated import result and one versioned study configuration bound to that dataset, invokes the
 existing backtester once, and returns immutable factual metadata with the report. Execution does
