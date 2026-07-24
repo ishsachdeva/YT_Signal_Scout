@@ -7,16 +7,18 @@ architecture only: no algorithm, formula, score, threshold, or implementation is
 
 ## Product Knowledge Status
 
-**Status: Implemented Foundation + Future Vision.** The canonical Opportunity and Opportunity
-Candidate domain contracts are implemented under PD-009/ADR-031 and PD-010/ADR-032. No Opportunity
-discovery, Candidate registry, evidence qualification, promotion, confidence, recommendation,
-lifecycle service, algorithm, or runtime workflow is implemented.
+**Status: Implemented Foundation + Future Vision.** Canonical Opportunity, Opportunity Candidate,
+and Evidence Reference domain contracts are implemented under PD-009 through PD-011 and ADR-031
+through ADR-033. No Opportunity discovery, Candidate or evidence registry, evidence retrieval or
+qualification, promotion, confidence, recommendation, lifecycle service, algorithm, or runtime
+workflow is implemented.
 
 ## Table of contents
 
 - [Scope](#scope)
 - [Implemented identity foundation](#implemented-identity-foundation)
 - [Implemented Candidate foundation](#implemented-candidate-foundation)
+- [Implemented Evidence Reference foundation](#implemented-evidence-reference-foundation)
 - [Inputs](#inputs)
 - [Evidence lifecycle](#evidence-lifecycle)
 - [Opportunity lifecycle](#opportunity-lifecycle)
@@ -56,6 +58,18 @@ The Candidate preserves supplied references without importing acquisition or evi
 does not contain a score, confidence, recommendation, ranking, qualification result, lifecycle,
 priority, heuristic, AI output, explanation, or canonical Opportunity. It is not a registry,
 discovery mechanism, evidence validator, or Candidate-to-Opportunity promotion policy.
+
+## Implemented Evidence Reference foundation
+
+Schema version 1 supplies one immutable canonical pointer to a YouTube channel or video using an
+opaque Evidence Reference identity and version, a closed evidence type and source platform, and an
+opaque source-object identity. It is strictly validated, canonically serialized, hashable, and
+content-addressable.
+
+The reference is not evidence content. It has no payload, metadata, analytics, provenance,
+timestamp, URL, retrieval, validation, discovery, interpretation, qualification, lifecycle, score,
+confidence, recommendation, or AI behavior. Candidate integration remains separately governed;
+neither domain imports the other.
 
 ## Inputs
 
@@ -126,3 +140,4 @@ Related: [Domain Model](DOMAIN_MODEL.md), [Feature Registry](FEATURE_REGISTRY.md
 | 1.1 | 2026-07-24 | Clarified that the engine remains Vision and is not implemented. |
 | 1.2 | 2026-07-24 | Recorded the implemented canonical identity foundation and retained future policy boundaries. |
 | 1.3 | 2026-07-24 | Recorded the factual Candidate foundation without advancing discovery or qualification. |
+| 1.4 | 2026-07-24 | Recorded the payload-free Evidence Reference foundation without adding evidence behavior. |

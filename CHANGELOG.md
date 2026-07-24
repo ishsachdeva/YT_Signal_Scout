@@ -4,6 +4,20 @@ This file records user-visible and architectural changes to YT Signal Scout by r
 
 ## Unreleased
 
+### Evidence Reference Domain Foundation
+
+- Added an immutable schema-versioned canonical pointer for YouTube channel and video evidence
+  identities without embedding evidence content, metadata, provenance, timestamps, or URLs.
+- Added strict versions, enums, primitive and identity validation, compact UTF-8 canonical JSON,
+  SHA-256 identity, public exports, dependency isolation, and golden contract coverage under
+  PD-011 and ADR-033.
+
+### Release boundaries
+
+- No evidence payload, retrieval, validation, discovery, analytics, qualification, interpretation,
+  lifecycle, scoring, confidence, recommendation, persistence, API, workflow, AI, external service,
+  Candidate/Opportunity integration, or application-startup behavior was added.
+
 ### Opportunity Candidate Domain Foundation
 
 - Added an immutable schema-versioned pre-qualification Candidate containing only discovery-source,

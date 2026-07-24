@@ -56,6 +56,15 @@ YouTube acquisition or canonical Opportunity models and performs no discovery, e
 qualification, lifecycle, interpretation, scoring, ranking, confidence, recommendation,
 persistence, I/O, AI, or startup behavior.
 
+## Evidence Reference
+
+`app.services.evidence_reference` exposes the immutable schema-versioned canonical pointer approved
+by PD-011 and ADR-033. Schema v1 identifies a YouTube channel or video using an opaque reference ID
+and version plus an opaque source-object ID. Strict validation, compact sorted-key UTF-8 JSON, and
+SHA-256 provide deterministic identity. The module contains no evidence payload, metadata,
+provenance, timestamp, URL, retrieval, validation, discovery, analytics, interpretation,
+qualification, scoring, confidence, recommendation, persistence, I/O, AI, or startup behavior.
+
 ## YouTube data acquisition
 
 Set `YOUTUBE_API_KEY` before constructing a `YouTubeClient`. `YOUTUBE_TIMEOUT`,

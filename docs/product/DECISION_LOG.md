@@ -155,6 +155,20 @@ the canonical Opportunity. RQ-OPP-001 and Candidate qualification policy remain 
 [Domain Model](DOMAIN_MODEL.md), [Opportunity Engine](OPPORTUNITY_ENGINE.md), Feature OE-001, and
 ADR-032.
 
+### PD-011: Authorize the canonical Evidence Reference foundation
+
+**Classification:** Product Decision. **Date:** 2026-07-24. **Status:** Decided for the foundational
+Evidence Reference milestone. **Decision:** Authorize one immutable, versioned pointer containing
+only an opaque Evidence Reference identity, evidence version, closed YouTube channel-or-video
+evidence type, YouTube source-platform identity, and opaque source-object identity. **Rationale:**
+Candidates and future governed systems require stable evidence identities without embedding source
+facts or asserting that those facts qualify as Evidence. **Implication:** The reference contains no
+payload, metadata, analytics, score, confidence, qualification, recommendation, lifecycle, AI
+output, provenance, timestamp, URL, or discovery behavior. It neither fetches nor validates the
+pointed-to object and remains independent of Opportunity and Candidate. Evidence sufficiency,
+binding, provenance, retrieval, and qualification remain open. **Related:** [Domain Model](DOMAIN_MODEL.md),
+[Opportunity Engine](OPPORTUNITY_ENGINE.md), Feature ER-001, and ADR-033.
+
 ## Open decisions
 
 Opportunity qualification and lifecycle, evidence sufficiency, reference-set independence,
@@ -175,3 +189,4 @@ constraints, or measurable targets. Reconcile the Feature Registry after every m
 | 1.2 | 2026-07-24 | Authorized the bounded v0.10.1 Personal Creator Profile facts. |
 | 1.3 | 2026-07-24 | Authorized the bounded canonical Opportunity identity foundation. |
 | 1.4 | 2026-07-24 | Authorized the factual pre-qualification Opportunity Candidate foundation. |
+| 1.5 | 2026-07-24 | Authorized the canonical payload-free Evidence Reference foundation. |

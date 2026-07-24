@@ -40,6 +40,16 @@ has no analytics, research, signals, persistence, HTTP, AI, external-service, or
 It supplies no registry, discovery, qualification, lifecycle, scoring, ranking, confidence, or
 recommendation behavior.
 
+### Evidence Reference boundary
+
+ADR-033 defines `app.services.evidence_reference` as a standalone deterministic identity boundary.
+One immutable schema-versioned reference points to an opaque YouTube channel or video identity and
+provides compact UTF-8 canonical JSON plus SHA-256 content identity. It contains no payload,
+metadata, provenance, timestamp, URL, analytics, validation, retrieval, discovery, interpretation,
+qualification, scoring, confidence, lifecycle, or recommendation behavior. The package imports
+neither Opportunity/Candidate nor YouTube acquisition models and has no research, signals,
+persistence, HTTP, framework, AI, external-service, or startup dependency.
+
 ## Analytics Pipeline
 
 ### Governed Channel Intelligence
