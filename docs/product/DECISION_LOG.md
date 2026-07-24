@@ -1,0 +1,128 @@
+# Product Decision Log
+
+## Purpose
+
+Maintain a living, append-only summary of major Product decisions. Detailed Product Decision Records
+may expand individual decisions. Technical implementation decisions remain in ADRs.
+
+## Product Knowledge Status
+
+**Status: Validated.** Recorded decisions are accepted within their stated classification and scope.
+Open decisions and referenced hypotheses remain unvalidated; decision presence does not imply code.
+
+## Table of contents
+
+- [Usage](#usage)
+- [Scope](#scope)
+- [Decision classifications](#decision-classifications)
+- [Decisions](#decisions)
+- [Open decisions](#open-decisions)
+- [Future considerations](#future-considerations)
+- [Revision history](#revision-history)
+
+## Usage
+
+Append decisions; do not rewrite historical rationale. A changed decision should supersede an earlier
+entry and link it. Each entry identifies the decision, rationale, implications, and related sources.
+“Decided” establishes Product intent but does not mark implementation complete.
+
+## Scope
+
+This log covers durable Product meaning and direction. Research findings, technical choices,
+delivery status, and routine editorial changes belong in their respective governed records.
+
+Research questions and their disposition are governed by [Research Questions](RESEARCH_QUESTIONS.md)
+and [Product Lifecycle](PRODUCT_LIFECYCLE.md). Decision authority, document precedence, and the
+meaning of knowledge states are governed by [Product Governance](PRODUCT_GOVERNANCE.md).
+
+## Decision classifications
+
+Every future decision belongs to exactly one classification. Cross-references do not change its
+owner or authority.
+
+| Classification | Decides | Canonical record | Does not establish |
+|---|---|---|---|
+| **Vision Decision** | Mission, target users, long-term direction, and enduring desired outcomes | Product Decision Log or approved vision record | Research validity, architecture, or implementation |
+| **Research Decision** | Research question, method, evidence sufficiency for a finding, or study disposition | Research plan, artifact, or research decision record | Product policy or runtime behavior |
+| **Product Decision** | User-facing meaning, behavior, scope, policy, prioritization, or acceptance | Product Decision Log or PDR | Technical design or completed implementation |
+| **Architecture Decision** | Durable technical boundary, dependency, structure, or technology choice | ADR | Product need, market validation, or code completion |
+| **Implementation Decision** | Local approved-scope construction detail that does not alter architecture or Product behavior | Code review, design note, commit, or test record | New Product behavior or architectural authority |
+
+If one proposal contains multiple classifications, split it into linked records. For example, a
+Product Decision may authorize explainable recommendation behavior; a later ADR decides technical
+boundaries; implementation decisions choose local construction details.
+
+## Decisions
+
+### PD-001: Opportunities are the primary Product asset
+
+**Classification:** Vision Decision. **Date:** 2026-07-24. **Status:** Decided. **Decision:** The platform exists to identify and explain
+bounded Opportunities; channels, videos, topics, and trends are evidence. **Rationale:** Channel lists
+do not answer whether a direction is repeatable, accessible, timely, or worth testing. **Implication:**
+Future capabilities must connect evidence to an Opportunity lifecycle. **Related:**
+[Product Vision](PRODUCT_VISION.md), [Domain Model](DOMAIN_MODEL.md).
+
+### PD-002: Channel Discovery is a foundation, not the final goal
+
+**Classification:** Vision Decision. **Date:** 2026-07-24. **Status:** Decided. **Decision:** Continue channel capabilities as evidence
+infrastructure within a larger platform. **Rationale:** Channels group repeated public observations
+but cannot alone establish market gaps or creator fit. **Implication:** Avoid roadmaps or interfaces
+that equate promising channels with complete recommendations. **Related:**
+[Channel Discovery](CHANNEL_DISCOVERY.md).
+
+### PD-003: Cross-channel evidence is required for market recommendations
+
+**Classification:** Product Decision. **Date:** 2026-07-24. **Status:** Decided at principle level; exact policy unapproved. **Decision:**
+No market recommendation may rely on one creator or one viral video. **Rationale:** Individual
+outcomes have many alternative explanations. **Implication:** Future research must define sufficient
+independence, diversity, and coverage. **Related:** [Product Principles](PRODUCT_PRINCIPLES.md).
+
+### PD-004: Small-creator evidence is necessary
+
+**Classification:** Product Decision. **Date:** 2026-07-24. **Status:** Decided at principle level. **Decision:** Evidence from established
+creators alone cannot establish accessibility for aspiring creators. **Rationale:** Incumbents have
+audience, brand, team, capital, and distribution advantages. **Implication:** Reference sets and
+validation must represent credible small creators and disclose scale. **Related:**
+[Competitor Discovery](COMPETITOR_DISCOVERY.md).
+
+### PD-005: Opportunity Confidence concerns evidence quality
+
+**Classification:** Product Decision. **Date:** 2026-07-24. **Status:** Decided; presentation unapproved. **Decision:** Confidence must never
+be interpreted as probability of creator success, YPP attainment, views, or revenue. **Rationale:**
+Public market evidence cannot model individual execution and future platform state reliably.
+**Implication:** No confidence formula or user-facing score exists until governed research and a
+separate Product decision approve its meaning. **Related:**
+[Opportunity Confidence](OPPORTUNITY_CONFIDENCE.md).
+
+### PD-006: Recommendations must be transparent and may be withheld
+
+**Classification:** Product Decision. **Date:** 2026-07-24. **Status:** Decided at principle level. **Decision:** Recommendations expose
+rationale, counterevidence, limitations, and profile effects; insufficient evidence is a valid
+result. **Rationale:** Trust and user agency outweigh recommendation volume. **Implication:** No
+black-box or always-return-something design. **Related:**
+[Recommendation Philosophy](RECOMMENDATION_PHILOSOPHY.md).
+
+### PD-007: Product Architecture and Technical Architecture are separate
+
+**Classification:** Architecture Decision. **Date:** 2026-07-24. **Status:** Decided. **Decision:** Product architecture governs intent and
+ubiquitous language; technical architecture governs implementation structure. **Rationale:** Feature
+requests must follow an explicit product model rather than accumulate into accidental architecture.
+**Implication:** Future technical ADRs cite relevant Product documents. **Related:** ADR-029.
+
+## Open decisions
+
+Opportunity identity and lifecycle, evidence sufficiency, reference-set independence, topic/niche
+validation, confidence presentation, creator-profile data policy, recommendation eligibility, and
+outcome feedback remain open. Roadmap inclusion is not approval.
+
+## Future considerations
+
+Create detailed PDRs when a decision establishes acceptance policy, user-facing claims, safety
+constraints, or measurable targets. Reconcile the Feature Registry after every material decision.
+
+## Revision history
+
+| Version | Date | Change |
+|---|---|---|
+| 1.0 | 2026-07-24 | Recorded seven foundational Product decisions. |
+| 1.1 | 2026-07-24 | Added exclusive decision classifications and governance cross-references. |

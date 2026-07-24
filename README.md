@@ -1,7 +1,29 @@
 # YT Signal Scout
 
-YT Signal Scout is a modular-monolith SaaS platform for discovering promising YouTube
-channels from official public API data. Its backend pipeline keeps acquisition, deterministic
+YT Signal Scout is evolving into a YouTube Opportunity Intelligence Platform that helps creators
+identify evidence-supported, feasible content opportunities without promising individual success.
+Channels, videos, topics, and trends are evidence; the Opportunity is the primary Product asset.
+Channel Discovery is the first capability, not the final product.
+
+Product drives Engineering through a governed evidence lifecycle:
+
+```text
+Customer Problems
+        |
+        v
+Vision -> Research -> Validated Findings -> Product Decisions
+                                            |
+                                            v
+Architecture -> Implementation -> Measurement -> Iteration
+       ^                                               |
+       +-----------------------------------------------+
+```
+
+Engineering implements approved Product intent; it does not define Product meaning. A documented
+idea is not a validated finding, and an accepted decision or ADR is not an implemented capability.
+
+The current implementation is a modular-monolith foundation using official public API data. Its
+backend pipeline keeps acquisition, deterministic
 analytics, business signal interpretation, and future AI narratives in separate typed layers.
 
 The v0.6.0 analytics foundation includes canonical acquisition with immutable provenance,
@@ -23,6 +45,16 @@ is stored in this repository.
 
 Key documentation:
 
+- [Product Architecture](docs/product/README.md) defines the long-term vision, ubiquitous language,
+  users, capability relationships, principles, decisions, registry, and roadmap.
+- [Product Vision](docs/product/PRODUCT_VISION.md) explains the Opportunity Intelligence mission and
+  why Channel Discovery is foundational evidence rather than the final outcome.
+- [Product Governance](docs/product/PRODUCT_GOVERNANCE.md) defines knowledge states, authority,
+  precedence, reviews, and the boundary between Product and Engineering.
+- [Product Lifecycle](docs/product/PRODUCT_LIFECYCLE.md) defines the traceable path from problem and
+  research question through implementation, measurement, and iteration.
+- [Research Questions](docs/product/RESEARCH_QUESTIONS.md) is the canonical unanswered Product
+  Discovery backlog and does not authorize implementation.
 - [Decision Governance](docs/governance/DECISION_GOVERNANCE.md) defines repository-wide decision
   accountability, approval, review, lifecycle, and traceability.
 - [SIG-002 Research Protocol](docs/research/SIG-002_RESEARCH_PROTOCOL.md) defines the canonical

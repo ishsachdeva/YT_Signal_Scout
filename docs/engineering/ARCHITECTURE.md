@@ -1,5 +1,13 @@
 # YT Signal Scout Architecture
 
+## Product Architecture Relationship
+
+Technical architecture implements the intent and ubiquitous language governed by the
+[Product Architecture](../product/README.md). It must not invent Product behaviour, confidence
+meaning, recommendation policy, or roadmap authority. ADR-029 requires future technical decisions
+to cite applicable Product documents and keep verified implementation status separate from planned
+capabilities.
+
 ## System Shape
 
 YT Signal Scout is a modular monolith with explicit module boundaries. Application services consume typed domain models rather than vendor-specific response objects, and each downstream stage owns one responsibility.

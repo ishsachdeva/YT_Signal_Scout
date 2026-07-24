@@ -4,6 +4,36 @@ This file records user-visible and architectural changes to YT Signal Scout by r
 
 ## Unreleased
 
+### v0.10.0a - Product Foundation Refinement
+
+- Added Product Governance, Product Lifecycle, and the canonical Product Research Questions backlog.
+- Added explicit Vision, Hypothesis, Research In Progress, Validated, and Implemented knowledge-state
+  governance across Product Architecture documents.
+- Added decision classifications, research-to-implementation traceability, and principles for
+  falsifiability, unknown-state preservation, research precedence, language consistency, explainable
+  AI, and explicit knowledge status.
+
+### Release boundaries
+
+- Additive documentation refinement only: no Product algorithm, confidence formula, scoring,
+  recommendation logic, production code, API, test, research framework, technical architecture,
+  persistence, dependency, or runtime behavior changed.
+
+### v0.10.0 - Product Vision & Domain Foundation
+
+- Added the authoritative Product Architecture foundation covering vision, principles, ubiquitous
+  language, personas, journeys, Opportunity Engine, discovery capabilities, Creator Profile,
+  Opportunity Confidence, recommendation philosophy, feature registry, roadmap, and decisions.
+- Added ADR-029 to separate Product Architecture from Technical Architecture and require future
+  technical decisions to trace to Product intent.
+- Reframed the long-term platform around Opportunities while retaining channels, videos, topics,
+  and trends as evidence and preserving existing implementation-status boundaries.
+
+### Release boundaries
+
+- Documentation only: no production code, analytics, research pipeline, API, algorithm, confidence
+  formula, recommendation logic, AI, persistence, dependency, or runtime behaviour changed.
+
 ### v0.9.9 - Governed Channel Intelligence Framework
 
 - Added immutable schema-versioned Channel Intelligence definitions, configuration, requests,

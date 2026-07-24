@@ -25,7 +25,11 @@ Performance optimization should only occur after measurable evidence identifies 
 Every implementation must follow this hierarchy.
 
 ```
-Product Behaviour
+Product Direction and Ubiquitous Language
+        ↓
+docs/product Product Architecture and Decision Log
+
+Historical Product Requirements
         ↓
 PRD
 
@@ -61,11 +65,23 @@ Never change architecture without approval.
 Before implementing any feature:
 
 1. Read this file.
-2. Read the relevant PRD section.
-3. Read the relevant TRD section.
-4. Read applicable ADRs.
-5. Review existing implementation.
-6. Reuse existing code whenever possible.
+2. Read `docs/product/PRODUCT_VISION.md`.
+3. Read `docs/product/PRODUCT_PRINCIPLES.md`.
+4. Read `docs/product/DOMAIN_MODEL.md`.
+5. Read `docs/product/RESEARCH_QUESTIONS.md` and confirm applicable questions are not being treated
+   as validated findings or implementation authority.
+6. Read `docs/product/DECISION_LOG.md` and applicable detailed Product Decision Records.
+7. Read `docs/product/FEATURE_REGISTRY.md` and verify the capability's Product Knowledge Status.
+8. Read applicable ADRs.
+9. Read the relevant PRD section.
+10. Read the relevant TRD section.
+11. Review existing implementation and tests to distinguish documented intent from verified behavior.
+12. Reuse existing code whenever possible.
+
+`Vision`, `Hypothesis`, and `Research In Progress` do not authorize implementation. `Validated`
+knowledge requires a Product Decision before user-facing behavior is created. Only repository code,
+tests, and synchronized runtime documentation support an `Implemented` claim. Follow
+`docs/product/PRODUCT_GOVERNANCE.md` and `docs/product/PRODUCT_LIFECYCLE.md`.
 
 Only then begin implementation.
 
