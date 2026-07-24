@@ -297,6 +297,11 @@ precision or recall is unavailable or their sum is zero. Preserve integer counts
 facts. Calculations use unrounded values; display may round to four decimal places using
 round-half-even while machine-readable artifacts retain full values.
 
+ADR-027's complete governed statistical artifact is stricter than a general protocol table: it is
+emitted only when every configured required metric and MCC domain is defined. An undefined domain
+rejects that artifact rather than emitting a partial or null-valued result. Protocol presentations
+outside that complete artifact continue to represent unavailable values as `null`, never zero.
+
 Also report qualification coverage, median availability, binary-label coverage, per-label counts,
 threshold-eligible support, candidate hit/non-hit counts and rate, VSR distribution, exclusions,
 and qualification-failure counts already governed by ADR-012 and ADR-016.
@@ -316,6 +321,12 @@ interval = [max(0, center - half_width), min(1, center + half_width)]
 An interval is unavailable when `n = 0`. No confidence interval is defined for F1 by this
 protocol. Intervals describe sampling uncertainty under the study sample; they do not correct
 discovery bias or prove population representativeness.
+
+ADR-027 additionally governs Wilson intervals for accuracy and specificity and, by explicit
+versioned convention, applies the Wilson transform to the balanced-accuracy estimate using binary
+cohort size. Balanced accuracy is an average of conditional proportions rather than a raw binomial
+success proportion; this plug-in interval receives no inferential interpretation. The strict
+statistical artifact rejects zero-support interval domains.
 
 ### 6.5 Candidate comparison, order, and ties
 
@@ -500,6 +511,8 @@ close any SIG-002 Product or Architecture gap.
 - ADR-024 and ADR-025: governed non-analytical study execution followed by immutable
   observation-level prediction-versus-truth facts before aggregation.
 - ADR-026: deterministic counts-only aggregation before derived statistical evaluation.
+- ADR-027: deterministic complete statistical evaluation without candidate comparison or
+  interpretation.
 
 ## 12. Version history
 
@@ -508,3 +521,4 @@ close any SIG-002 Product or Architecture gap.
 | 1 | 2026-07-24 | Initial canonical SIG-002 research protocol | Documentation milestone v0.9.1 |
 | 2 | 2026-07-24 | Added governed execution and observation-level labelled evaluation boundaries | ADR-024 and ADR-025 |
 | 3 | 2026-07-24 | Added the counts-only evaluation aggregation boundary | ADR-026 |
+| 4 | 2026-07-24 | Added the governed deterministic statistical evaluation boundary | ADR-027 |

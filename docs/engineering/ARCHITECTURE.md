@@ -358,6 +358,12 @@ contributes to Total Evaluated; Not Evaluated does not. The output contains only
 integer counts and structural total identities—no division, rate, percentage, metric, interval,
 ranking, recommendation, or runtime behavior.
 
+ADR-027 adds a separate governed statistical boundary after counts-only aggregation. It calculates
+the approved binary-classification metric set and specified Wilson intervals from exactly one
+immutable aggregation result using high-precision Decimal arithmetic. Undefined required domains
+reject the entire artifact. The boundary performs no threshold/candidate comparison, ranking,
+selection, interpretation, recommendation, Product decision, or runtime behavior.
+
 ADR-016 defines evaluation methodology separately from both execution facts and study reviews.
 `ThresholdEvaluationMethodology` is an immutable, versioned, ordered collection of criteria whose
 metrics map only to facts already present in `ThresholdBacktestReport`: qualification coverage,

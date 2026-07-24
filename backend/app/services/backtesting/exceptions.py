@@ -195,3 +195,19 @@ class EvaluationAggregationValidationError(EvaluationAggregationError):
 
 class EvaluationAggregationDigestMismatchError(EvaluationAggregationValidationError):
     """Raised when canonical aggregation content differs from its digest."""
+
+
+class StatisticalEvaluationError(Exception):
+    """Base failure for governed statistical evaluation."""
+
+
+class StatisticalEvaluationValidationError(StatisticalEvaluationError):
+    """Raised when statistical input is invalid or mathematically undefined."""
+
+    def __init__(self, issues: tuple[str, ...]) -> None:
+        self.issues = issues
+        super().__init__("statistical evaluation validation failed: " + "; ".join(issues))
+
+
+class StatisticalEvaluationDigestMismatchError(StatisticalEvaluationValidationError):
+    """Raised when canonical statistical content differs from its digest."""

@@ -15,6 +15,9 @@ from app.services.backtesting.exceptions import (
     EvaluationAggregationDigestMismatchError,
     EvaluationAggregationError,
     EvaluationAggregationValidationError,
+    StatisticalEvaluationDigestMismatchError,
+    StatisticalEvaluationError,
+    StatisticalEvaluationValidationError,
     EvaluationError,
     EvaluationValidationError,
     GroundTruthLabelBindingError,
@@ -166,6 +169,24 @@ from app.services.backtesting.study_models import (
     BacktestStudyStatus,
 )
 from app.services.backtesting.validation import BacktestDatasetValidator
+from app.services.backtesting.statistical_evaluation import (
+    StatisticalEvaluationService,
+    StatisticalEvaluationValidator,
+)
+from app.services.backtesting.statistical_evaluation_canonicalizer import (
+    StatisticalEvaluationCanonicalizer,
+)
+from app.services.backtesting.statistical_evaluation_models import (
+    STATISTICAL_EVALUATION_SCHEMA_VERSION,
+    StatisticalEvaluationConfiguration,
+    StatisticalEvaluationDefinition,
+    StatisticalEvaluationManifest,
+    StatisticalEvaluationMetadata,
+    StatisticalEvaluationRequest,
+    StatisticalEvaluationResult,
+    StatisticalEvaluationSummary,
+    WilsonScoreInterval,
+)
 from app.services.backtesting.evaluation_aggregation import (
     EvaluationAggregationService,
     EvaluationAggregationValidator,
@@ -223,6 +244,21 @@ from app.services.backtesting.study_execution_models import (
 )
 
 __all__ = [
+    "STATISTICAL_EVALUATION_SCHEMA_VERSION",
+    "StatisticalEvaluationCanonicalizer",
+    "StatisticalEvaluationConfiguration",
+    "StatisticalEvaluationDefinition",
+    "StatisticalEvaluationDigestMismatchError",
+    "StatisticalEvaluationError",
+    "StatisticalEvaluationManifest",
+    "StatisticalEvaluationMetadata",
+    "StatisticalEvaluationRequest",
+    "StatisticalEvaluationResult",
+    "StatisticalEvaluationService",
+    "StatisticalEvaluationSummary",
+    "StatisticalEvaluationValidationError",
+    "StatisticalEvaluationValidator",
+    "WilsonScoreInterval",
     "EVALUATION_AGGREGATION_SCHEMA_VERSION",
     "EvaluationAggregationCanonicalizer",
     "EvaluationAggregationConfiguration",

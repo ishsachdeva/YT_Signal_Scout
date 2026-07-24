@@ -35,6 +35,8 @@ Key documentation:
   per-observation prediction-versus-truth outcomes without aggregation.
 - [Evaluation Aggregation Format](docs/engineering/EVALUATION_AGGREGATION_FORMAT.md) defines
   immutable counts-only cohort summaries without statistical metrics.
+- [Statistical Evaluation Format](docs/engineering/STATISTICAL_EVALUATION_FORMAT.md) defines the
+  approved mathematical metrics, Wilson intervals, and deterministic integrity boundary.
 - [Signal Catalog v1](docs/product/SIGNAL_CATALOG.md) governs proposed and approved signal policy.
 - [Backend README](backend/README.md) contains setup and test commands.
 - [Changelog](CHANGELOG.md) records release capabilities and boundaries.

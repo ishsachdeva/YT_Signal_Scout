@@ -36,6 +36,7 @@ New contributors should read the documents in the following order:
 | STUDY_EXECUTION_FORMAT.md | Governed study definition, input compatibility, validation, execution manifest, and canonical result |
 | LABELLED_EVALUATION_FORMAT.md | Immutable observation-level prediction-versus-truth facts and canonical integrity |
 | EVALUATION_AGGREGATION_FORMAT.md | Counts-only cohort summaries from immutable labelled evaluations |
+| STATISTICAL_EVALUATION_FORMAT.md | Approved mathematical metrics, Wilson intervals, and canonical integrity |
 | adr/ | Architecture Decision Records |
 | ../research/SIG-002_RESEARCH_PROTOCOL.md | Canonical SIG-002 research methodology |
 | ../product/SIGNAL_CATALOG.md | Governed signal definitions, readiness, and threshold provenance |

@@ -150,6 +150,13 @@ rate, statistical metric, threshold recommendation, or policy decision. See
 [`docs/engineering/EVALUATION_AGGREGATION_FORMAT.md`](../docs/engineering/EVALUATION_AGGREGATION_FORMAT.md)
 and ADR-026.
 
+`StatisticalEvaluationService` consumes exactly one immutable aggregation result and calculates the
+approved binary-classification metrics and five configured Wilson intervals using Decimal
+arithmetic. Every metric is required, so any undefined denominator rejects the whole request. It
+does not compare candidates or thresholds and contains no interpretation or recommendation. See
+[`docs/engineering/STATISTICAL_EVALUATION_FORMAT.md`](../docs/engineering/STATISTICAL_EVALUATION_FORMAT.md)
+and ADR-027.
+
 `BacktestExecutionService` is the controlled synchronous execution boundary. It accepts one
 validated import result and one versioned study configuration bound to that dataset, invokes the
 existing backtester once, and returns immutable factual metadata with the report. Execution does

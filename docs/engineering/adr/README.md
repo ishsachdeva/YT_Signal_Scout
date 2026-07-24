@@ -39,6 +39,7 @@ This directory contains all significant architectural decisions for the YT Signa
 | ADR-024 | Govern Study Definition and Execution | 🟢 Accepted | 2026-07-24 |
 | ADR-025 | Deterministic Observation-Level Labelled Evaluation | 🟢 Accepted | 2026-07-24 |
 | ADR-026 | Govern Counts-Only Evaluation Aggregation | 🟢 Accepted | 2026-07-24 |
+| ADR-027 | Govern Deterministic Statistical Evaluation | 🟢 Accepted | 2026-07-24 |
 
 ---
 

@@ -6,6 +6,23 @@ This file records user-visible and architectural changes to YT Signal Scout by r
 
 ### Added
 
+- Governed Statistical Evaluation schema version 1 with immutable definitions, configuration,
+  requests, approved metrics, Wilson intervals, metadata, manifests, and results.
+- Decimal-based deterministic calculation of accuracy, precision, recall/sensitivity, specificity,
+  negative predictive value, false-positive/negative rates, balanced accuracy, F1, and MCC.
+- Two-sided 95% Wilson intervals for accuracy, precision, recall, specificity, and the governed
+  balanced-accuracy plug-in convention.
+
+### Release boundaries
+
+- No real research statistics were calculated and no threshold comparison, ranking, selection,
+  interpretation, recommendation, Product decision, persistence, API, workflow, AI, or runtime
+  behavior was created.
+
+## 0.9.7 - 2026-07-24
+
+### Added
+
 - Governed Evaluation Aggregation schema version 1 with immutable definitions, configuration,
   requests, counts-only summaries, metadata, manifests, and results.
 - Deterministic counting of all six observation-level outcomes with exact total invariants,

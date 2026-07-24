@@ -16,6 +16,8 @@ or authorize runtime behavior.
   per-observation comparison boundary used before any statistical aggregation.
 - [Evaluation Aggregation Contract](../engineering/EVALUATION_AGGREGATION_FORMAT.md) defines the
   counts-only cohort boundary used before derived statistical metrics.
+- [Statistical Evaluation Contract](../engineering/STATISTICAL_EVALUATION_FORMAT.md) defines the
+  complete approved mathematical artifact without interpretation or candidate comparison.
 
 Study-specific datasets, configurations, executions, reports, labels, and reviews are not stored
 here unless a separately approved milestone explicitly adds them.
