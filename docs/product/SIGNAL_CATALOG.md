@@ -1,6 +1,6 @@
 # YT Signal Scout — Signal Catalog v1
 
-**Catalog version:** 1.5
+**Catalog version:** 1.6
 **Status:** Active — No production signals approved  
 **Date:** 2026-07-22  
 **Accountable owner:** Product Owner
@@ -590,7 +590,10 @@ sensitivity testing.
 **Approval:** Eligibility, denominator, standard basis, and null semantics are approved. The
 Product Owner must approve `T`, comparator, equality behavior, and required business evidence after
 Analytics Owner and Architecture Owner review. The Architecture Owner subsequently owns evidence
-representation, input-boundary decisions, and Implementable Now readiness. Not implementable now.
+representation, input-boundary decisions, and Implementable Now readiness.
+[PDR-001](decisions/PDR-001-sig-002-product-policy.md) records these Product decisions as Draft and
+unapproved. Future threshold evidence must conform to the
+[SIG-002 Research Protocol](../research/SIG-002_RESEARCH_PROTOCOL.md). Not implementable now.
 
 ### SIG-003 — Breakout eligible video
 
@@ -1064,7 +1067,8 @@ signals/analytics; it must not retroactively create, merge, or suppress rule out
 
 ## 19. Open product decisions
 
-1. Approve median standard-video VSR threshold `T` and validation evidence.
+1. Review evidence produced under the SIG-002 Research Protocol, then approve median
+   standard-video VSR threshold `T` and validation evidence under PDR-001.
 2. Approve hit-consistency share `P` and whether Bayesian adjustment belongs in metric or score.
 3. Define breakout baseline and materiality.
 4. Decide whether qualification failures are also emitted as Signals; the typed qualification

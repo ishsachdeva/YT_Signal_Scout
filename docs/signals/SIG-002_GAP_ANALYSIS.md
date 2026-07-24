@@ -3,6 +3,11 @@
 This backlog lists every known blocker preventing implementation of SIG-002. Resolving a row
 requires updating the authoritative Signal Catalog and SIG-002 specification where applicable.
 Engineering must not infer missing policy from research results or proposed catalog language.
+Product-owned gaps are recorded without resolution in
+[PDR-001](../product/decisions/PDR-001-sig-002-product-policy.md).
+Future evidence offered to resolve threshold-related gaps must conform to the
+[SIG-002 Research Protocol](../research/SIG-002_RESEARCH_PROTOCOL.md). Protocol conformance alone
+does not resolve a gap or approve Product policy.
 
 | ID | Description | Accountable owner | Required reviewers | Governing record | Impact | Suggested resolution | Priority |
 |---|---|---|---|---|---|---|---|
@@ -27,6 +32,8 @@ SIG-002 becomes implementation-ready only when:
 - implementation can reuse qualification and analytics without recomputation.
 
 Research findings or human recommendations alone do not close these gaps.
+The Research Protocol defines how such evidence is produced and accepted; it does not alter the
+dependency order or any accountable owner.
 
 ## P0 dependency order
 

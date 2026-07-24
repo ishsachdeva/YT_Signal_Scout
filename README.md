@@ -19,6 +19,8 @@ Key documentation:
 
 - [Decision Governance](docs/governance/DECISION_GOVERNANCE.md) defines repository-wide decision
   accountability, approval, review, lifecycle, and traceability.
+- [SIG-002 Research Protocol](docs/research/SIG-002_RESEARCH_PROTOCOL.md) defines the canonical
+  dataset, labelling, evaluation, boundary-testing, and evidence methodology for threshold studies.
 - [Signal Catalog v1](docs/product/SIGNAL_CATALOG.md) governs proposed and approved signal policy.
 - [Backend README](backend/README.md) contains setup and test commands.
 - [Changelog](CHANGELOG.md) records release capabilities and boundaries.

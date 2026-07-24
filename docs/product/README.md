@@ -15,7 +15,9 @@ source documents.
 | `source/04_Security_Spec_YT_Signal_Scout.docx` | Security, privacy, and compliance requirements |
 | `source/05_Feature_Catalogue_YT_Signal_Scout.docx` | Delivery backlog and acceptance intent |
 | `../governance/DECISION_GOVERNANCE.md` | Repository-wide decision ownership, approval, review, lifecycle, and traceability |
+| `../research/SIG-002_RESEARCH_PROTOCOL.md` | Canonical Analytics methodology for reproducible SIG-002 threshold studies |
 | `SIGNAL_CATALOG.md` | Authoritative signal policy, Eligible Video Policy v1, readiness, and threshold provenance |
+| `decisions/PDR-001-sig-002-product-policy.md` | Draft decision record for unresolved SIG-002 Product policy |
 
 Where an original source document states a configurable or incomplete signal condition, the
 approved Signal Catalog definition supplies the exact implementation boundary. It does not mark a
