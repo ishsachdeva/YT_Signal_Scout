@@ -46,6 +46,16 @@ known-or-unknown values. Strict validation, stable compact UTF-8 JSON, and SHA-2
 are framework-independent and perform no discovery, evidence qualification, lifecycle transition,
 classification, analytics, scoring, ranking, filtering, recommendation, persistence, or I/O.
 
+## Opportunity Candidate
+
+`app.services.opportunity_candidate` exposes the immutable schema-versioned pre-qualification
+Candidate contract approved by PD-010 and ADR-032. It preserves opaque discovery-source, ordered
+evidence-reference, UTC acquisition-time, and ordered provenance-reference facts using strict
+validation, compact UTF-8 canonical JSON, and SHA-256 content identity. It has no dependency on
+YouTube acquisition or canonical Opportunity models and performs no discovery, evidence validation,
+qualification, lifecycle, interpretation, scoring, ranking, confidence, recommendation,
+persistence, I/O, AI, or startup behavior.
+
 ## YouTube data acquisition
 
 Set `YOUTUBE_API_KEY` before constructing a `YouTubeClient`. `YOUTUBE_TIMEOUT`,

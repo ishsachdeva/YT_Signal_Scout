@@ -44,6 +44,7 @@ This directory contains all significant architectural decisions for the YT Signa
 | ADR-029 | Separate Product Architecture from Technical Architecture | 🟢 Accepted | 2026-07-24 |
 | ADR-030 | Establish a Personal Creator Profile Domain Boundary | 🟢 Accepted | 2026-07-24 |
 | ADR-031 | Establish the Canonical Opportunity Domain Boundary | 🟢 Accepted | 2026-07-24 |
+| ADR-032 | Establish the Opportunity Candidate Domain Boundary | 🟢 Accepted | 2026-07-24 |
 
 ---
 

@@ -7,14 +7,16 @@ architecture only: no algorithm, formula, score, threshold, or implementation is
 
 ## Product Knowledge Status
 
-**Status: Implemented Foundation + Future Vision.** The canonical Opportunity identity contract is
-implemented under PD-009 and ADR-031. No Opportunity discovery, evidence qualification,
-confidence, recommendation, lifecycle service, algorithm, or runtime workflow is implemented.
+**Status: Implemented Foundation + Future Vision.** The canonical Opportunity and Opportunity
+Candidate domain contracts are implemented under PD-009/ADR-031 and PD-010/ADR-032. No Opportunity
+discovery, Candidate registry, evidence qualification, promotion, confidence, recommendation,
+lifecycle service, algorithm, or runtime workflow is implemented.
 
 ## Table of contents
 
 - [Scope](#scope)
 - [Implemented identity foundation](#implemented-identity-foundation)
+- [Implemented Candidate foundation](#implemented-candidate-foundation)
 - [Inputs](#inputs)
 - [Evidence lifecycle](#evidence-lifecycle)
 - [Opportunity lifecycle](#opportunity-lifecycle)
@@ -42,6 +44,18 @@ contract is immutable, strictly validated, canonically serialized, and content-a
 This foundation does not decide whether evidence is sufficient, create or promote a candidate,
 classify a proposition, assign a type or lifecycle state, attach creator/channel provenance, or
 judge quality. Those behaviors remain governed future work.
+
+## Implemented Candidate foundation
+
+Schema version 1 records one pre-qualification Candidate using opaque Candidate and discovery-source
+identity, YouTube source identity, ordered evidence and provenance references, a positive discovery
+version, and an explicit UTC-normalized acquisition timestamp. It is immutable, strictly validated,
+canonically serialized, and content-addressable.
+
+The Candidate preserves supplied references without importing acquisition or evidence models. It
+does not contain a score, confidence, recommendation, ranking, qualification result, lifecycle,
+priority, heuristic, AI output, explanation, or canonical Opportunity. It is not a registry,
+discovery mechanism, evidence validator, or Candidate-to-Opportunity promotion policy.
 
 ## Inputs
 
@@ -111,3 +125,4 @@ Related: [Domain Model](DOMAIN_MODEL.md), [Feature Registry](FEATURE_REGISTRY.md
 | 1.0 | 2026-07-24 | Defined the long-term evidence-to-opportunity product boundary. |
 | 1.1 | 2026-07-24 | Clarified that the engine remains Vision and is not implemented. |
 | 1.2 | 2026-07-24 | Recorded the implemented canonical identity foundation and retained future policy boundaries. |
+| 1.3 | 2026-07-24 | Recorded the factual Candidate foundation without advancing discovery or qualification. |

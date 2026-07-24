@@ -4,6 +4,19 @@ This file records user-visible and architectural changes to YT Signal Scout by r
 
 ## Unreleased
 
+### Opportunity Candidate Domain Foundation
+
+- Added an immutable schema-versioned pre-qualification Candidate containing only discovery-source,
+  ordered evidence-reference, UTC acquisition-time, and ordered provenance-reference facts.
+- Added strict primitive, version, timestamp, enum, duplicate-reference, canonical JSON, SHA-256,
+  hashability, dependency-isolation, and golden contract coverage under PD-010 and ADR-032.
+
+### Release boundaries
+
+- No Candidate registry, discovery, acquisition integration, evidence interpretation, qualification,
+  promotion, lifecycle, score, rank, confidence, recommendation, persistence, API, workflow, AI, or
+  application-startup behavior was added.
+
 ### Canonical Opportunity Domain Foundation
 
 - Added an immutable schema-versioned Opportunity identity with opaque Opportunity, Market, and

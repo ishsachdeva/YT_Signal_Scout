@@ -47,7 +47,7 @@ engineering backlog, release promise, implementation inventory, or authorization
 | ND-001 | Niche Map | Organize topics, audiences, formats, and markets | TD-001, NP-001 | Research required | Phase 3 | 9 |
 | TR-001 | Trend Lifecycle Evidence | Describe time-dependent change and persistence | Longitudinal observations, TD-001 | Research required | Phase 3 | 10 |
 | OE-000 | Canonical Opportunity Identity | Provide the stable Product object referenced by later capabilities | PD-009, ADR-031 | Foundation available; qualification unvalidated | Phase 4 | 11 |
-| OE-001 | Opportunity Candidate Registry | Record bounded propositions and evidence needs | ND-001, CP-001, TR-001 | Defined | Phase 4 | 12 |
+| OE-001 | Opportunity Candidate Registry | Record bounded propositions and evidence needs | PD-010, ADR-032; ND-001, CP-001, TR-001 for later discovery | Domain foundation available; registry and qualification unimplemented | Phase 4 | 12 |
 | OE-002 | Opportunity Validation | Govern when a candidate becomes an Opportunity | OE-001, OE-000, research policy | Research required | Phase 4 | 13 |
 | OC-001 | Opportunity Confidence | Communicate evidence quality and limitations | OE-002, interpretation research | Research required | Phase 4 | 14 |
 | CR-001 | Creator Profile | Capture explicit owner-supplied preferences and constraints | PD-008, ADR-030; privacy/UX/persona research for later use | Foundation available in v0.10.1; personalization unvalidated | Phase 5 | 15 |
@@ -87,3 +87,4 @@ Related: [Product Roadmap](PRODUCT_ROADMAP.md), [Decision Log](DECISION_LOG.md),
 | 1.1 | 2026-07-24 | Added Product Research Governance and lifecycle/status traceability. |
 | 1.2 | 2026-07-24 | Recorded the CR-001 deterministic factual foundation and remaining research boundary. |
 | 1.3 | 2026-07-24 | Added OE-000 for the canonical Opportunity identity without advancing qualification. |
+| 1.4 | 2026-07-24 | Recorded the OE-001 Candidate domain foundation without claiming registry behavior. |

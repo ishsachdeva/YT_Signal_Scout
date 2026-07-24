@@ -140,6 +140,21 @@ provenance, or still-unapproved policy concerns. RQ-OPP-001 remains open. **Rela
 [Domain Model](DOMAIN_MODEL.md), [Opportunity Engine](OPPORTUNITY_ENGINE.md), Feature OE-000, and
 ADR-031.
 
+### PD-010: Authorize the factual Opportunity Candidate foundation
+
+**Classification:** Product Decision. **Date:** 2026-07-24. **Status:** Decided for the foundational
+Opportunity Candidate milestone. **Decision:** Authorize one immutable, versioned Candidate value
+object containing only opaque Candidate and discovery-source identity, YouTube source-platform
+identity, ordered evidence-reference and provenance-reference identities, and an explicit
+acquisition timestamp. **Rationale:** Potential Opportunities require a stable pre-qualification
+snapshot that preserves what discovery supplied without using the governed term Opportunity or
+asserting evidence quality. **Implication:** Candidate construction records source facts only. It
+does not discover, interpret, explain, qualify, promote, reject, prioritize, score, rank, assess
+confidence, recommend, execute AI, or manage lifecycle. The Candidate does not depend on or embed
+the canonical Opportunity. RQ-OPP-001 and Candidate qualification policy remain open. **Related:**
+[Domain Model](DOMAIN_MODEL.md), [Opportunity Engine](OPPORTUNITY_ENGINE.md), Feature OE-001, and
+ADR-032.
+
 ## Open decisions
 
 Opportunity qualification and lifecycle, evidence sufficiency, reference-set independence,
@@ -159,3 +174,4 @@ constraints, or measurable targets. Reconcile the Feature Registry after every m
 | 1.1 | 2026-07-24 | Added exclusive decision classifications and governance cross-references. |
 | 1.2 | 2026-07-24 | Authorized the bounded v0.10.1 Personal Creator Profile facts. |
 | 1.3 | 2026-07-24 | Authorized the bounded canonical Opportunity identity foundation. |
+| 1.4 | 2026-07-24 | Authorized the factual pre-qualification Opportunity Candidate foundation. |

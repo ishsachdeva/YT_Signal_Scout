@@ -30,6 +30,16 @@ provide stable content identity. The module has no dependency on HTTP, persisten
 analytics, research, signals, Creator Profile, AI, recommendations, or application startup. It
 records no qualification, lifecycle, score, rank, or quality judgment.
 
+### Opportunity Candidate boundary
+
+ADR-032 defines `app.services.opportunity_candidate` as a separate deterministic pre-qualification
+domain boundary. One immutable schema-versioned Candidate retains opaque discovery-source, ordered
+evidence-reference, acquisition-time, and provenance-reference facts with stable compact UTF-8 JSON
+and SHA-256 content identity. It imports neither `Opportunity` nor YouTube acquisition models and
+has no analytics, research, signals, persistence, HTTP, AI, external-service, or startup dependency.
+It supplies no registry, discovery, qualification, lifecycle, scoring, ranking, confidence, or
+recommendation behavior.
+
 ## Analytics Pipeline
 
 ### Governed Channel Intelligence
