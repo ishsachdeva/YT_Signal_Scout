@@ -73,6 +73,10 @@ boundary distinguishes evidence-supported Opportunities from candidates without 
 exploration, and bounded experiment planning. **Exit direction:** Users understand the evidence,
 profile effects, uncertainty, and next reversible decision.
 
+The v0.10.1 immutable Personal Creator Profile fact contract is an early foundation only. It does
+not advance Opportunity contextualization, personalization, feasibility, onboarding, or
+recommendations to Implemented status, and it does not change roadmap ordering.
+
 ## Phase 6: AI Content Planning
 
 **Outcome:** Creators may receive assistive planning support grounded in selected Opportunities and
@@ -116,3 +120,4 @@ Related: [Feature Registry](FEATURE_REGISTRY.md), [Product Vision](PRODUCT_VISIO
 |---|---|---|
 | 1.0 | 2026-07-24 | Established the nine-phase long-term roadmap. |
 | 1.1 | 2026-07-24 | Declared Vision status without changing roadmap ordering. |
+| 1.2 | 2026-07-24 | Recorded the early Creator Profile fact foundation without changing phase status or order. |

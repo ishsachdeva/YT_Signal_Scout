@@ -109,11 +109,25 @@ ubiquitous language; technical architecture governs implementation structure. **
 requests must follow an explicit product model rather than accumulate into accidental architecture.
 **Implication:** Future technical ADRs cite relevant Product documents. **Related:** ADR-029.
 
+### PD-008: Authorize a deterministic Personal Creator Profile foundation
+
+**Classification:** Product Decision. **Date:** 2026-07-24. **Status:** Decided for v0.10.1.
+**Decision:** Authorize one immutable, versioned profile containing only explicit owner-supplied
+production preferences and constraints: presentation style, AI-assistance preference, preferred
+language, target geography, available weekly production hours, self-assessed editing capability,
+narration preference, self-declared budget category, and upload-cadence goal. Every fact may remain
+Unknown. **Rationale:** Later market and feasibility work needs a stable factual input, while the
+usefulness and personalization effect of these attributes remain unvalidated. **Implication:** The
+foundation may validate and canonically serialize facts, but may not infer preferences, persist
+them, evaluate fit, filter Opportunities, recommend action, execute AI, or claim that the profile
+improves outcomes. **Related:** [Creator Profile](CREATOR_PROFILE.md), RQ-CRT-001, RQ-PRD-001,
+Feature CR-001, and ADR-030.
+
 ## Open decisions
 
 Opportunity identity and lifecycle, evidence sufficiency, reference-set independence, topic/niche
-validation, confidence presentation, creator-profile data policy, recommendation eligibility, and
-outcome feedback remain open. Roadmap inclusion is not approval.
+validation, confidence presentation, broader creator-profile data policy and personalization,
+recommendation eligibility, and outcome feedback remain open. Roadmap inclusion is not approval.
 
 ## Future considerations
 
@@ -126,3 +140,4 @@ constraints, or measurable targets. Reconcile the Feature Registry after every m
 |---|---|---|
 | 1.0 | 2026-07-24 | Recorded seven foundational Product decisions. |
 | 1.1 | 2026-07-24 | Added exclusive decision classifications and governance cross-references. |
+| 1.2 | 2026-07-24 | Authorized the bounded v0.10.1 Personal Creator Profile facts. |

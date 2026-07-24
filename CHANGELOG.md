@@ -4,6 +4,18 @@ This file records user-visible and architectural changes to YT Signal Scout by r
 
 ## Unreleased
 
+### v0.10.1 - Personal Creator Profile Foundation
+
+- Added an immutable schema-versioned Personal Creator Profile with closed self-declared production
+  preferences/constraints and explicit Unknown semantics.
+- Added strict validation, deterministic compact UTF-8 JSON, SHA-256 content identity, public Python
+  exports, PD-008, ADR-030, and behavior-focused contract tests.
+
+### Release boundaries
+
+- No persistence, API, UI, inference, recommendation, opportunity filtering/scoring/ranking,
+  confidence formula, AI execution, external integration, or application-startup behavior was added.
+
 ### v0.10.0a - Product Foundation Refinement
 
 - Added Product Governance, Product Lifecycle, and the canonical Product Research Questions backlog.

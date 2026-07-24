@@ -30,6 +30,14 @@ outside API versioning:
 
 Future product endpoints compose beneath `API_V1_PREFIX`, which defaults to `/api/v1`.
 
+## Personal Creator Profile
+
+`app.services.creator_profile` exposes the immutable schema-versioned Personal Creator Profile fact
+contract approved by PD-008 and ADR-030. Optional self-declared preferences and constraints preserve
+`None` as explicit Unknown; the module performs strict validation and stable compact UTF-8 JSON plus
+SHA-256 canonicalization. It has no API, persistence, inference, clock, AI, feasibility,
+personalization, filtering, or recommendation behavior.
+
 ## YouTube data acquisition
 
 Set `YOUTUBE_API_KEY` before constructing a `YouTubeClient`. `YOUTUBE_TIMEOUT`,

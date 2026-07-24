@@ -12,6 +12,14 @@ capabilities.
 
 YT Signal Scout is a modular monolith with explicit module boundaries. Application services consume typed domain models rather than vendor-specific response objects, and each downstream stage owns one responsibility.
 
+### Personal Creator Profile boundary
+
+ADR-030 defines `app.services.creator_profile` as an independent deterministic domain boundary. It
+contains one immutable versioned factual snapshot, closed self-declared vocabularies, strict Unknown
+semantics, and canonical serialization. It has no dependency on HTTP, persistence, analytics,
+research, signals, YouTube acquisition, AI, recommendations, or application startup. Future modules
+may consume it only under separately approved Product behavior.
+
 ## Analytics Pipeline
 
 ### Governed Channel Intelligence

@@ -42,6 +42,7 @@ This directory contains all significant architectural decisions for the YT Signa
 | ADR-027 | Govern Deterministic Statistical Evaluation | 🟢 Accepted | 2026-07-24 |
 | ADR-028 | Govern Channel Intelligence as a Factual Research Boundary | 🟢 Accepted | 2026-07-24 |
 | ADR-029 | Separate Product Architecture from Technical Architecture | 🟢 Accepted | 2026-07-24 |
+| ADR-030 | Establish a Personal Creator Profile Domain Boundary | 🟢 Accepted | 2026-07-24 |
 
 ---
 

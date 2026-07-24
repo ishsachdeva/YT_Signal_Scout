@@ -6,14 +6,16 @@ Define future user-supplied onboarding context for accessible, explainable perso
 
 ## Product Knowledge Status
 
-**Status: Vision.** The profile is a future consent-based Product capability. Its questions,
-personalization effects, storage, privacy controls, and interfaces are not validated or implemented.
+**Status: Implemented Foundation + Future Vision.** An immutable deterministic contract for the
+repository owner's explicit facts is implemented in v0.10.1. Personalization effects, persistence,
+privacy controls, onboarding interfaces, and multi-user behavior remain unvalidated and unimplemented.
 
 ## Table of contents
 
 - [Role and scope](#role-and-scope)
 - [Potential attributes](#potential-attributes)
 - [Personalization](#personalization)
+- [Implemented v0.10.1 contract](#implemented-v0101-contract)
 - [User control and safeguards](#user-control-and-safeguards)
 - [Limitations](#limitations)
 - [Future considerations](#future-considerations)
@@ -44,6 +46,29 @@ and languages, explain resource gaps, present alternatives, or shape a bounded e
 platform should distinguish market evidence from personal fit: a strong Opportunity may be a poor
 fit for one profile, while low fit does not invalidate the market proposition.
 
+The implemented foundation performs none of these actions. RQ-CRT-001 and RQ-PRD-001 remain open;
+recording facts is not evidence that they improve relevance or measure feasibility.
+
+## Implemented v0.10.1 contract
+
+PD-008 and ADR-030 authorize one opaque profile identity, explicit schema/profile versions, and
+these optional self-declared facts:
+
+- preferred presentation style: faceless, on-camera, or mixed;
+- AI-assistance preference: avoid, open, or prefer;
+- one canonical lower-case language preference;
+- one upper-case two-letter target-geography code shape;
+- available production hours per week from zero through 168;
+- self-assessed editing capability;
+- narration preference;
+- self-declared relative production-budget category; and
+- upload-cadence goal.
+
+`None` means Unknown and remains serialized as `null`. Zero weekly hours and “no current cadence
+goal” are explicit facts, not Unknown. Categories carry no inferred quality, affordability, skill,
+policy compliance, or fit meaning. The value object is immutable, rejects extra fields, uses no
+clock or random defaults, and supports canonical compact UTF-8 JSON and SHA-256 content identity.
+
 ## User control and safeguards
 
 Users must be able to review, edit, remove, and understand profile data and its influence. The
@@ -72,3 +97,4 @@ and [Opportunity Confidence](OPPORTUNITY_CONFIDENCE.md).
 |---|---|---|
 | 1.0 | 2026-07-24 | Defined future creator-profile inputs and safeguards. |
 | 1.1 | 2026-07-24 | Marked the Creator Profile as unimplemented future Vision. |
+| 1.2 | 2026-07-24 | Documented the implemented v0.10.1 factual foundation and future boundaries. |
