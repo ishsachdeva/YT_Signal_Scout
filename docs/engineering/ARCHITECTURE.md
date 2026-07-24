@@ -6,6 +6,22 @@ YT Signal Scout is a modular monolith with explicit module boundaries. Applicati
 
 ## Analytics Pipeline
 
+### Governed Channel Intelligence
+
+ADR-028 defines a separate offline factual research boundary:
+
+```text
+Immutable Channel + Canonically Ordered Videos + Source Digest
+        -> ChannelIntelligenceValidator
+        -> EligibleVideoClassifier (Policy v1, once)
+        -> ChannelIntelligenceService
+        -> Immutable ChannelIntelligenceResult + Result Digest
+```
+
+It is the canonical source of channel-level research characteristics. It is not part of runtime
+analytics, application composition, or signal evaluation and performs no I/O, persistence, AI,
+comparison, scoring, ranking, recommendation, inference, or production policy.
+
 Analytics has two explicit deterministic execution paths. They share canonical source facts and
 typed metric results, but they do not share an execution registry.
 

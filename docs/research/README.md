@@ -20,6 +20,8 @@ or authorize runtime behavior.
   complete approved mathematical artifact without interpretation or candidate comparison.
 - [Research Architecture Stabilization Audit](../engineering/RESEARCH_ARCHITECTURE_STABILIZATION.md)
   records the verified end-to-end pipeline state and synthetic integrity coverage.
+- [Channel Intelligence Contract](../engineering/CHANNEL_INTELLIGENCE_FORMAT.md) defines the
+  deterministic immutable source of channel-level research facts and data-quality summaries.
 
 Study-specific datasets, configurations, executions, reports, labels, and reviews are not stored
 here unless a separately approved milestone explicitly adds them.

@@ -211,3 +211,19 @@ class StatisticalEvaluationValidationError(StatisticalEvaluationError):
 
 class StatisticalEvaluationDigestMismatchError(StatisticalEvaluationValidationError):
     """Raised when canonical statistical content differs from its digest."""
+
+
+class ChannelIntelligenceError(Exception):
+    """Base failure for governed channel intelligence."""
+
+
+class ChannelIntelligenceValidationError(ChannelIntelligenceError):
+    """Raised when channel-intelligence inputs do not bind exactly."""
+
+    def __init__(self, issues: tuple[str, ...]) -> None:
+        self.issues = issues
+        super().__init__("channel intelligence validation failed: " + "; ".join(issues))
+
+
+class ChannelIntelligenceDigestMismatchError(ChannelIntelligenceValidationError):
+    """Raised when source or result content differs from its declared digest."""

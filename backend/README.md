@@ -96,6 +96,12 @@ no threshold comparison, signal evaluation, ranking, or recommendation.
 
 ## Offline threshold research
 
+`ChannelIntelligenceService` is the offline canonical boundary for channel-level research facts.
+It verifies one immutable channel and ordered video tuple, reuses Eligible Video Policy v1, and
+returns population, format, subscriber-relative, upload, distribution, and data-quality summaries
+with source/result integrity. It performs no I/O or policy evaluation. See
+[`CHANNEL_INTELLIGENCE_FORMAT.md`](../docs/engineering/CHANNEL_INTELLIGENCE_FORMAT.md) and ADR-028.
+
 The `app/services/backtesting` package provides deterministic offline subscriber-band median-VSR
 threshold analysis. It accepts immutable historical observations and explicitly versioned band
 and candidate configurations, preserving structural failures and analytical exclusions as

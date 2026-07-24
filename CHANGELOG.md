@@ -4,6 +4,19 @@ This file records user-visible and architectural changes to YT Signal Scout by r
 
 ## Unreleased
 
+### v0.9.9 - Governed Channel Intelligence Framework
+
+- Added immutable schema-versioned Channel Intelligence definitions, configuration, requests,
+  summaries, metadata, manifests, results, validation, canonicalization, and service contracts.
+- Added deterministic population, format, subscriber-relative, upload, distribution, exclusion,
+  missing-value, canonical-ordering, and SHA-256 source/result integrity facts.
+- Added ADR-028, the canonical format specification, and normal/edge/corruption/math coverage.
+
+### Release boundaries
+
+- No scoring, ranking, AI, recommendation, confidence, cohort or threshold comparison, signal,
+  production policy, persistence, API, workflow, or external-service integration was added.
+
 ### Fixed
 
 - Narrowed governed pipeline exception translation to exact upstream integrity/binding failures so

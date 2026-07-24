@@ -45,6 +45,8 @@ Key documentation:
   approved mathematical metrics, Wilson intervals, and deterministic integrity boundary.
 - [Research Architecture Stabilization Audit](docs/engineering/RESEARCH_ARCHITECTURE_STABILIZATION.md)
   records verified boundary, validation, digest, mathematical, export, and dependency findings.
+- [Channel Intelligence Format](docs/engineering/CHANNEL_INTELLIGENCE_FORMAT.md) defines immutable
+  deterministic channel-level research facts and canonical integrity.
 - [Signal Catalog v1](docs/product/SIGNAL_CATALOG.md) governs proposed and approved signal policy.
 - [Backend README](backend/README.md) contains setup and test commands.
 - [Changelog](CHANGELOG.md) records release capabilities and boundaries.
