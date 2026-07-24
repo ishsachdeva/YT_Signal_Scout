@@ -216,8 +216,12 @@ one final label and rationale without altering the independent labels.
 Label artifacts record label-set ID/version, channel and observation IDs, reviewer/adjudicator
 identities, rubric and evidence-pack versions, timezone-aware timestamps, independent labels,
 final label, reason codes, and provenance. Reviewer strings alone do not establish authentication.
-The immutable engineering representation and strict canonical import boundary are defined by
-[Ground Truth Label JSON Format](../engineering/GROUND_TRUTH_LABEL_FORMAT.md) and ADR-022.
+The immutable engineering representations and strict canonical import boundaries are defined by
+[Evidence Pack JSON Format](../engineering/EVIDENCE_PACK_FORMAT.md),
+[Labelling Rubric JSON Format](../engineering/LABELLING_RUBRIC_FORMAT.md),
+[Ground Truth Label JSON Format](../engineering/GROUND_TRUTH_LABEL_FORMAT.md), ADR-022, and
+ADR-023. These contracts represent supplied artifacts only; they do not generate evidence, run a
+labelling workflow, or choose labels.
 
 ### 5.4 Label changes and agreement
 
@@ -480,6 +484,8 @@ close any SIG-002 Product or Architecture gap.
 - ADR-021: development-time Product/release governance and autonomous post-release runtime
   evaluation; research labels and evaluations never authorize individual runtime outcomes.
 - ADR-022: immutable ground-truth label artifacts, canonical import, and dataset/evidence binding.
+- ADR-023: immutable evidence-pack and labelling-rubric definitions, concrete evidence snapshots,
+  canonical integrity, and exact label-artifact binding.
 
 ## 12. Version history
 

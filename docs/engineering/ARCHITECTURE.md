@@ -262,6 +262,37 @@ metrics, execute a study, approve Product policy, or participate in autonomous p
 Schema version 1 is documented in
 [`GROUND_TRUTH_LABEL_FORMAT.md`](GROUND_TRUTH_LABEL_FORMAT.md).
 
+ADR-023 completes the references used by ground-truth labels with separate immutable evidence and
+rubric contracts:
+
+```text
+Versioned EvidencePackDefinition
+              |
+              v
+Dataset/Observation-bound EvidencePack ----+
+                                             |
+Versioned RubricDefinition -----------------+----> GroundTruthLabelArtifact
+ (criteria + labels + reason codes)          |       exact reference binding
+                                             |
+                     GroundTruthLabelBindingValidator
+                     (structure only; no decision)
+```
+
+An evidence-pack definition declares ordered item and typed primitive fact requirements. A
+concrete pack binds that exact definition digest to one historical dataset observation and retains
+typed facts, subject identities, semantic units, snapshot time, and its own digest. It contains no
+candidate outcome or reviewer decision.
+
+A rubric binds the exact definition and supplies ordered qualitative criteria, all four protocol
+label states, closed reason codes, and one human-readable non-executing decision rule per label.
+The binding validator verifies exact content identities and compatible reason codes but never
+selects or changes a label. Strict import and canonical SHA-256 integrity apply independently to
+evidence and rubrics. Neither contract generates evidence, renders media, operates a review
+workflow, calculates statistics, executes research, or participates in production runtime. Schema
+version 1 formats are documented in
+[`EVIDENCE_PACK_FORMAT.md`](EVIDENCE_PACK_FORMAT.md) and
+[`LABELLING_RUBRIC_FORMAT.md`](LABELLING_RUBRIC_FORMAT.md).
+
 ADR-014 defines the controlled execution boundary that follows successful import:
 
 ```text

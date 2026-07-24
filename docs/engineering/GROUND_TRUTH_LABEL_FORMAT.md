@@ -65,10 +65,17 @@ or calculate agreement.
 
 ## Evidence binding
 
-Every artifact records the exact concrete evidence-pack identity/version/content digest and exact
-rubric identity/version/digest used for the decision. All artifacts in one label set use the same
-evidence-pack definition identity/version and rubric version; concrete channel evidence-pack IDs
-and content digests may differ.
+Every artifact records the exact evidence-pack definition identity/version, concrete evidence-pack
+identity/version/content digest, and rubric identity/version/digest used for the decision. All
+artifacts in one label set use the same evidence-pack definition identity/version and rubric
+version; concrete channel evidence-pack IDs and content digests may differ. The concrete pack and
+rubric each bind the definition digest, so the existing schema-v1 label reference remains compatible
+while the cross-document validator verifies the full chain.
+
+The referenced contracts are defined by [Evidence Pack JSON Format](EVIDENCE_PACK_FORMAT.md) and
+[Labelling Rubric JSON Format](LABELLING_RUBRIC_FORMAT.md). Importing a label set does not generate
+either dependency; `GroundTruthLabelBindingValidator` verifies supplied, independently imported
+documents without choosing or changing a label.
 
 The label-set manifest and every artifact bind the same historical dataset identity/version. Labels
 never modify or become fields on the historical dataset.
@@ -126,4 +133,4 @@ label_set = result.label_set
 ```
 
 Import and serialization perform no statistics, threshold evaluation, study execution, Product
-decision, or runtime signal behavior. See ADR-022 and the SIG-002 Research Protocol.
+decision, or runtime signal behavior. See ADR-022, ADR-023, and the SIG-002 Research Protocol.

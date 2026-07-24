@@ -69,6 +69,66 @@ class GroundTruthLabelDigestMismatchError(GroundTruthLabelValidationError):
     """Raised when canonical labels do not match their declared digest."""
 
 
+class EvidencePackImportError(Exception):
+    """Base failure for governed evidence-pack import."""
+
+
+class EvidencePackReadError(EvidencePackImportError):
+    """Raised when an evidence-pack file cannot be read."""
+
+
+class EvidencePackSyntaxError(EvidencePackImportError):
+    """Raised when evidence-pack input is not valid JSON."""
+
+
+class UnsupportedEvidencePackSchemaError(EvidencePackImportError):
+    """Raised when an evidence-pack document declares an unsupported schema."""
+
+
+class EvidencePackValidationError(EvidencePackImportError):
+    """Raised when typed evidence-pack input is structurally invalid."""
+
+    def __init__(self, issues: tuple[str, ...]) -> None:
+        self.issues = issues
+        super().__init__("evidence-pack validation failed: " + "; ".join(issues))
+
+
+class EvidencePackDigestMismatchError(EvidencePackValidationError):
+    """Raised when evidence definition or pack digest validation fails."""
+
+
+class RubricImportError(Exception):
+    """Base failure for governed labelling-rubric import."""
+
+
+class RubricReadError(RubricImportError):
+    """Raised when a rubric file cannot be read."""
+
+
+class RubricSyntaxError(RubricImportError):
+    """Raised when rubric input is not valid JSON."""
+
+
+class UnsupportedRubricSchemaError(RubricImportError):
+    """Raised when a rubric document declares an unsupported schema."""
+
+
+class RubricValidationError(RubricImportError):
+    """Raised when typed rubric input is structurally invalid."""
+
+    def __init__(self, issues: tuple[str, ...]) -> None:
+        self.issues = issues
+        super().__init__("labelling-rubric validation failed: " + "; ".join(issues))
+
+
+class RubricDigestMismatchError(RubricValidationError):
+    """Raised when canonical rubric content does not match its digest."""
+
+
+class GroundTruthLabelBindingError(ValueError):
+    """Raised when a label does not bind its supplied evidence pack and rubric."""
+
+
 class BacktestExecutionError(Exception):
     """Base failure for controlled offline backtest execution."""
 

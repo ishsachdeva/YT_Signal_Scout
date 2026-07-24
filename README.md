@@ -25,6 +25,10 @@ Key documentation:
   2 custody, provenance, canonical serialization, and integrity validation.
 - [Ground Truth Label Format](docs/engineering/GROUND_TRUTH_LABEL_FORMAT.md) defines immutable
   dataset-bound independent labels, adjudication, version history, and canonical integrity.
+- [Evidence Pack Format](docs/engineering/EVIDENCE_PACK_FORMAT.md) defines immutable reviewer
+  evidence definitions, snapshots, typed facts, canonical serialization, and integrity checks.
+- [Labelling Rubric Format](docs/engineering/LABELLING_RUBRIC_FORMAT.md) defines closed criteria,
+  decision states, reason codes, and exact evidence-definition binding.
 - [Signal Catalog v1](docs/product/SIGNAL_CATALOG.md) governs proposed and approved signal policy.
 - [Backend README](backend/README.md) contains setup and test commands.
 - [Changelog](CHANGELOG.md) records release capabilities and boundaries.

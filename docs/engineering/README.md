@@ -31,6 +31,8 @@ New contributors should read the documents in the following order:
 | ARCHITECTURE.md | Current and target system architecture |
 | HISTORICAL_DATASET_FORMAT.md | Governed schema, custody, provenance, digest, and canonical import format |
 | GROUND_TRUTH_LABEL_FORMAT.md | Immutable dataset-bound labels, independent review, adjudication, and canonical import format |
+| EVIDENCE_PACK_FORMAT.md | Immutable reviewer evidence definitions, snapshots, facts, canonical import, and integrity |
+| LABELLING_RUBRIC_FORMAT.md | Versioned criteria, label states, reason codes, decision guidance, and canonical import |
 | adr/ | Architecture Decision Records |
 | ../research/SIG-002_RESEARCH_PROTOCOL.md | Canonical SIG-002 research methodology |
 | ../product/SIGNAL_CATALOG.md | Governed signal definitions, readiness, and threshold provenance |

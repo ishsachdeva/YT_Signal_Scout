@@ -121,6 +121,14 @@ This framework does not create labels, calculate agreement or threshold metrics,
 study. The format is documented in
 [`docs/engineering/GROUND_TRUTH_LABEL_FORMAT.md`](../docs/engineering/GROUND_TRUTH_LABEL_FORMAT.md).
 
+Reviewer evidence packs and labelling rubrics have their own strict schema-versioned import
+boundaries. `EvidencePackImporter` and `RubricImporter` verify canonical SHA-256 digests and return
+immutable typed documents; `GroundTruthLabelBindingValidator` verifies exact dataset, snapshot,
+definition, pack, rubric, observation, and channel bindings without choosing a label. The
+framework neither generates evidence nor runs a review workflow. See
+[`docs/engineering/EVIDENCE_PACK_FORMAT.md`](../docs/engineering/EVIDENCE_PACK_FORMAT.md) and
+[`docs/engineering/LABELLING_RUBRIC_FORMAT.md`](../docs/engineering/LABELLING_RUBRIC_FORMAT.md).
+
 `BacktestExecutionService` is the controlled synchronous execution boundary. It accepts one
 validated import result and one versioned study configuration bound to that dataset, invokes the
 existing backtester once, and returns immutable factual metadata with the report. Execution does

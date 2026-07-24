@@ -231,6 +231,8 @@ evidence:
 - ADR-021 supersedes the manual-approval portions of ADR-018 and ADR-019 and defines one-time
   Product/release governance followed by autonomous runtime evaluation.
 - ADR-022 defines immutable dataset-bound ground-truth labels without making a Product decision.
+- ADR-023 defines immutable evidence-pack and labelling-rubric contracts without generating
+  evidence, performing labelling, or making a Product decision.
 
 No governed dataset instance, execution result, study artifact, completed human evaluation, or
 research recommendation is committed. Test fixtures prove contract behavior only and are not
@@ -250,6 +252,7 @@ Product evidence.
 - ADR-012 through ADR-020: governed research, dataset, and eligibility contracts
 - ADR-021: release governance separated from autonomous runtime evaluation
 - ADR-022: ground-truth label artifacts and canonical integrity
+- ADR-023: reviewer evidence-pack and labelling-rubric contracts and canonical integrity
 
 ## Implementation blockers and dependencies
 

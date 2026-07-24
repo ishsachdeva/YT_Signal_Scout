@@ -17,6 +17,9 @@ This file records user-visible and architectural changes to YT Signal Scout by r
 - Immutable Ground Truth Label schema version 1 with dataset/evidence binding, two independent
   reviews, disagreement adjudication, supersession history, canonical serialization, strict import,
   SHA-256 integrity, and typed failures.
+- Immutable Evidence Pack and Labelling Rubric schema version 1 contracts with typed reviewer
+  facts, exact snapshot and definition binding, closed decision states and reason codes, strict
+  canonical import, SHA-256 integrity, and ground-truth label reference validation.
 
 ### Release boundaries
 
@@ -25,6 +28,7 @@ This file records user-visible and architectural changes to YT Signal Scout by r
 - SIG-002 remains blocked; no production threshold or production runtime behavior changed.
 - No historical dataset was created or imported, and no research execution or labelling occurred.
 - No ground-truth label artifact was created and no channel was labelled.
+- No evidence pack, rubric instance, label, dataset, or research result was created or generated.
 
 ## 0.6.0 - 2026-07-22
 
