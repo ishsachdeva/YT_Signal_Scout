@@ -129,6 +129,13 @@ framework neither generates evidence nor runs a review workflow. See
 [`docs/engineering/EVIDENCE_PACK_FORMAT.md`](../docs/engineering/EVIDENCE_PACK_FORMAT.md) and
 [`docs/engineering/LABELLING_RUBRIC_FORMAT.md`](../docs/engineering/LABELLING_RUBRIC_FORMAT.md).
 
+Governed study execution composes those imported artifacts with one historical dataset, one
+ground-truth label set, and one version-pinned configuration. `StudyExecutionService` validates
+complete cohort coverage and exact bindings and returns only an immutable canonical manifest; it
+does not run threshold analysis or calculate research metrics. See
+[`docs/engineering/STUDY_EXECUTION_FORMAT.md`](../docs/engineering/STUDY_EXECUTION_FORMAT.md) and
+ADR-024.
+
 `BacktestExecutionService` is the controlled synchronous execution boundary. It accepts one
 validated import result and one versioned study configuration bound to that dataset, invokes the
 existing backtester once, and returns immutable factual metadata with the report. Execution does

@@ -147,3 +147,19 @@ class BacktestExecutionConfigurationMismatchError(BacktestExecutionError):
 
 class BacktestExecutionStructuralError(BacktestExecutionError):
     """Raised when the backtester rejects or returns an invalid structure."""
+
+
+class StudyExecutionError(Exception):
+    """Base failure for governed, non-analytical study execution."""
+
+
+class StudyExecutionValidationError(StudyExecutionError):
+    """Raised when governed execution inputs do not bind exactly."""
+
+    def __init__(self, issues: tuple[str, ...]) -> None:
+        self.issues = issues
+        super().__init__("study execution validation failed: " + "; ".join(issues))
+
+
+class StudyExecutionDigestMismatchError(StudyExecutionValidationError):
+    """Raised when canonical execution content differs from its digest."""

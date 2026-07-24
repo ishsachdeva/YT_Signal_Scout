@@ -339,6 +339,13 @@ results into a new ranking model. Reviews identify the reviewer, decision, ratio
 Approval applies only to the research artifact and cannot publish policy or authorize production
 signal composition.
 
+ADR-024 adds a separate non-analytical governed study boundary. It consumes exactly one imported
+dataset, one ordered evidence-pack collection covering that cohort, one rubric, one label set, and
+one version-pinned configuration. It validates identities, observations, bindings, schemas, and
+digests, then returns immutable metadata, binding context, and a canonical execution manifest.
+Unlike the ADR-014 backtest service, it invokes no threshold backtester and produces no report,
+metric, interpretation, or policy recommendation.
+
 ADR-016 defines evaluation methodology separately from both execution facts and study reviews.
 `ThresholdEvaluationMethodology` is an immutable, versioned, ordered collection of criteria whose
 metrics map only to facts already present in `ThresholdBacktestReport`: qualification coverage,

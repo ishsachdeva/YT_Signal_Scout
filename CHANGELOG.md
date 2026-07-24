@@ -6,6 +6,21 @@ This file records user-visible and architectural changes to YT Signal Scout by r
 
 ### Added
 
+- Governed Study Definition and Execution schema version 1 with immutable configuration, input
+  bundle, request, metadata, context, manifest, and result contracts.
+- Pure synchronous study orchestration with cohort-wide dataset, observation, evidence, rubric,
+  ground-truth, schema-version, digest, canonical-order, and identity validation.
+- Canonical UTF-8 serialization and SHA-256 integrity for immutable execution results.
+
+### Release boundaries
+
+- No study was executed and no threshold, metric, statistic, recommendation, Product decision,
+  persistence, API, workflow, or runtime behavior was created.
+
+## 0.9.4 - 2026-07-24
+
+### Added
+
 - Canonical SIG-002 Research Protocol covering governed datasets, independent channel labels,
   deterministic classification metrics, Wilson intervals, sensitivity and boundary testing,
   immutable study artifacts, acceptance criteria, and the Product evidence boundary.

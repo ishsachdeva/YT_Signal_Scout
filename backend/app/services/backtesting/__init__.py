@@ -34,6 +34,9 @@ from app.services.backtesting.exceptions import (
     UnsupportedHistoricalDatasetSchemaError,
     UnsupportedGroundTruthLabelSchemaError,
     UnsupportedRubricSchemaError,
+    StudyExecutionDigestMismatchError,
+    StudyExecutionError,
+    StudyExecutionValidationError,
 )
 from app.services.backtesting.evidence_importer import (
     EvidencePackCanonicalizer,
@@ -157,8 +160,41 @@ from app.services.backtesting.study_models import (
     BacktestStudyStatus,
 )
 from app.services.backtesting.validation import BacktestDatasetValidator
+from app.services.backtesting.study_execution import (
+    StudyExecutionService,
+    StudyExecutionValidator,
+)
+from app.services.backtesting.study_execution_canonicalizer import (
+    StudyExecutionCanonicalizer,
+)
+from app.services.backtesting.study_execution_models import (
+    STUDY_EXECUTION_SCHEMA_VERSION,
+    StudyConfiguration,
+    StudyDefinition,
+    StudyExecutionContext,
+    StudyExecutionManifest,
+    StudyExecutionMetadata,
+    StudyExecutionRequest,
+    StudyExecutionResult,
+    StudyInputBundle,
+)
 
 __all__ = [
+    "STUDY_EXECUTION_SCHEMA_VERSION",
+    "StudyConfiguration",
+    "StudyDefinition",
+    "StudyExecutionCanonicalizer",
+    "StudyExecutionContext",
+    "StudyExecutionDigestMismatchError",
+    "StudyExecutionError",
+    "StudyExecutionManifest",
+    "StudyExecutionMetadata",
+    "StudyExecutionRequest",
+    "StudyExecutionResult",
+    "StudyExecutionService",
+    "StudyExecutionValidationError",
+    "StudyExecutionValidator",
+    "StudyInputBundle",
     "BacktestExecutionConfiguration",
     "BacktestExecutionConfigurationMismatchError",
     "BacktestExecutionDatasetMismatchError",
