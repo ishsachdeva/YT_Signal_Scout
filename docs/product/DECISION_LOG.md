@@ -184,6 +184,25 @@ lifecycle, score, AI output, discovery, retrieval, or persistence behavior. Evid
 binding, provenance, and downstream use remain open. **Related:** [Domain Model](DOMAIN_MODEL.md),
 [Opportunity Engine](OPPORTUNITY_ENGINE.md), Feature EM-001, and ADR-034.
 
+### PD-013: Authorize the immutable Evidence Snapshot foundation
+
+**Classification:** Product Decision. **Date:** 2026-07-24. **Status:** Decided for the foundational
+Evidence Snapshot milestone. **Decision:** Authorize one immutable, versioned binding containing
+only an opaque snapshot identity/version; one Evidence Manifest identity/version and supplied
+canonical SHA-256 digest; an explicit UTC-normalized designation timestamp; and optional bounded
+human-readable description. **Rationale:** Future qualification and research reproducibility
+require an integrity-pinned statement of which canonical immutable manifest representation is
+referenced without relying on a registry or embedding the manifest or its members. **Implication:** The
+snapshot is neither evidence, retrieval, storage, provenance, nor validation. It contains no
+payload, Evidence References, manifest object, URL, metadata, analytics, qualification,
+recommendation, lifecycle, confidence, AI output, discovery, retrieval, or persistence behavior.
+It records but never calculates or verifies the supplied manifest digest. `snapshot_timestamp` is
+when that exact manifest identity/version/digest was designated as the downstream evidence basis;
+it is not publication, observation, retrieval, manifest-creation, qualification-execution, or
+persistence time. Manifest existence, digest verification, evidence sufficiency, binding policy,
+and downstream use remain open. **Related:** [Domain Model](DOMAIN_MODEL.md), [Opportunity Engine](OPPORTUNITY_ENGINE.md),
+Feature ES-001, and ADR-035.
+
 ## Open decisions
 
 Opportunity qualification and lifecycle, evidence sufficiency, reference-set independence,
@@ -206,3 +225,4 @@ constraints, or measurable targets. Reconcile the Feature Registry after every m
 | 1.4 | 2026-07-24 | Authorized the factual pre-qualification Opportunity Candidate foundation. |
 | 1.5 | 2026-07-24 | Authorized the canonical payload-free Evidence Reference foundation. |
 | 1.6 | 2026-07-24 | Authorized the ordered immutable Evidence Manifest snapshot foundation. |
+| 1.7 | 2026-07-24 | Authorized the integrity-pinned Evidence Snapshot manifest binding. |

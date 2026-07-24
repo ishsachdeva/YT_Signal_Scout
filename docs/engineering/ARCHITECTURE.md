@@ -61,6 +61,18 @@ analytics, interpretation, qualification, scoring, confidence, lifecycle, recomm
 persistence, or AI behavior. It has no Opportunity, Candidate, acquisition, research, signals,
 HTTP, framework, external-service, or startup dependency.
 
+### Evidence Snapshot boundary
+
+ADR-035 defines `app.services.evidence_snapshot` as a deterministic identity-binding boundary
+downstream only of the Evidence Manifest identifier type. One immutable schema-versioned snapshot
+binds its identity/version to one manifest identity/version and supplied canonical manifest SHA-256
+digest at a UTC-normalized designation instant, with optional bounded description and compact UTF-8
+JSON plus its own SHA-256 content identity. It embeds no manifest or Evidence References, never
+calculates or verifies the supplied manifest digest, and performs no lookup, retrieval,
+discovery, analytics, qualification, confidence, recommendation, lifecycle, persistence, or AI
+behavior. It has no Opportunity, Candidate, Evidence Reference, research, signals, HTTP, framework,
+external-service, or startup dependency.
+
 ## Analytics Pipeline
 
 ### Governed Channel Intelligence

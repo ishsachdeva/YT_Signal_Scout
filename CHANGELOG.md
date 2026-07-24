@@ -4,6 +4,20 @@ This file records user-visible and architectural changes to YT Signal Scout by r
 
 ## Unreleased
 
+### Evidence Snapshot Domain Foundation
+
+- Added an immutable schema-versioned, time-specific binding from one snapshot identity/version to
+  one exact Evidence Manifest identity/version and supplied canonical SHA-256 digest, with optional
+  description.
+- Added strict version, identifier, lower-case manifest-digest, designation-timestamp, canonical
+  JSON, SHA-256, public-export, and dependency-isolation coverage under PD-013 and ADR-035.
+
+### Release boundaries
+
+- No evidence payload, Evidence References, embedded manifest, provenance, URL, metadata,
+  manifest lookup/digest calculation/verification, retrieval, validation, discovery, analytics, qualification, recommendation, lifecycle,
+  confidence, persistence, API, workflow, AI, external service, or startup behavior was added.
+
 ### Evidence Manifest Domain Foundation
 
 - Added an immutable schema-versioned snapshot declaring an exact non-empty ordered collection of

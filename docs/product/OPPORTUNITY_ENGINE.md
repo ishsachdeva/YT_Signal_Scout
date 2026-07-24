@@ -8,10 +8,10 @@ architecture only: no algorithm, formula, score, threshold, or implementation is
 ## Product Knowledge Status
 
 **Status: Implemented Foundation + Future Vision.** Canonical Opportunity, Opportunity Candidate,
-Evidence Reference, and Evidence Manifest domain contracts are implemented under PD-009 through
-PD-012 and ADR-031 through ADR-034. No Opportunity discovery, Candidate/evidence registry, evidence
-retrieval or validation, qualification, promotion, confidence, recommendation, lifecycle service,
-algorithm, or runtime workflow is implemented.
+Evidence Reference, Evidence Manifest, and Evidence Snapshot domain contracts are implemented under
+PD-009 through PD-013 and ADR-031 through ADR-035. No Opportunity discovery, Candidate/evidence
+registry, evidence retrieval or validation, qualification, promotion, confidence, recommendation,
+lifecycle service, algorithm, or runtime workflow is implemented.
 
 ## Table of contents
 
@@ -20,6 +20,7 @@ algorithm, or runtime workflow is implemented.
 - [Implemented Candidate foundation](#implemented-candidate-foundation)
 - [Implemented Evidence Reference foundation](#implemented-evidence-reference-foundation)
 - [Implemented Evidence Manifest foundation](#implemented-evidence-manifest-foundation)
+- [Implemented Evidence Snapshot foundation](#implemented-evidence-snapshot-foundation)
 - [Inputs](#inputs)
 - [Evidence lifecycle](#evidence-lifecycle)
 - [Opportunity lifecycle](#opportunity-lifecycle)
@@ -83,6 +84,18 @@ The manifest stores reference identities only. It does not embed Evidence Refere
 and it performs no sorting, deduplication, retrieval, reference validation, discovery,
 interpretation, qualification, analytics, lifecycle, confidence, scoring, recommendation,
 persistence, or AI behavior.
+
+## Implemented Evidence Snapshot foundation
+
+Schema version 1 binds one opaque versioned snapshot identity to exactly one Evidence Manifest
+identity/version and supplied canonical SHA-256 digest at the explicit UTC-normalized instant when
+that representation was designated as the evidence basis, with optional bounded description. It
+is immutable, strictly validated, hashable, canonically serialized, and content-addressable.
+
+The snapshot stores neither a manifest nor Evidence References. It never calculates or verifies the
+manifest digest, performs no manifest lookup or existence validation, and contains no evidence, payload, provenance, URL, metadata, analytics,
+qualification, recommendation, lifecycle, confidence, discovery, retrieval, persistence, or AI
+behavior.
 
 ## Inputs
 
@@ -155,3 +168,4 @@ Related: [Domain Model](DOMAIN_MODEL.md), [Feature Registry](FEATURE_REGISTRY.md
 | 1.3 | 2026-07-24 | Recorded the factual Candidate foundation without advancing discovery or qualification. |
 | 1.4 | 2026-07-24 | Recorded the payload-free Evidence Reference foundation without adding evidence behavior. |
 | 1.5 | 2026-07-24 | Recorded the ordered Evidence Manifest foundation without adding evidence behavior. |
+| 1.6 | 2026-07-24 | Recorded the integrity-pinned Evidence Snapshot binding without adding validation. |

@@ -75,6 +75,17 @@ deduplicates references and contains no evidence payload, provenance, URL, metad
 validation, discovery, analytics, qualification, confidence, lifecycle, scoring, recommendation,
 persistence, I/O, AI, or startup behavior.
 
+## Evidence Snapshot
+
+`app.services.evidence_snapshot` exposes the immutable schema-versioned manifest binding approved by
+PD-013 and ADR-035. It binds one versioned snapshot identity to exactly one Evidence Manifest
+identity/version and supplied canonical manifest SHA-256 digest at a UTC-normalized designation
+instant, with optional bounded description. Strict validation, compact sorted-key UTF-8 JSON, and
+SHA-256 provide deterministic Snapshot identity. The module embeds no manifest or Evidence
+References, never calculates or verifies the supplied manifest digest, and performs no evidence handling, provenance, metadata, URL,
+retrieval, validation, discovery, analytics, qualification, confidence, lifecycle, recommendation,
+persistence, I/O, AI, or startup behavior.
+
 ## YouTube data acquisition
 
 Set `YOUTUBE_API_KEY` before constructing a `YouTubeClient`. `YOUTUBE_TIMEOUT`,
