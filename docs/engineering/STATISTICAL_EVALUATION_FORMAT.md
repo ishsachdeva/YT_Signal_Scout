@@ -41,14 +41,17 @@ accuracy use binary cohort size; precision uses `TP+FP`; recall uses `TP+FN`; sp
 
 Balanced accuracy uses a specified plug-in Wilson transform over the averaged estimate and binary
 cohort size. It is not represented as a raw binomial success fraction and receives no inferential
-interpretation in this contract.
+interpretation in this contract. Consumers distinguish it through the dedicated
+`balanced_accuracy_interval` field; changing its convention or sample-size rule requires a new
+version.
 
 ## Undefined domains and validation
 
 Every metric is required. A zero denominator or MCC factor rejects the request; no partial result,
 null, zero substitution, infinity, or NaN is emitted. Validation also rejects invalid counts or
 totals, aggregation identity/version/schema mismatch, aggregation digest mismatch, duplicate
-identities, unknown fields, and naive timestamps.
+identities, unknown fields, and naive timestamps. Aggregation integrity failures are translated to
+the statistical digest-error subtype; unrelated programming errors are not intercepted.
 
 ## Determinism and canonical integrity
 
@@ -56,4 +59,3 @@ Arithmetic uses Decimal precision 50 with exact constants before final finite fl
 Canonical output uses UTF-8 JSON, sorted object keys, no insignificant whitespace, retained
 Unicode, and rejection of non-finite values. The manifest binds the source aggregation-result
 digest and SHA-256 of all statistical metadata, metrics, and intervals.
-

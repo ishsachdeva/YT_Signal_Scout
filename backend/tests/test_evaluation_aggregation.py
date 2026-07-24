@@ -121,6 +121,18 @@ def test_summary_invariants_reject_inconsistent_totals() -> None:
         EvaluationAggregationSummary.model_validate(values)
 
 
+def test_boolean_counts_and_expected_cohort_size_are_rejected() -> None:
+    summary = EvaluationAggregationService().aggregate(_request()).summary.model_dump()
+    summary["true_positive_count"] = True
+    with pytest.raises(ValidationError):
+        EvaluationAggregationSummary.model_validate(summary)
+
+    configuration = _request().configuration.model_dump()
+    configuration["expected_observation_count"] = True
+    with pytest.raises(ValidationError):
+        EvaluationAggregationConfiguration.model_validate(configuration)
+
+
 def test_observation_count_and_duplicate_outcomes_are_rejected() -> None:
     request = _request()
     configuration = request.configuration.model_copy(
@@ -169,7 +181,7 @@ def test_unknown_fields_identity_reuse_and_source_digest_tampering_are_rejected(
         }
     )
     tampered = request.model_copy(update={"evaluation_result": altered})
-    with pytest.raises(EvaluationAggregationValidationError, match="digest"):
+    with pytest.raises(EvaluationAggregationDigestMismatchError, match="digest"):
         EvaluationAggregationService().aggregate(tampered)
 
     forged_observation = source.observations[0].model_copy(

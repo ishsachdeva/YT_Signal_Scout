@@ -112,6 +112,8 @@ def test_required_metrics_are_mathematically_correct_and_deterministic() -> None
     assert summary.negative_predictive_value == pytest.approx(40 / 45)
     assert summary.false_positive_rate == pytest.approx(10 / 50)
     assert summary.false_negative_rate == pytest.approx(5 / 55)
+    assert summary.false_positive_rate == pytest.approx(1 - summary.specificity)
+    assert summary.false_negative_rate == pytest.approx(1 - summary.recall)
     assert summary.balanced_accuracy == pytest.approx(((50 / 55) + (40 / 50)) / 2)
     assert summary.f1_score == pytest.approx(100 / 115)
     assert summary.matthews_correlation_coefficient == pytest.approx(
@@ -140,6 +142,7 @@ def test_wilson_intervals_use_configured_formula_and_denominators() -> None:
         assert interval.sample_size == sample_size
         assert interval.lower_bound == pytest.approx(lower)
         assert interval.upper_bound == pytest.approx(upper)
+        assert 0 <= interval.lower_bound <= interval.estimate <= interval.upper_bound <= 1
 
 
 def test_undefined_domains_fail_instead_of_returning_partial_metrics() -> None:
@@ -178,6 +181,15 @@ def test_identity_version_unknown_fields_and_invalid_counts_are_rejected() -> No
             request.model_copy(update={"aggregation_result": forged})
         )
 
+    boolean_summary = request.aggregation_result.summary.model_copy(
+        update={"true_positive_count": True}
+    )
+    forged = request.aggregation_result.model_copy(update={"summary": boolean_summary})
+    with pytest.raises(StatisticalEvaluationValidationError, match="non-negative integers"):
+        StatisticalEvaluationService().evaluate(
+            request.model_copy(update={"aggregation_result": forged})
+        )
+
 
 def test_source_and_result_digest_tampering_are_rejected() -> None:
     request = _request()
@@ -210,7 +222,7 @@ def test_structurally_valid_stale_source_digest_and_naive_time_are_rejected() ->
         }
     )
     stale = source.model_copy(update={"summary": summary})
-    with pytest.raises(StatisticalEvaluationValidationError, match="digest"):
+    with pytest.raises(StatisticalEvaluationDigestMismatchError, match="digest"):
         StatisticalEvaluationService().evaluate(
             request.model_copy(update={"aggregation_result": stale})
         )

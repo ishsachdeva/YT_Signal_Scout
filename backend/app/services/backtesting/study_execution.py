@@ -3,7 +3,15 @@
 from __future__ import annotations
 
 from app.services.backtesting.evidence_importer import EvidencePackCanonicalizer
-from app.services.backtesting.exceptions import StudyExecutionValidationError
+from app.services.backtesting.exceptions import (
+    EvidencePackDigestMismatchError,
+    GroundTruthLabelBindingError,
+    GroundTruthLabelDigestMismatchError,
+    HistoricalDatasetDigestMismatchError,
+    RubricDigestMismatchError,
+    StudyExecutionDigestMismatchError,
+    StudyExecutionValidationError,
+)
 from app.services.backtesting.importer import HistoricalDatasetCanonicalizer
 from app.services.backtesting.label_binding import GroundTruthLabelBindingValidator
 from app.services.backtesting.label_importer import GroundTruthLabelCanonicalizer
@@ -97,11 +105,20 @@ class StudyExecutionValidator:
                 EvidencePackCanonicalizer.validate_pack_digest(document.pack)
             RubricCanonicalizer.validate_digest(inputs.labelling_rubric.document)
             GroundTruthLabelCanonicalizer.validate_digest(labels.manifest, labels.label_set.artifacts)
+        except (
+            HistoricalDatasetDigestMismatchError,
+            EvidencePackDigestMismatchError,
+            RubricDigestMismatchError,
+            GroundTruthLabelDigestMismatchError,
+        ) as exc:
+            raise StudyExecutionDigestMismatchError((str(exc),)) from exc
+
+        try:
             for observation_id, artifact in artifacts.items():
-                self._label_binding.validate(artifact, evidence_by_observation[observation_id], rubric)
-        except Exception as exc:
-            if isinstance(exc, StudyExecutionValidationError):
-                raise
+                self._label_binding.validate(
+                    artifact, evidence_by_observation[observation_id], rubric
+                )
+        except GroundTruthLabelBindingError as exc:
             raise StudyExecutionValidationError((str(exc),)) from exc
 
         identities = (

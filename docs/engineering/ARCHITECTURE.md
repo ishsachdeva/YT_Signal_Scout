@@ -211,7 +211,7 @@ HistoricalDatasetImportResult
 SubscriberRelativeBacktestDataset
         |
         v
-Future controlled offline execution
+Governed Study Execution and downstream evaluation
 ```
 
 Import validates structure, declared custody metadata, cutoff, and content integrity but cannot
@@ -363,6 +363,10 @@ the approved binary-classification metric set and specified Wilson intervals fro
 immutable aggregation result using high-precision Decimal arithmetic. Undefined required domains
 reject the entire artifact. The boundary performs no threshold/candidate comparison, ranking,
 selection, interpretation, recommendation, Product decision, or runtime behavior.
+
+The verified boundary, validation, digest, mathematical, export, exception, and dependency state
+through v0.9.8 is recorded in
+[`RESEARCH_ARCHITECTURE_STABILIZATION.md`](RESEARCH_ARCHITECTURE_STABILIZATION.md).
 
 ADR-016 defines evaluation methodology separately from both execution facts and study reviews.
 `ThresholdEvaluationMethodology` is an immutable, versioned, ordered collection of criteria whose
@@ -553,7 +557,6 @@ Raw API response shapes and Google SDK types must not cross the canonical domain
 
 ### Planned Pipeline Stages
 
-- Acquisition provenance and subscriber-relative qualification implementation under ADR-010
 - Product-approved signal rules
 - AI Narrative Engine
 

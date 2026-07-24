@@ -40,9 +40,8 @@ complete metadata, context, and remaining manifest.
 
 Unknown or missing typed fields fail Pydantic validation. `StudyExecutionValidationError` rejects
 identity, observation, binding, schema, ordering, duplicate, or digest mismatches.
-`StudyExecutionDigestMismatchError` rejects altered serialized execution content. Validation is
-all-or-nothing and returns no partial result.
+`StudyExecutionDigestMismatchError` rejects corrupted governed source integrity or altered
+serialized execution content. Validation is all-or-nothing and returns no partial result.
 
 The service performs no file I/O and has no execution importer. Existing governed artifact
 importers remain the sole JSON trust boundaries for dataset, evidence, rubric, and labels.
-

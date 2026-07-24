@@ -12,7 +12,7 @@ observation count.
 
 ## Summary
 
-`EvaluationAggregationSummary` exposes only non-negative integer counts:
+`EvaluationAggregationSummary` exposes only strict non-Boolean, non-negative integer counts:
 
 - True Positive
 - True Negative
@@ -30,8 +30,9 @@ Evaluated. No percentage, ratio, rate, score, or interval exists.
 ## Validation
 
 The validator requires exact definition/configuration/evaluation bindings, supported schema and
-outcome vocabulary, the declared observation count, unique observation identities, canonical
-observation ordering, unique aggregation identities, and a valid source evaluation digest.
+outcome vocabulary, the strict non-Boolean declared observation count, unique observation
+identities, canonical observation ordering, unique aggregation identities, and a valid source
+evaluation digest. Source integrity failures use the aggregation digest-error subtype.
 Unknown fields fail typed validation. Validation is all-or-nothing.
 
 ## Output and canonicalization
@@ -45,4 +46,3 @@ digest while excluding only the result digest's own field.
 
 This boundary has no importer because it consumes an already typed and integrity-validated
 `EvaluationResult`; a future external artifact format requires separate approval.
-

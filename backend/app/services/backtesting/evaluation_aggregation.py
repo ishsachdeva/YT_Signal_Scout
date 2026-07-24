@@ -15,7 +15,11 @@ from app.services.backtesting.evaluation_aggregation_models import (
     EvaluationAggregationResult,
     EvaluationAggregationSummary,
 )
-from app.services.backtesting.exceptions import EvaluationAggregationValidationError
+from app.services.backtesting.exceptions import (
+    EvaluationAggregationDigestMismatchError,
+    EvaluationAggregationValidationError,
+    EvaluationDigestMismatchError,
+)
 from app.services.backtesting.label_models import LabelContentDigest
 from app.services.backtesting.labelled_evaluation_canonicalizer import (
     EvaluationCanonicalizer,
@@ -66,8 +70,8 @@ class EvaluationAggregationValidator:
             self._fail("aggregation identities must be unique")
         try:
             EvaluationCanonicalizer.validate_result_digest(evaluation)
-        except Exception as exc:
-            raise EvaluationAggregationValidationError((str(exc),)) from exc
+        except EvaluationDigestMismatchError as exc:
+            raise EvaluationAggregationDigestMismatchError((str(exc),)) from exc
 
     @staticmethod
     def _fail(issue: str) -> None:

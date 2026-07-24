@@ -18,6 +18,8 @@ or authorize runtime behavior.
   counts-only cohort boundary used before derived statistical metrics.
 - [Statistical Evaluation Contract](../engineering/STATISTICAL_EVALUATION_FORMAT.md) defines the
   complete approved mathematical artifact without interpretation or candidate comparison.
+- [Research Architecture Stabilization Audit](../engineering/RESEARCH_ARCHITECTURE_STABILIZATION.md)
+  records the verified end-to-end pipeline state and synthetic integrity coverage.
 
 Study-specific datasets, configurations, executions, reports, labels, and reviews are not stored
 here unless a separately approved milestone explicitly adds them.

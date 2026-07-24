@@ -82,7 +82,7 @@ class WilsonScoreInterval(BaseModel):
     estimate: UnitInterval
     lower_bound: UnitInterval
     upper_bound: UnitInterval
-    sample_size: int = Field(gt=0)
+    sample_size: int = Field(gt=0, strict=True)
 
     @model_validator(mode="after")
     def validate_bounds(self) -> WilsonScoreInterval:
@@ -179,4 +179,3 @@ class StatisticalEvaluationResult(BaseModel):
     metadata: StatisticalEvaluationMetadata
     summary: StatisticalEvaluationSummary
     manifest: StatisticalEvaluationManifest
-

@@ -15,6 +15,12 @@ reports; it does not select or recommend production policy. No production signal
 approved, registered, or emitted. SIG-002 remains blocked pending governed research and explicit
 Product Owner decisions with required Analytics Owner review.
 
+The governed artifact path separately imports historical datasets, evidence, rubrics, and labels;
+validates one study execution; compares supplied predictions with final labels per observation;
+counts those outcomes; and calculates the approved mathematical statistics. Each boundary remains
+immutable, content-addressed, offline, and absent from application startup. No real study artifact
+is stored in this repository.
+
 Key documentation:
 
 - [Decision Governance](docs/governance/DECISION_GOVERNANCE.md) defines repository-wide decision
@@ -37,6 +43,8 @@ Key documentation:
   immutable counts-only cohort summaries without statistical metrics.
 - [Statistical Evaluation Format](docs/engineering/STATISTICAL_EVALUATION_FORMAT.md) defines the
   approved mathematical metrics, Wilson intervals, and deterministic integrity boundary.
+- [Research Architecture Stabilization Audit](docs/engineering/RESEARCH_ARCHITECTURE_STABILIZATION.md)
+  records verified boundary, validation, digest, mathematical, export, and dependency findings.
 - [Signal Catalog v1](docs/product/SIGNAL_CATALOG.md) governs proposed and approved signal policy.
 - [Backend README](backend/README.md) contains setup and test commands.
 - [Changelog](CHANGELOG.md) records release capabilities and boundaries.

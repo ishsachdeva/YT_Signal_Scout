@@ -7,7 +7,11 @@ from decimal import Decimal, localcontext
 from app.services.backtesting.evaluation_aggregation_canonicalizer import (
     EvaluationAggregationCanonicalizer,
 )
-from app.services.backtesting.exceptions import StatisticalEvaluationValidationError
+from app.services.backtesting.exceptions import (
+    EvaluationAggregationDigestMismatchError,
+    StatisticalEvaluationDigestMismatchError,
+    StatisticalEvaluationValidationError,
+)
 from app.services.backtesting.label_models import LabelContentDigest
 from app.services.backtesting.statistical_evaluation_canonicalizer import (
     StatisticalEvaluationCanonicalizer,
@@ -90,8 +94,8 @@ class StatisticalEvaluationValidator:
             self._fail("statistical identities must be unique")
         try:
             EvaluationAggregationCanonicalizer.validate_result_digest(aggregation)
-        except Exception as exc:
-            raise StatisticalEvaluationValidationError((str(exc),)) from exc
+        except EvaluationAggregationDigestMismatchError as exc:
+            raise StatisticalEvaluationDigestMismatchError((str(exc),)) from exc
 
     @staticmethod
     def _fail(issue: str) -> None:
@@ -212,4 +216,3 @@ class StatisticalEvaluationService:
             upper_bound=float(upper),
             sample_size=sample_size,
         )
-

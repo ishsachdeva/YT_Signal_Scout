@@ -16,6 +16,7 @@ from app.services.backtesting import (
     EvaluationValidationError,
     EvaluationDigestMismatchError,
     GroundTruthLabel,
+    LabelContentDigest,
     LabelledEvaluationService,
     ObservationPrediction,
     PredictedOutcome,
@@ -164,3 +165,18 @@ def test_duplicate_predictions_and_digest_tampering_are_rejected() -> None:
     )
     with pytest.raises(EvaluationDigestMismatchError):
         EvaluationCanonicalizer.serialize_result(altered)
+
+
+def test_corrupted_study_execution_uses_evaluation_digest_error() -> None:
+    request = _request()
+    manifest = request.study_execution.manifest.model_copy(
+        update={
+            "result_digest": LabelContentDigest(algorithm="sha256", value="0" * 64)
+        }
+    )
+    execution = request.study_execution.model_copy(update={"manifest": manifest})
+
+    with pytest.raises(EvaluationDigestMismatchError):
+        LabelledEvaluationService().evaluate(
+            request.model_copy(update={"study_execution": execution})
+        )

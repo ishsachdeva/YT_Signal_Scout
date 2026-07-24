@@ -2,7 +2,13 @@
 
 from __future__ import annotations
 
-from app.services.backtesting.exceptions import EvaluationValidationError
+from app.services.backtesting.exceptions import (
+    EvaluationDigestMismatchError,
+    EvaluationValidationError,
+    GroundTruthLabelDigestMismatchError,
+    HistoricalDatasetDigestMismatchError,
+    StudyExecutionDigestMismatchError,
+)
 from app.services.backtesting.importer import HistoricalDatasetCanonicalizer
 from app.services.backtesting.label_importer import GroundTruthLabelCanonicalizer
 from app.services.backtesting.label_models import GroundTruthLabel, LabelContentDigest
@@ -134,8 +140,12 @@ class EvaluationValidator:
                 labels.manifest, labels.label_set.artifacts
             )
             StudyExecutionCanonicalizer.validate_result_digest(execution)
-        except Exception as exc:
-            raise EvaluationValidationError((str(exc),)) from exc
+        except (
+            HistoricalDatasetDigestMismatchError,
+            GroundTruthLabelDigestMismatchError,
+            StudyExecutionDigestMismatchError,
+        ) as exc:
+            raise EvaluationDigestMismatchError((str(exc),)) from exc
 
     @staticmethod
     def _fail(issue: str) -> None:

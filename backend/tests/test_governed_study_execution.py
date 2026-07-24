@@ -17,10 +17,12 @@ from app.services.backtesting import (
     StudyConfiguration,
     StudyDefinition,
     StudyExecutionCanonicalizer,
+    StudyExecutionDigestMismatchError,
     StudyExecutionRequest,
     StudyExecutionService,
     StudyExecutionValidationError,
     StudyInputBundle,
+    HistoricalDatasetDigest,
 )
 from app.services.backtesting.evidence_models import EvidencePackDocument
 from app.services.backtesting.rubric_models import RubricDocument
@@ -165,3 +167,19 @@ def test_unknown_request_fields_and_duplicate_execution_identity_are_rejected() 
     )
     with pytest.raises(StudyExecutionValidationError, match="identities must be unique"):
         StudyExecutionService().execute(duplicate)
+
+
+def test_corrupted_governed_source_uses_execution_digest_error() -> None:
+    request = _request()
+    manifest = request.inputs.dataset.manifest.model_copy(
+        update={
+            "digest": HistoricalDatasetDigest(algorithm="sha256", value="0" * 64)
+        }
+    )
+    dataset = request.inputs.dataset.model_copy(update={"manifest": manifest})
+    corrupted = request.model_copy(
+        update={"inputs": request.inputs.model_copy(update={"dataset": dataset})}
+    )
+
+    with pytest.raises(StudyExecutionDigestMismatchError):
+        StudyExecutionService().execute(corrupted)

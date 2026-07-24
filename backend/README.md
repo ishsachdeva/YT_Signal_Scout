@@ -157,6 +157,11 @@ does not compare candidates or thresholds and contains no interpretation or reco
 [`docs/engineering/STATISTICAL_EVALUATION_FORMAT.md`](../docs/engineering/STATISTICAL_EVALUATION_FORMAT.md)
 and ADR-027.
 
+The complete governed research chain and its negative-validation, canonicalization, mathematical,
+export, exception, and dependency properties are reconciled in the
+[`Research Architecture Stabilization Audit`](../docs/engineering/RESEARCH_ARCHITECTURE_STABILIZATION.md).
+The audit executes synthetic fixtures only and adds no research or runtime capability.
+
 `BacktestExecutionService` is the controlled synchronous execution boundary. It accepts one
 validated import result and one versioned study configuration bound to that dataset, invokes the
 existing backtester once, and returns immutable factual metadata with the report. Execution does

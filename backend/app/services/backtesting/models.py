@@ -43,7 +43,7 @@ class BacktestExclusionReason(StrEnum):
 class SubscriberRelativeBacktestObservation(BaseModel):
     """Minimum immutable historical input needed for subscriber-band research."""
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     observation_id: ResearchIdentifier
     channel_id: Annotated[str, Field(min_length=1, max_length=100)]
@@ -80,7 +80,7 @@ class SubscriberRelativeBacktestObservation(BaseModel):
 class SubscriberRelativeBacktestDataset(BaseModel):
     """Versioned immutable historical observation cohort."""
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     dataset_id: ResearchIdentifier
     version: int = Field(ge=1)
@@ -90,7 +90,7 @@ class SubscriberRelativeBacktestDataset(BaseModel):
 class SubscriberBandDefinition(BaseModel):
     """One inclusive-lower, exclusive-upper positive subscriber range."""
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     band_id: ResearchIdentifier
     lower_bound: int = Field(gt=0)
@@ -113,7 +113,7 @@ class SubscriberBandDefinition(BaseModel):
 class SubscriberBandSet(BaseModel):
     """Explicitly ordered, versioned subscriber-band research configuration."""
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     band_set_id: ResearchIdentifier
     version: int = Field(ge=1)
@@ -154,7 +154,7 @@ class SubscriberBandSet(BaseModel):
 class MedianVsrThresholdCandidate(BaseModel):
     """One explicitly identified median-VSR threshold research candidate."""
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     candidate_id: ResearchIdentifier
     threshold: float = Field(ge=0)
@@ -176,7 +176,7 @@ class MedianVsrThresholdCandidate(BaseModel):
 class MedianVsrThresholdSet(BaseModel):
     """Explicitly ordered, versioned threshold research configuration."""
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     threshold_set_id: ResearchIdentifier
     version: int = Field(ge=1)
@@ -195,7 +195,7 @@ class MedianVsrThresholdSet(BaseModel):
 class QualificationCoverageSummary(BaseModel):
     """Factual qualification and metric-availability coverage counts."""
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     total_observations: int = Field(ge=0)
     qualified_observations: int = Field(ge=0)
@@ -233,7 +233,7 @@ class QualificationCoverageSummary(BaseModel):
 class DistributionSummary(BaseModel):
     """Deterministic unrounded distribution statistics for eligible VSR values."""
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     eligible_observation_count: int = Field(ge=0)
     minimum: float | None
@@ -263,7 +263,7 @@ class DistributionSummary(BaseModel):
 class ThresholdEvaluationResult(BaseModel):
     """Factual result for one subscriber-band and threshold-candidate pair."""
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     band_id: ResearchIdentifier
     candidate_id: ResearchIdentifier
@@ -294,7 +294,7 @@ class ThresholdEvaluationResult(BaseModel):
 class QualificationFailureCount(BaseModel):
     """Count of one existing qualification failure in enum order."""
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     failure: QualificationFailureReason
     count: int = Field(gt=0)
@@ -303,7 +303,7 @@ class QualificationFailureCount(BaseModel):
 class BacktestExclusion(BaseModel):
     """Normal typed exclusion retained in canonical observation order."""
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     observation_id: ResearchIdentifier
     channel_id: Annotated[str, Field(min_length=1, max_length=100)]
@@ -314,7 +314,7 @@ class BacktestExclusion(BaseModel):
 class SubscriberBandBacktestResult(BaseModel):
     """Coverage, distribution, and candidate results for one configured band."""
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     band_id: ResearchIdentifier
     coverage: QualificationCoverageSummary
@@ -325,7 +325,7 @@ class SubscriberBandBacktestResult(BaseModel):
 class ThresholdBacktestReport(BaseModel):
     """Serializable immutable factual report for one complete backtest invocation."""
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     dataset_id: ResearchIdentifier
     dataset_version: int = Field(ge=1)

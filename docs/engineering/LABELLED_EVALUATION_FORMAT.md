@@ -42,6 +42,5 @@ excludes only its own field.
 
 Typed validation rejects missing/unknown fields and unsupported vocabulary. `EvaluationValidator`
 rejects dataset, execution, label, observation, channel, ordering, duplicate, version, and digest
-mismatches. `EvaluationDigestMismatchError` rejects altered result content. Validation is
-all-or-nothing and returns no partial evaluation.
-
+mismatches. `EvaluationDigestMismatchError` rejects corrupted source integrity or altered result
+content. Validation is all-or-nothing and returns no partial evaluation.

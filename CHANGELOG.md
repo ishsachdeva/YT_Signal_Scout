@@ -4,6 +4,27 @@ This file records user-visible and architectural changes to YT Signal Scout by r
 
 ## Unreleased
 
+### Fixed
+
+- Narrowed governed pipeline exception translation to exact upstream integrity/binding failures so
+  programming errors are not masked and callers retain typed digest distinctions.
+- Rejected Boolean research counts/cohort sizes and unknown direct-construction fields across the
+  reused immutable backtesting contracts.
+
+### Added
+
+- Complete synthetic research-pipeline integrity coverage, public-export/dependency guards, and
+  the v0.9.8.1 Research Architecture Stabilization audit with validation/digest traceability.
+
+### Release boundaries
+
+- No real research was executed and no new research capability was added.
+- No threshold or candidate was compared, ranked, selected, or recommended; no Product decision
+  was created and no runtime behavior changed.
+- No API, persistence, workflow, AI, production signal, or external artifact importer was added.
+
+## 0.9.8 - 2026-07-24
+
 ### Added
 
 - Governed Statistical Evaluation schema version 1 with immutable definitions, configuration,

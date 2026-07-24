@@ -144,6 +144,13 @@ class HistoricalDatasetImporterTests(TestCase):
         with self.assertRaises(ValidationError):
             result.manifest.schema_version = 3
 
+    def test_historical_observation_contract_rejects_unknown_direct_fields(self) -> None:
+        values = _observation("observation-1").model_dump()
+        values["unregistered_fact"] = "not governed"
+
+        with self.assertRaises(ValidationError):
+            SubscriberRelativeBacktestObservation.model_validate(values)
+
     def test_file_import_uses_the_same_contract(self) -> None:
         payload = _json(_observation("observation-1"))
         with patch(

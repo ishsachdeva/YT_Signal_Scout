@@ -25,7 +25,7 @@ class EvaluationAggregationConfiguration(BaseModel):
     evaluation_id: ResearchIdentifier
     evaluation_version: int = Field(ge=1)
     evaluation_schema_version: Literal[1]
-    expected_observation_count: int = Field(ge=1)
+    expected_observation_count: int = Field(ge=1, strict=True)
 
 
 class EvaluationAggregationDefinition(BaseModel):
@@ -74,14 +74,14 @@ class EvaluationAggregationSummary(BaseModel):
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    true_positive_count: int = Field(ge=0)
-    true_negative_count: int = Field(ge=0)
-    false_positive_count: int = Field(ge=0)
-    false_negative_count: int = Field(ge=0)
-    unknown_count: int = Field(ge=0)
-    not_evaluated_count: int = Field(ge=0)
-    total_evaluated: int = Field(ge=0)
-    total_observations: int = Field(ge=1)
+    true_positive_count: int = Field(ge=0, strict=True)
+    true_negative_count: int = Field(ge=0, strict=True)
+    false_positive_count: int = Field(ge=0, strict=True)
+    false_negative_count: int = Field(ge=0, strict=True)
+    unknown_count: int = Field(ge=0, strict=True)
+    not_evaluated_count: int = Field(ge=0, strict=True)
+    total_evaluated: int = Field(ge=0, strict=True)
+    total_observations: int = Field(ge=1, strict=True)
 
     @model_validator(mode="after")
     def validate_counts(self) -> EvaluationAggregationSummary:
@@ -131,4 +131,3 @@ class EvaluationAggregationResult(BaseModel):
     metadata: EvaluationAggregationMetadata
     summary: EvaluationAggregationSummary
     manifest: EvaluationAggregationManifest
-
