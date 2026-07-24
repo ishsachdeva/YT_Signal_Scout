@@ -14,6 +14,9 @@ This file records user-visible and architectural changes to YT Signal Scout by r
   and typed digest failures.
 - Corrected release-governance contracts so production eligibility depends on an approved
   versioned Product decision and required release reviews, never manual runtime authorization.
+- Immutable Ground Truth Label schema version 1 with dataset/evidence binding, two independent
+  reviews, disagreement adjudication, supersession history, canonical serialization, strict import,
+  SHA-256 integrity, and typed failures.
 
 ### Release boundaries
 
@@ -21,6 +24,7 @@ This file records user-visible and architectural changes to YT Signal Scout by r
   created.
 - SIG-002 remains blocked; no production threshold or production runtime behavior changed.
 - No historical dataset was created or imported, and no research execution or labelling occurred.
+- No ground-truth label artifact was created and no channel was labelled.
 
 ## 0.6.0 - 2026-07-22
 

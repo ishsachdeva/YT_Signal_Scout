@@ -23,6 +23,8 @@ Key documentation:
   dataset, labelling, evaluation, boundary-testing, and evidence methodology for threshold studies.
 - [Historical Dataset Format](docs/engineering/HISTORICAL_DATASET_FORMAT.md) defines schema version
   2 custody, provenance, canonical serialization, and integrity validation.
+- [Ground Truth Label Format](docs/engineering/GROUND_TRUTH_LABEL_FORMAT.md) defines immutable
+  dataset-bound independent labels, adjudication, version history, and canonical integrity.
 - [Signal Catalog v1](docs/product/SIGNAL_CATALOG.md) governs proposed and approved signal policy.
 - [Backend README](backend/README.md) contains setup and test commands.
 - [Changelog](CHANGELOG.md) records release capabilities and boundaries.

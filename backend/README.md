@@ -112,6 +112,15 @@ enforces the observation cutoff, verifies a canonical SHA-256 digest, and can em
 JSON through `HistoricalDatasetCanonicalizer`. The schema and trust boundary are documented in
 [`docs/engineering/HISTORICAL_DATASET_FORMAT.md`](../docs/engineering/HISTORICAL_DATASET_FORMAT.md).
 
+Ground-truth research labels are a separate immutable boundary. `GroundTruthLabelImporter` loads
+one strict dataset-bound label set containing only Positive, Negative, Borderline, and Unknown.
+Every artifact has exactly two independent reviews; disagreement requires an independent later
+adjudication. Evidence-pack and rubric versions/digests, supersession history, canonical ordering,
+and SHA-256 integrity remain explicit. `GroundTruthLabelCanonicalizer` emits stable canonical JSON.
+This framework does not create labels, calculate agreement or threshold metrics, or execute a
+study. The format is documented in
+[`docs/engineering/GROUND_TRUTH_LABEL_FORMAT.md`](../docs/engineering/GROUND_TRUTH_LABEL_FORMAT.md).
+
 `BacktestExecutionService` is the controlled synchronous execution boundary. It accepts one
 validated import result and one versioned study configuration bound to that dataset, invokes the
 existing backtester once, and returns immutable factual metadata with the report. Execution does

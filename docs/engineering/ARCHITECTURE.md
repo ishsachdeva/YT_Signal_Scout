@@ -221,6 +221,47 @@ UTF-8 JSON. Neither component invokes YouTube, analytics, qualification, evidenc
 backtester, and neither is registered in production composition. Schema version 2 is documented in
 [`HISTORICAL_DATASET_FORMAT.md`](HISTORICAL_DATASET_FORMAT.md).
 
+ADR-022 defines a separate ground-truth label boundary after a governed historical dataset exists
+and before any labelled threshold study may execute:
+
+```text
+Historical Dataset Identity + Versioned Evidence Pack + Versioned Rubric
+                              |
+                              v
+               Two Independent Label Reviews
+                              |
+                +-------------+-------------+
+                |                           |
+                v                           v
+         Matching labels              Disagreement
+                |                           |
+                |                           v
+                |                 Independent Adjudication
+                +-------------+-------------+
+                              v
+              Immutable GroundTruthLabelArtifact
+                              |
+                              v
+               Strict GroundTruthLabelImporter
+              (bindings + canonical SHA-256 integrity)
+                              |
+                              v
+                 Immutable GroundTruthLabelSet
+```
+
+Labels are separate annotations bound to one exact dataset observation; they never mutate the
+historical dataset. Only Positive, Negative, Borderline, and Unknown exist. Matching independent
+labels define the final label directly. Disagreement requires a third reviewer who is distinct
+from both independent reviewers and acts no earlier than either review. Replacement versions link
+to the preceding immutable artifact and record a change reason.
+
+The label importer is strict, all-or-nothing, and deterministically orders artifacts and reviews.
+Its canonicalizer verifies the complete label set and evidence/rubric references using SHA-256.
+The framework does not assign reviewers, operate a workflow, calculate agreement or classification
+metrics, execute a study, approve Product policy, or participate in autonomous production runtime.
+Schema version 1 is documented in
+[`GROUND_TRUTH_LABEL_FORMAT.md`](GROUND_TRUTH_LABEL_FORMAT.md).
+
 ADR-014 defines the controlled execution boundary that follows successful import:
 
 ```text

@@ -37,6 +37,38 @@ class HistoricalDatasetDigestMismatchError(HistoricalDatasetValidationError):
     """Raised when canonical dataset content does not match its declared digest."""
 
 
+class GroundTruthLabelImportError(Exception):
+    """Base failure for governed ground-truth label import."""
+
+
+class GroundTruthLabelReadError(GroundTruthLabelImportError):
+    """Raised when a ground-truth label file cannot be read."""
+
+
+class GroundTruthLabelSyntaxError(GroundTruthLabelImportError):
+    """Raised when ground-truth label input is not valid JSON."""
+
+
+class UnsupportedGroundTruthLabelSchemaError(GroundTruthLabelImportError):
+    """Raised when a label document declares an unsupported schema."""
+
+
+class GroundTruthLabelValidationError(GroundTruthLabelImportError):
+    """Raised when typed label input violates structural validation."""
+
+    def __init__(self, issues: tuple[str, ...]) -> None:
+        self.issues = issues
+        super().__init__("ground-truth label validation failed: " + "; ".join(issues))
+
+
+class GroundTruthLabelDuplicateError(GroundTruthLabelValidationError):
+    """Raised when label-set identities are duplicated."""
+
+
+class GroundTruthLabelDigestMismatchError(GroundTruthLabelValidationError):
+    """Raised when canonical labels do not match their declared digest."""
+
+
 class BacktestExecutionError(Exception):
     """Base failure for controlled offline backtest execution."""
 

@@ -34,6 +34,7 @@ This directory contains all significant architectural decisions for the YT Signa
 | ADR-019 | Represent Production Eligibility as an Immutable Assessment | 🔵 Superseded in part by ADR-021 | 2026-07-22 |
 | ADR-020 | Govern Historical Dataset Custody and Canonical Integrity | 🟢 Accepted | 2026-07-24 |
 | ADR-021 | Separate Release Governance from Autonomous Runtime Evaluation | 🟢 Accepted | 2026-07-24 |
+| ADR-022 | Govern Ground-Truth Labels as Immutable Dataset-Bound Artifacts | 🟢 Accepted | 2026-07-24 |
 
 ---
 
