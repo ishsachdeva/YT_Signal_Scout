@@ -38,6 +38,14 @@ contract approved by PD-008 and ADR-030. Optional self-declared preferences and 
 SHA-256 canonicalization. It has no API, persistence, inference, clock, AI, feasibility,
 personalization, filtering, or recommendation behavior.
 
+## Canonical Opportunity
+
+`app.services.opportunity` exposes the immutable schema-versioned Opportunity identity contract
+approved by PD-009 and ADR-031. Every field is required; language and region use explicit tagged
+known-or-unknown values. Strict validation, stable compact UTF-8 JSON, and SHA-256 content identity
+are framework-independent and perform no discovery, evidence qualification, lifecycle transition,
+classification, analytics, scoring, ranking, filtering, recommendation, persistence, or I/O.
+
 ## YouTube data acquisition
 
 Set `YOUTUBE_API_KEY` before constructing a `YouTubeClient`. `YOUTUBE_TIMEOUT`,

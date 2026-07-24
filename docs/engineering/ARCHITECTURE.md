@@ -20,6 +20,16 @@ semantics, and canonical serialization. It has no dependency on HTTP, persistenc
 research, signals, YouTube acquisition, AI, recommendations, or application startup. Future modules
 may consume it only under separately approved Product behavior.
 
+### Canonical Opportunity boundary
+
+ADR-031 defines `app.services.opportunity` as an independent deterministic Product-domain
+boundary. It contains one immutable schema-versioned Opportunity identity, an opaque versioned
+proposition identity, Market and Niche identities, a closed source-platform vocabulary, and
+explicit known-or-unknown language and region context. Canonical compact UTF-8 JSON and SHA-256
+provide stable content identity. The module has no dependency on HTTP, persistence, acquisition,
+analytics, research, signals, Creator Profile, AI, recommendations, or application startup. It
+records no qualification, lifecycle, score, rank, or quality judgment.
+
 ## Analytics Pipeline
 
 ### Governed Channel Intelligence

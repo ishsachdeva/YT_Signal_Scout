@@ -123,10 +123,27 @@ them, evaluate fit, filter Opportunities, recommend action, execute AI, or claim
 improves outcomes. **Related:** [Creator Profile](CREATOR_PROFILE.md), RQ-CRT-001, RQ-PRD-001,
 Feature CR-001, and ADR-030.
 
+### PD-009: Authorize the canonical Opportunity identity foundation
+
+**Classification:** Product Decision. **Date:** 2026-07-24. **Status:** Decided for the foundational
+Opportunity domain milestone.
+**Decision:** Authorize one immutable, versioned Opportunity value object containing only its opaque
+Opportunity, Market, and Niche identities; an exact bounded proposition; YouTube source-platform
+identity; and explicit known-or-unknown language and region context. Identifier values must be
+unique within one Opportunity snapshot. **Rationale:** Opportunity is the primary Product asset and
+requires a stable canonical identity before later governed capabilities can reference it.
+**Implication:** Construction records an Opportunity already qualified under future Product policy;
+it does not discover, classify, validate evidence, qualify, score, rank, assess quality, recommend,
+or change lifecycle. Creator/profile IDs, channel IDs/handles, source URLs, discovery timestamps,
+Opportunity types, and lifecycle states are excluded because they are consumer, evidence,
+provenance, or still-unapproved policy concerns. RQ-OPP-001 remains open. **Related:**
+[Domain Model](DOMAIN_MODEL.md), [Opportunity Engine](OPPORTUNITY_ENGINE.md), Feature OE-000, and
+ADR-031.
+
 ## Open decisions
 
-Opportunity identity and lifecycle, evidence sufficiency, reference-set independence, topic/niche
-validation, confidence presentation, broader creator-profile data policy and personalization,
+Opportunity qualification and lifecycle, evidence sufficiency, reference-set independence,
+topic/niche validation, confidence presentation, broader creator-profile data policy and personalization,
 recommendation eligibility, and outcome feedback remain open. Roadmap inclusion is not approval.
 
 ## Future considerations
@@ -141,3 +158,4 @@ constraints, or measurable targets. Reconcile the Feature Registry after every m
 | 1.0 | 2026-07-24 | Recorded seven foundational Product decisions. |
 | 1.1 | 2026-07-24 | Added exclusive decision classifications and governance cross-references. |
 | 1.2 | 2026-07-24 | Authorized the bounded v0.10.1 Personal Creator Profile facts. |
+| 1.3 | 2026-07-24 | Authorized the bounded canonical Opportunity identity foundation. |

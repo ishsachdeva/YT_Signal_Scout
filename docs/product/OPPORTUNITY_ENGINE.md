@@ -7,12 +7,14 @@ architecture only: no algorithm, formula, score, threshold, or implementation is
 
 ## Product Knowledge Status
 
-**Status: Vision.** The engine is a future Product concept. No Opportunity qualification,
-confidence, recommendation, lifecycle service, algorithm, or runtime capability is implemented.
+**Status: Implemented Foundation + Future Vision.** The canonical Opportunity identity contract is
+implemented under PD-009 and ADR-031. No Opportunity discovery, evidence qualification,
+confidence, recommendation, lifecycle service, algorithm, or runtime workflow is implemented.
 
 ## Table of contents
 
 - [Scope](#scope)
+- [Implemented identity foundation](#implemented-identity-foundation)
 - [Inputs](#inputs)
 - [Evidence lifecycle](#evidence-lifecycle)
 - [Opportunity lifecycle](#opportunity-lifecycle)
@@ -29,6 +31,17 @@ The Opportunity Engine is the conceptual product capability that turns qualified
 an inspectable opportunity proposition. “Engine” does not imply a single service. Opportunities are
 repository-level domain concepts whose meaning must remain stable across research, APIs, interfaces,
 and future workflows.
+
+## Implemented identity foundation
+
+Schema version 1 records one already-qualified Opportunity as an opaque Opportunity identity and
+version, opaque Market and Niche identities, the exact bounded proposition, YouTube source-platform
+identity, and explicit known-or-unknown language and region context. All fields are required. The
+contract is immutable, strictly validated, canonically serialized, and content-addressable.
+
+This foundation does not decide whether evidence is sufficient, create or promote a candidate,
+classify a proposition, assign a type or lifecycle state, attach creator/channel provenance, or
+judge quality. Those behaviors remain governed future work.
 
 ## Inputs
 
@@ -84,9 +97,9 @@ recommendation are separate responsibilities even if a future interface presents
 
 ## Future considerations
 
-Research must establish opportunity identity/versioning, candidate provenance, evidence-independence
-criteria, lifecycle states, retirement semantics, profile-fit governance, and outcome feedback before
-implementation. Technical decomposition requires future ADRs referencing this document.
+Research must establish qualification policy, candidate provenance, evidence-independence criteria,
+lifecycle states, retirement semantics, profile-fit governance, and outcome feedback before those
+capabilities are implemented. The implemented identity foundation does not resolve RQ-OPP-001.
 
 Related: [Domain Model](DOMAIN_MODEL.md), [Feature Registry](FEATURE_REGISTRY.md), and
 [Product Principles](PRODUCT_PRINCIPLES.md).
@@ -97,3 +110,4 @@ Related: [Domain Model](DOMAIN_MODEL.md), [Feature Registry](FEATURE_REGISTRY.md
 |---|---|---|
 | 1.0 | 2026-07-24 | Defined the long-term evidence-to-opportunity product boundary. |
 | 1.1 | 2026-07-24 | Clarified that the engine remains Vision and is not implemented. |
+| 1.2 | 2026-07-24 | Recorded the implemented canonical identity foundation and retained future policy boundaries. |

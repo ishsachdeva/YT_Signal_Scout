@@ -66,6 +66,10 @@ validated against representative data; no opaque semantic classification is trea
 qualification policy, and Opportunity Confidence communication. **Exit direction:** A Product-approved
 boundary distinguishes evidence-supported Opportunities from candidates without predicting success.
 
+The canonical Opportunity identity contract is an early foundation only. It does not implement
+candidate discovery, evidence assembly, qualification, lifecycle, monitoring, confidence, or any
+other Phase 4 capability, and it does not change roadmap ordering or phase status.
+
 ## Phase 5: Creator Intelligence
 
 **Outcome:** Opportunities can be contextualized to explicit user goals and constraints.
@@ -121,3 +125,4 @@ Related: [Feature Registry](FEATURE_REGISTRY.md), [Product Vision](PRODUCT_VISIO
 | 1.0 | 2026-07-24 | Established the nine-phase long-term roadmap. |
 | 1.1 | 2026-07-24 | Declared Vision status without changing roadmap ordering. |
 | 1.2 | 2026-07-24 | Recorded the early Creator Profile fact foundation without changing phase status or order. |
+| 1.3 | 2026-07-24 | Recorded the early Opportunity identity foundation without changing phase status or order. |

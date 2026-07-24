@@ -4,6 +4,20 @@ This file records user-visible and architectural changes to YT Signal Scout by r
 
 ## Unreleased
 
+### Canonical Opportunity Domain Foundation
+
+- Added an immutable schema-versioned Opportunity identity with opaque Opportunity, Market, and
+  Niche identifiers; a bounded proposition; YouTube source identity; and explicit known-or-unknown
+  language and region context.
+- Added strict validation, deterministic compact UTF-8 JSON, SHA-256 content identity, PD-009,
+  ADR-031, dependency guards, and behavior-focused golden contract tests.
+
+### Release boundaries
+
+- No discovery, evidence qualification, lifecycle, classification, analytics, scoring, ranking,
+  filtering, recommendation, persistence, API, workflow, AI, external service, or startup behavior
+  was added.
+
 ### v0.10.1 - Personal Creator Profile Foundation
 
 - Added an immutable schema-versioned Personal Creator Profile with closed self-declared production

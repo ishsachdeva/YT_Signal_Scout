@@ -46,17 +46,18 @@ engineering backlog, release promise, implementation inventory, or authorization
 | NP-001 | Content Pattern Evidence | Describe repeated framing/delivery structures | TD-001, format semantics | Research required | Phase 3 | 8 |
 | ND-001 | Niche Map | Organize topics, audiences, formats, and markets | TD-001, NP-001 | Research required | Phase 3 | 9 |
 | TR-001 | Trend Lifecycle Evidence | Describe time-dependent change and persistence | Longitudinal observations, TD-001 | Research required | Phase 3 | 10 |
-| OE-001 | Opportunity Candidate Registry | Record bounded propositions and evidence needs | ND-001, CP-001, TR-001 | Defined | Phase 4 | 11 |
-| OE-002 | Opportunity Validation | Govern when a candidate becomes an Opportunity | OE-001, research policy | Research required | Phase 4 | 12 |
-| OC-001 | Opportunity Confidence | Communicate evidence quality and limitations | OE-002, interpretation research | Research required | Phase 4 | 13 |
-| CR-001 | Creator Profile | Capture explicit owner-supplied preferences and constraints | PD-008, ADR-030; privacy/UX/persona research for later use | Foundation available in v0.10.1; personalization unvalidated | Phase 5 | 14 |
-| RC-001 | Explainable Recommendations | Contextualize Opportunities for user-controlled action | OC-001, CR-001, Product policy | Research required | Phase 5 | 15 |
-| EX-001 | Experiment Planning | Turn a recommendation into a bounded learning plan | RC-001, user journeys | Future | Phase 5 | 16 |
-| PL-001 | AI-assisted Content Planning | Assist ideation/planning with source-aware safeguards | EX-001, AI governance | Future | Phase 6 | 17 |
-| VC-001 | AI-assisted Video Creation | Support selected production tasks under creator control | PL-001, rights/safety review | Future | Phase 7 | 18 |
-| PB-001 | Publishing Assistance | Support review and publishing workflows | VC-001, OAuth/security/policy | Future | Phase 8 | 19 |
-| GI-001 | Growth Intelligence | Observe outcomes and inform reassessment | Publishing/observation history | Future | Phase 9 | 20 |
-| PF-002 | Portfolio and Collaboration | Support agencies/studios across governed workspaces | Mature opportunity workflows | Future | Cross-phase | 21 |
+| OE-000 | Canonical Opportunity Identity | Provide the stable Product object referenced by later capabilities | PD-009, ADR-031 | Foundation available; qualification unvalidated | Phase 4 | 11 |
+| OE-001 | Opportunity Candidate Registry | Record bounded propositions and evidence needs | ND-001, CP-001, TR-001 | Defined | Phase 4 | 12 |
+| OE-002 | Opportunity Validation | Govern when a candidate becomes an Opportunity | OE-001, OE-000, research policy | Research required | Phase 4 | 13 |
+| OC-001 | Opportunity Confidence | Communicate evidence quality and limitations | OE-002, interpretation research | Research required | Phase 4 | 14 |
+| CR-001 | Creator Profile | Capture explicit owner-supplied preferences and constraints | PD-008, ADR-030; privacy/UX/persona research for later use | Foundation available in v0.10.1; personalization unvalidated | Phase 5 | 15 |
+| RC-001 | Explainable Recommendations | Contextualize Opportunities for user-controlled action | OC-001, CR-001, Product policy | Research required | Phase 5 | 16 |
+| EX-001 | Experiment Planning | Turn a recommendation into a bounded learning plan | RC-001, user journeys | Future | Phase 5 | 17 |
+| PL-001 | AI-assisted Content Planning | Assist ideation/planning with source-aware safeguards | EX-001, AI governance | Future | Phase 6 | 18 |
+| VC-001 | AI-assisted Video Creation | Support selected production tasks under creator control | PL-001, rights/safety review | Future | Phase 7 | 19 |
+| PB-001 | Publishing Assistance | Support review and publishing workflows | VC-001, OAuth/security/policy | Future | Phase 8 | 20 |
+| GI-001 | Growth Intelligence | Observe outcomes and inform reassessment | Publishing/observation history | Future | Phase 9 | 21 |
+| PF-002 | Portfolio and Collaboration | Support agencies/studios across governed workspaces | Mature opportunity workflows | Future | Cross-phase | 22 |
 
 ## Feature governance
 
@@ -85,3 +86,4 @@ Related: [Product Roadmap](PRODUCT_ROADMAP.md), [Decision Log](DECISION_LOG.md),
 | 1.0 | 2026-07-24 | Created the initial ordered capability registry. |
 | 1.1 | 2026-07-24 | Added Product Research Governance and lifecycle/status traceability. |
 | 1.2 | 2026-07-24 | Recorded the CR-001 deterministic factual foundation and remaining research boundary. |
+| 1.3 | 2026-07-24 | Added OE-000 for the canonical Opportunity identity without advancing qualification. |
