@@ -4,6 +4,19 @@ This file records user-visible and architectural changes to YT Signal Scout by r
 
 ## Unreleased
 
+### Evidence Manifest Domain Foundation
+
+- Added an immutable schema-versioned snapshot declaring an exact non-empty ordered collection of
+  unique Evidence Reference identities, UTC-normalized creation time, and optional description.
+- Added strict versions, identifier, timestamp, immutable-collection, duplicate, canonical JSON,
+  SHA-256, ordering, public-export, and dependency-isolation coverage under PD-012 and ADR-034.
+
+### Release boundaries
+
+- No evidence payload, provenance, URL, metadata, retrieval, reference validation, discovery,
+  analytics, qualification, confidence, lifecycle, scoring, recommendation, persistence, API,
+  workflow, AI, external service, Candidate/Opportunity integration, or startup behavior was added.
+
 ### Evidence Reference Domain Foundation
 
 - Added an immutable schema-versioned canonical pointer for YouTube channel and video evidence

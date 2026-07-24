@@ -50,6 +50,17 @@ qualification, scoring, confidence, lifecycle, or recommendation behavior. The p
 neither Opportunity/Candidate nor YouTube acquisition models and has no research, signals,
 persistence, HTTP, framework, AI, external-service, or startup dependency.
 
+### Evidence Manifest boundary
+
+ADR-034 defines `app.services.evidence_manifest` as a deterministic snapshot boundary downstream
+only of the Evidence Reference identity contract. One immutable schema-versioned manifest retains a
+non-empty ordered tuple of unique reference IDs, UTC-normalized creation time, and optional bounded
+description with compact UTF-8 canonical JSON and SHA-256 content identity. It stores no references
+or evidence payload and performs no sorting, deduplication, retrieval, validation, discovery,
+analytics, interpretation, qualification, scoring, confidence, lifecycle, recommendation,
+persistence, or AI behavior. It has no Opportunity, Candidate, acquisition, research, signals,
+HTTP, framework, external-service, or startup dependency.
+
 ## Analytics Pipeline
 
 ### Governed Channel Intelligence

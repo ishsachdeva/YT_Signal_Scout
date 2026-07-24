@@ -65,6 +65,16 @@ SHA-256 provide deterministic identity. The module contains no evidence payload,
 provenance, timestamp, URL, retrieval, validation, discovery, analytics, interpretation,
 qualification, scoring, confidence, recommendation, persistence, I/O, AI, or startup behavior.
 
+## Evidence Manifest
+
+`app.services.evidence_manifest` exposes the immutable schema-versioned snapshot approved by
+PD-012 and ADR-034. It declares an exact non-empty ordered tuple of unique Evidence Reference IDs,
+UTC-normalized creation time, and optional bounded description. Strict validation, compact
+sorted-key UTF-8 JSON, and SHA-256 provide deterministic identity. The module never sorts or
+deduplicates references and contains no evidence payload, provenance, URL, metadata, retrieval,
+validation, discovery, analytics, qualification, confidence, lifecycle, scoring, recommendation,
+persistence, I/O, AI, or startup behavior.
+
 ## YouTube data acquisition
 
 Set `YOUTUBE_API_KEY` before constructing a `YouTubeClient`. `YOUTUBE_TIMEOUT`,

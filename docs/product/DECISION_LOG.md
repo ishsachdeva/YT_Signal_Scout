@@ -169,6 +169,21 @@ pointed-to object and remains independent of Opportunity and Candidate. Evidence
 binding, provenance, retrieval, and qualification remain open. **Related:** [Domain Model](DOMAIN_MODEL.md),
 [Opportunity Engine](OPPORTUNITY_ENGINE.md), Feature ER-001, and ADR-033.
 
+### PD-012: Authorize the immutable Evidence Manifest foundation
+
+**Classification:** Product Decision. **Date:** 2026-07-24. **Status:** Decided for the foundational
+Evidence Manifest milestone. **Decision:** Authorize one immutable, versioned snapshot containing
+only an opaque manifest identity, an ordered non-empty collection of unique Evidence Reference
+identities, an explicit UTC-normalized creation time, and optional bounded human-readable
+description. **Rationale:** Future governed systems require an exact, reproducible declaration of
+which references belonged to a snapshot without embedding evidence or silently rewriting reference
+membership. **Implication:** Reference order is identity and must never be sorted; duplicates are
+rejected, not removed. A manifest neither retrieves nor validates references and contains no
+payload, provenance, URL, metadata, analytics, qualification, confidence, recommendation,
+lifecycle, score, AI output, discovery, retrieval, or persistence behavior. Evidence sufficiency,
+binding, provenance, and downstream use remain open. **Related:** [Domain Model](DOMAIN_MODEL.md),
+[Opportunity Engine](OPPORTUNITY_ENGINE.md), Feature EM-001, and ADR-034.
+
 ## Open decisions
 
 Opportunity qualification and lifecycle, evidence sufficiency, reference-set independence,
@@ -190,3 +205,4 @@ constraints, or measurable targets. Reconcile the Feature Registry after every m
 | 1.3 | 2026-07-24 | Authorized the bounded canonical Opportunity identity foundation. |
 | 1.4 | 2026-07-24 | Authorized the factual pre-qualification Opportunity Candidate foundation. |
 | 1.5 | 2026-07-24 | Authorized the canonical payload-free Evidence Reference foundation. |
+| 1.6 | 2026-07-24 | Authorized the ordered immutable Evidence Manifest snapshot foundation. |

@@ -8,10 +8,10 @@ architecture only: no algorithm, formula, score, threshold, or implementation is
 ## Product Knowledge Status
 
 **Status: Implemented Foundation + Future Vision.** Canonical Opportunity, Opportunity Candidate,
-and Evidence Reference domain contracts are implemented under PD-009 through PD-011 and ADR-031
-through ADR-033. No Opportunity discovery, Candidate or evidence registry, evidence retrieval or
-qualification, promotion, confidence, recommendation, lifecycle service, algorithm, or runtime
-workflow is implemented.
+Evidence Reference, and Evidence Manifest domain contracts are implemented under PD-009 through
+PD-012 and ADR-031 through ADR-034. No Opportunity discovery, Candidate/evidence registry, evidence
+retrieval or validation, qualification, promotion, confidence, recommendation, lifecycle service,
+algorithm, or runtime workflow is implemented.
 
 ## Table of contents
 
@@ -19,6 +19,7 @@ workflow is implemented.
 - [Implemented identity foundation](#implemented-identity-foundation)
 - [Implemented Candidate foundation](#implemented-candidate-foundation)
 - [Implemented Evidence Reference foundation](#implemented-evidence-reference-foundation)
+- [Implemented Evidence Manifest foundation](#implemented-evidence-manifest-foundation)
 - [Inputs](#inputs)
 - [Evidence lifecycle](#evidence-lifecycle)
 - [Opportunity lifecycle](#opportunity-lifecycle)
@@ -70,6 +71,18 @@ The reference is not evidence content. It has no payload, metadata, analytics, p
 timestamp, URL, retrieval, validation, discovery, interpretation, qualification, lifecycle, score,
 confidence, recommendation, or AI behavior. Candidate integration remains separately governed;
 neither domain imports the other.
+
+## Implemented Evidence Manifest foundation
+
+Schema version 1 declares one exact non-empty ordered snapshot of unique Evidence Reference
+identities, with opaque manifest identity/version, a UTC-normalized creation timestamp, and optional
+bounded description. It is immutable, strictly validated, hashable, canonically serialized, and
+content-addressable. Supplied reference order remains part of manifest identity.
+
+The manifest stores reference identities only. It does not embed Evidence References or evidence,
+and it performs no sorting, deduplication, retrieval, reference validation, discovery,
+interpretation, qualification, analytics, lifecycle, confidence, scoring, recommendation,
+persistence, or AI behavior.
 
 ## Inputs
 
@@ -141,3 +154,4 @@ Related: [Domain Model](DOMAIN_MODEL.md), [Feature Registry](FEATURE_REGISTRY.md
 | 1.2 | 2026-07-24 | Recorded the implemented canonical identity foundation and retained future policy boundaries. |
 | 1.3 | 2026-07-24 | Recorded the factual Candidate foundation without advancing discovery or qualification. |
 | 1.4 | 2026-07-24 | Recorded the payload-free Evidence Reference foundation without adding evidence behavior. |
+| 1.5 | 2026-07-24 | Recorded the ordered Evidence Manifest foundation without adding evidence behavior. |
