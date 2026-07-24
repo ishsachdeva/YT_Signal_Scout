@@ -25,7 +25,10 @@ from app.services.backtesting import (
     BacktestValidationError,
     ComparisonOperator,
     HistoricalDatasetImportResult,
+    HistoricalDatasetCustody,
+    HistoricalDatasetDigest,
     HistoricalDatasetManifest,
+    HistoricalDatasetProvenance,
     InvalidBacktestExecutionRequestError,
     MedianStandardVideoVsrThresholdBacktester,
     MedianVsrThresholdCandidate,
@@ -94,9 +97,24 @@ def _imported_dataset() -> HistoricalDatasetImportResult:
     )
     return HistoricalDatasetImportResult(
         manifest=HistoricalDatasetManifest(
-            schema_version=1,
+            schema_version=2,
             dataset_id=dataset.dataset_id,
             dataset_version=dataset.version,
+            custody=HistoricalDatasetCustody(
+                creator_identity="analytics-owner",
+                created_at=_NOW,
+            ),
+            provenance=HistoricalDatasetProvenance(
+                source_description="Controlled execution fixture",
+                collection_methodology="Deterministic fixture construction",
+                selection_methodology_id="selection-v1",
+                selection_methodology_version=1,
+                collection_started_at=_NOW,
+                collection_ended_at=_NOW,
+                observation_cutoff=_NOW,
+                known_limitations=("Synthetic test data",),
+            ),
+            digest=HistoricalDatasetDigest(algorithm="sha256", value="0" * 64),
         ),
         dataset=dataset,
     )

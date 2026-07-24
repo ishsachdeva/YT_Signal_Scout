@@ -27,8 +27,8 @@ class ResearchRecommendation(StrEnum):
 
     FURTHER_INVESTIGATION = "further_investigation"
     INSUFFICIENT_EVIDENCE = "insufficient_evidence"
-    CANDIDATE_WORTH_REVIEWING = "candidate_worth_reviewing"
-    READY_FOR_HUMAN_REVIEW = "ready_for_human_review"
+    CANDIDATE_FOR_PRODUCT_CONSIDERATION = "candidate_for_product_consideration"
+    READY_FOR_PRODUCT_DECISION = "ready_for_product_decision"
 
 
 class ThresholdEvaluationCriterion(BaseModel):

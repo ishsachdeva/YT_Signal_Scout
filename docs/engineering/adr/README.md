@@ -28,10 +28,12 @@ This directory contains all significant architectural decisions for the YT Signa
 | ADR-013 | Govern Historical Research Dataset Import Through Strict Versioned JSON | 🟢 Accepted | 2026-07-22 |
 | ADR-014 | Controlled Deterministic Offline Backtest Execution | 🟢 Accepted | 2026-07-22 |
 | ADR-015 | Govern Threshold Research Through Immutable Study Artifacts | 🟢 Accepted | 2026-07-22 |
-| ADR-016 | Define Versioned Factual Threshold Evaluation Methodology | 🟢 Accepted | 2026-07-22 |
+| ADR-016 | Define Versioned Factual Threshold Evaluation Methodology | 🟢 Accepted; amended by ADR-021 | 2026-07-22 |
 | ADR-017 | Record Human Threshold Evaluation as an Immutable Bound Artifact | 🟢 Accepted | 2026-07-22 |
-| ADR-018 | Govern Production Threshold Promotion Through Declarative Policy | 🟢 Accepted | 2026-07-22 |
-| ADR-019 | Represent Production Eligibility as an Immutable Assessment | 🟢 Accepted | 2026-07-22 |
+| ADR-018 | Govern Production Threshold Promotion Through Declarative Policy | 🔵 Superseded by ADR-021 | 2026-07-22 |
+| ADR-019 | Represent Production Eligibility as an Immutable Assessment | 🔵 Superseded in part by ADR-021 | 2026-07-22 |
+| ADR-020 | Govern Historical Dataset Custody and Canonical Integrity | 🟢 Accepted | 2026-07-24 |
+| ADR-021 | Separate Release Governance from Autonomous Runtime Evaluation | 🟢 Accepted | 2026-07-24 |
 
 ---
 

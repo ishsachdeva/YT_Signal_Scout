@@ -97,7 +97,7 @@ a defensible band-specific policy.
 
 ### 4.2 Required metadata
 
-Each observation MUST satisfy Historical Dataset JSON schema version 1 and include its stable
+Each observation MUST satisfy Historical Dataset JSON schema version 2 and include its stable
 observation ID, canonical channel ID, timezone-aware observation time, positive factual subscriber
 count, and complete `SubscriberRelativeAnalysisResult`. The nested result MUST retain:
 
@@ -462,7 +462,7 @@ close any SIG-002 Product or Architecture gap.
 - [SIG-002 gap analysis](../signals/SIG-002_GAP_ANALYSIS.md): implementation blockers that research
   alone cannot close.
 - [Historical Dataset JSON Format](../engineering/HISTORICAL_DATASET_FORMAT.md): strict schema
-  version 1 import boundary.
+  version 2 custody, canonicalization, integrity, and import boundary.
 - ADR-010 and ADR-011: qualification, provenance, analytics, and policy-free evidence facts.
 - ADR-012: deterministic band/candidate backtesting, exclusions, statistics, and ordering.
 - ADR-013: strict dataset import and factual-trust boundary.
@@ -470,8 +470,11 @@ close any SIG-002 Product or Architecture gap.
 - ADR-015: immutable study artifacts and research-only approval.
 - ADR-016: current factual methodology contract and its deliberate metric boundary.
 - ADR-017: immutable methodology-bound human evaluations.
-- ADR-018 and ADR-019: separate production-promotion prerequisites and ineligible assessment
-  boundary; neither supplies production approval.
+- ADR-018 and ADR-019: historical production-promotion and eligibility contracts whose mandatory
+  manual-approval portions are superseded by ADR-021.
+- ADR-020: immutable dataset custody, provenance, canonical serialization, and digest integrity.
+- ADR-021: development-time Product/release governance and autonomous post-release runtime
+  evaluation; research labels and evaluations never authorize individual runtime outcomes.
 
 ## 12. Version history
 

@@ -1,6 +1,6 @@
 # ADR-018: Govern Production Threshold Promotion Through Declarative Policy
 
-**Status:** Accepted
+**Status:** Superseded by ADR-021
 
 **Date:** 2026-07-22
 
@@ -9,6 +9,9 @@
 ## Supersedes
 
 None. This decision adds a boundary after ADR-015 through ADR-017 without authorizing promotion.
+
+ADR-021 supersedes the mandatory human-evaluation and manual-production-approval requirements.
+The text below is retained as the historical decision.
 
 ---
 

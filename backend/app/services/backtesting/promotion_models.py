@@ -6,7 +6,6 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from app.services.backtesting.methodology_models import ResearchRecommendation
 from app.services.backtesting.models import ResearchIdentifier
 from app.services.backtesting.study_models import BacktestStudyStatus
 
@@ -14,10 +13,8 @@ REQUIRED_PROMOTION_REQUIREMENT_KINDS = frozenset(
     {
         "approved_study",
         "methodology_version",
-        "minimum_evaluations",
-        "evaluation_completion",
-        "research_recommendation",
-        "manual_approval",
+        "approved_product_policy",
+        "release_governance_reviews",
     }
 )
 
@@ -45,52 +42,46 @@ class MethodologyVersionRequirement(_PromotionRequirement):
     methodology_version: int = Field(ge=1)
 
 
-class MinimumEvaluationsRequirement(_PromotionRequirement):
-    """Require a positive minimum count of governed human evaluations."""
+class ApprovedProductPolicyRequirement(_PromotionRequirement):
+    """Require one approved, versioned Product policy for a release."""
 
-    kind: Literal["minimum_evaluations"]
-    minimum_count: int = Field(gt=0)
-
-
-class EvaluationCompletionRequirement(_PromotionRequirement):
-    """Define qualitative completion required of criterion observations."""
-
-    kind: Literal["evaluation_completion"]
-    allow_required_needs_clarification: bool
-    require_optional_criteria_reviewed: bool
-
-
-class ResearchRecommendationRequirement(_PromotionRequirement):
-    """Require one of the explicitly permitted research recommendations."""
-
-    kind: Literal["research_recommendation"]
-    permitted_recommendations: Annotated[
-        tuple[ResearchRecommendation, ...], Field(min_length=1)
+    kind: Literal["approved_product_policy"]
+    decision_id: Annotated[
+        str,
+        Field(min_length=1, max_length=100, pattern=r"^PDR-[0-9]{3,}$"),
+    ]
+    decision_version: int = Field(ge=1)
+    effective_release: Annotated[
+        str,
+        Field(pattern=r"^v[0-9]+\.[0-9]+\.[0-9]+$"),
     ]
 
+
+ReleaseGovernanceReviewer = Literal["analytics_owner", "architecture_owner"]
+
+
+class ReleaseGovernanceReviewsRequirement(_PromotionRequirement):
+    """Require one-time release-governance review dispositions."""
+
+    kind: Literal["release_governance_reviews"]
+    required_reviewers: tuple[ReleaseGovernanceReviewer, ...]
+
     @model_validator(mode="after")
-    def validate_recommendations(self) -> ResearchRecommendationRequirement:
-        if len(set(self.permitted_recommendations)) != len(
-            self.permitted_recommendations
-        ):
-            raise ValueError("promotion research recommendations must be unique")
+    def validate_reviewers(self) -> ReleaseGovernanceReviewsRequirement:
+        if set(self.required_reviewers) != {"analytics_owner", "architecture_owner"}:
+            raise ValueError(
+                "release governance requires Analytics and Architecture reviewers"
+            )
+        if len(self.required_reviewers) != 2:
+            raise ValueError("release governance reviewers must be unique")
         return self
-
-
-class ManualApprovalRequirement(_PromotionRequirement):
-    """Declare that a separate manual production approval remains required."""
-
-    kind: Literal["manual_approval"]
-    required: Literal[True]
 
 
 PromotionRequirement = Annotated[
     ApprovedStudyRequirement
     | MethodologyVersionRequirement
-    | MinimumEvaluationsRequirement
-    | EvaluationCompletionRequirement
-    | ResearchRecommendationRequirement
-    | ManualApprovalRequirement,
+    | ApprovedProductPolicyRequirement
+    | ReleaseGovernanceReviewsRequirement,
     Field(discriminator="kind"),
 ]
 

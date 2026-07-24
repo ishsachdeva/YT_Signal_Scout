@@ -15,10 +15,8 @@ from app.services.backtesting.study_models import BacktestStudyArtifact
 PromotionRequirementKind = Literal[
     "approved_study",
     "methodology_version",
-    "minimum_evaluations",
-    "evaluation_completion",
-    "research_recommendation",
-    "manual_approval",
+    "approved_product_policy",
+    "release_governance_reviews",
 ]
 
 
@@ -82,16 +80,6 @@ class ProductionEligibilityAssessment(BaseModel):
             raise ValueError(
                 "eligibility results must match promotion requirements in order"
             )
-        manual_approval_result = next(
-            result
-            for result in self.requirement_results
-            if result.requirement_kind == "manual_approval"
-        )
-        if manual_approval_result.satisfied:
-            raise ValueError(
-                "manual approval cannot be satisfied without a governed approval artifact"
-            )
-
         expected_failures = tuple(
             result.requirement_id
             for result in self.requirement_results

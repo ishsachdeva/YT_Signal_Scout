@@ -7,6 +7,7 @@ from app.services.backtesting.exceptions import (
     BacktestExecutionStructuralError,
     BacktestValidationError,
     HistoricalDatasetDuplicateError,
+    HistoricalDatasetDigestMismatchError,
     HistoricalDatasetImportError,
     HistoricalDatasetReadError,
     HistoricalDatasetSyntaxError,
@@ -33,10 +34,16 @@ from app.services.backtesting.eligibility_models import (
 )
 from app.services.backtesting.import_models import (
     HISTORICAL_DATASET_SCHEMA_VERSION,
+    HistoricalDatasetCustody,
+    HistoricalDatasetDigest,
     HistoricalDatasetImportResult,
     HistoricalDatasetManifest,
+    HistoricalDatasetProvenance,
 )
-from app.services.backtesting.importer import HistoricalDatasetImporter
+from app.services.backtesting.importer import (
+    HistoricalDatasetCanonicalizer,
+    HistoricalDatasetImporter,
+)
 from app.services.backtesting.models import (
     BacktestExclusion,
     BacktestExclusionReason,
@@ -55,14 +62,12 @@ from app.services.backtesting.models import (
     ThresholdEvaluationResult,
 )
 from app.services.backtesting.promotion_models import (
+    ApprovedProductPolicyRequirement,
     ApprovedStudyRequirement,
-    EvaluationCompletionRequirement,
-    ManualApprovalRequirement,
     MethodologyVersionRequirement,
-    MinimumEvaluationsRequirement,
     ProductionPromotionPolicy,
     PromotionRequirement,
-    ResearchRecommendationRequirement,
+    ReleaseGovernanceReviewsRequirement,
 )
 from app.services.backtesting.methodology_models import (
     ResearchRecommendation,
@@ -103,18 +108,23 @@ __all__ = [
     "BacktestExclusionReason",
     "BacktestValidationError",
     "ApprovedStudyRequirement",
+    "ApprovedProductPolicyRequirement",
     "ComparisonOperator",
     "CriterionObservation",
     "CriterionObservationStatus",
     "DistributionSummary",
-    "EvaluationCompletionRequirement",
     "EligibilityRequirementResult",
     "HISTORICAL_DATASET_SCHEMA_VERSION",
     "HistoricalDatasetDuplicateError",
+    "HistoricalDatasetDigestMismatchError",
+    "HistoricalDatasetCanonicalizer",
+    "HistoricalDatasetCustody",
+    "HistoricalDatasetDigest",
     "HistoricalDatasetImportError",
     "HistoricalDatasetImporter",
     "HistoricalDatasetImportResult",
     "HistoricalDatasetManifest",
+    "HistoricalDatasetProvenance",
     "HistoricalDatasetReadError",
     "HistoricalDatasetSyntaxError",
     "HistoricalDatasetValidationError",
@@ -122,9 +132,7 @@ __all__ = [
     "MedianStandardVideoVsrThresholdBacktester",
     "MedianVsrThresholdCandidate",
     "MedianVsrThresholdSet",
-    "ManualApprovalRequirement",
     "MethodologyVersionRequirement",
-    "MinimumEvaluationsRequirement",
     "ProductionPromotionPolicy",
     "ProductionEligibilityAssessment",
     "PromotionRequirement",
@@ -132,7 +140,7 @@ __all__ = [
     "QualificationFailureCount",
     "QualificationCoverageSummary",
     "ResearchRecommendation",
-    "ResearchRecommendationRequirement",
+    "ReleaseGovernanceReviewsRequirement",
     "SubscriberBandBacktestResult",
     "SubscriberBandDefinition",
     "SubscriberBandSet",

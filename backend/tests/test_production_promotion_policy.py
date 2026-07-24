@@ -7,15 +7,12 @@ from unittest import TestCase
 from pydantic import ValidationError
 
 from app.services.backtesting import (
+    ApprovedProductPolicyRequirement,
     ApprovedStudyRequirement,
     BacktestStudyStatus,
-    EvaluationCompletionRequirement,
-    ManualApprovalRequirement,
     MethodologyVersionRequirement,
-    MinimumEvaluationsRequirement,
     ProductionPromotionPolicy,
-    ResearchRecommendation,
-    ResearchRecommendationRequirement,
+    ReleaseGovernanceReviewsRequirement,
 )
 
 
@@ -32,28 +29,20 @@ def _requirements():
             methodology_id="median-vsr-evaluation-v1",
             methodology_version=1,
         ),
-        MinimumEvaluationsRequirement(
-            requirement_id="minimum-evaluations",
-            kind="minimum_evaluations",
-            minimum_count=1,
+        ApprovedProductPolicyRequirement(
+            requirement_id="approved-product-policy",
+            kind="approved_product_policy",
+            decision_id="PDR-001",
+            decision_version=1,
+            effective_release="v1.0.0",
         ),
-        EvaluationCompletionRequirement(
-            requirement_id="evaluation-completion",
-            kind="evaluation_completion",
-            allow_required_needs_clarification=False,
-            require_optional_criteria_reviewed=False,
-        ),
-        ResearchRecommendationRequirement(
-            requirement_id="research-recommendation",
-            kind="research_recommendation",
-            permitted_recommendations=(
-                ResearchRecommendation.READY_FOR_HUMAN_REVIEW,
+        ReleaseGovernanceReviewsRequirement(
+            requirement_id="release-governance-reviews",
+            kind="release_governance_reviews",
+            required_reviewers=(
+                "analytics_owner",
+                "architecture_owner",
             ),
-        ),
-        ManualApprovalRequirement(
-            requirement_id="manual-approval",
-            kind="manual_approval",
-            required=True,
         ),
     )
 
@@ -67,7 +56,7 @@ def _policy() -> ProductionPromotionPolicy:
 
 
 class ProductionPromotionPolicyTests(TestCase):
-    def test_complete_six_kind_policy_is_valid_and_preserves_supplied_order(self) -> None:
+    def test_complete_release_governance_policy_preserves_supplied_order(self) -> None:
         requirements = tuple(reversed(_requirements()))
 
         policy = ProductionPromotionPolicy(
@@ -93,7 +82,7 @@ class ProductionPromotionPolicyTests(TestCase):
     def test_policy_represents_requirements_without_threshold_or_decision(self) -> None:
         values = _policy().model_dump()
 
-        self.assertEqual(len(values["requirements"]), 6)
+        self.assertEqual(len(values["requirements"]), 4)
         self.assertNotIn("threshold", values)
         self.assertNotIn("decision", values)
         self.assertNotIn("eligible", values)
@@ -112,15 +101,19 @@ class ProductionPromotionPolicyTests(TestCase):
             )
 
     def test_duplicate_requirement_kinds_are_rejected(self) -> None:
-        first = MinimumEvaluationsRequirement(
-            requirement_id="minimum-one",
-            kind="minimum_evaluations",
-            minimum_count=1,
+        first = ApprovedProductPolicyRequirement(
+            requirement_id="product-policy-one",
+            kind="approved_product_policy",
+            decision_id="PDR-001",
+            decision_version=1,
+            effective_release="v1.0.0",
         )
-        second = MinimumEvaluationsRequirement(
-            requirement_id="minimum-two",
-            kind="minimum_evaluations",
-            minimum_count=2,
+        second = ApprovedProductPolicyRequirement(
+            requirement_id="product-policy-two",
+            kind="approved_product_policy",
+            decision_id="PDR-002",
+            decision_version=1,
+            effective_release="v1.0.0",
         )
 
         with self.assertRaisesRegex(ValidationError, "kinds must be unique"):
@@ -130,16 +123,16 @@ class ProductionPromotionPolicyTests(TestCase):
                 requirements=(first, second),
             )
 
-    def test_boundary_validation_rejects_nonapproved_study_and_optional_manual_approval(self) -> None:
+    def test_boundary_validation_rejects_nonapproved_study_and_invalid_release_governance(self) -> None:
         invalid_study = _requirements()[0].model_dump()
         invalid_study["required_status"] = BacktestStudyStatus.EXECUTED
         with self.assertRaises(ValidationError):
             ApprovedStudyRequirement.model_validate(invalid_study)
 
-        invalid_approval = _requirements()[-1].model_dump()
-        invalid_approval["required"] = False
+        invalid_reviews = _requirements()[-1].model_dump()
+        invalid_reviews["required_reviewers"] = ("analytics_owner",)
         with self.assertRaises(ValidationError):
-            ManualApprovalRequirement.model_validate(invalid_approval)
+            ReleaseGovernanceReviewsRequirement.model_validate(invalid_reviews)
 
     def test_omitting_each_required_kind_is_rejected(self) -> None:
         requirements = _requirements()
@@ -165,10 +158,12 @@ class ProductionPromotionPolicyTests(TestCase):
                 requirements=(),
             )
         with self.assertRaises(ValidationError):
-            MinimumEvaluationsRequirement(
-                requirement_id="minimum-evaluations",
-                kind="minimum_evaluations",
-                minimum_count=0,
+            ApprovedProductPolicyRequirement(
+                requirement_id="approved-product-policy",
+                kind="approved_product_policy",
+                decision_id="PDR-001",
+                decision_version=0,
+                effective_release="v1.0.0",
             )
 
         values = _policy().model_dump()
@@ -176,16 +171,28 @@ class ProductionPromotionPolicyTests(TestCase):
         with self.assertRaises(ValidationError):
             ProductionPromotionPolicy.model_validate(values)
 
-    def test_research_recommendations_remain_the_existing_closed_enum(self) -> None:
-        values = _requirements()[4].model_dump()
-        values["permitted_recommendations"] = ("production_approved",)
-        with self.assertRaises(ValidationError):
-            ResearchRecommendationRequirement.model_validate(values)
+    def test_product_policy_requires_pdr_identity_and_semantic_release(self) -> None:
+        values = _requirements()[2].model_dump()
+        for field, value in (("decision_id", "pdr-001"), ("effective_release", "main")):
+            with self.subTest(field=field):
+                invalid = {**values, field: value}
+                with self.assertRaises(ValidationError):
+                    ApprovedProductPolicyRequirement.model_validate(invalid)
 
-        values = _requirements()[4].model_dump()
-        values["permitted_recommendations"] = (
-            ResearchRecommendation.READY_FOR_HUMAN_REVIEW,
-            ResearchRecommendation.READY_FOR_HUMAN_REVIEW,
-        )
-        with self.assertRaisesRegex(ValidationError, "must be unique"):
-            ResearchRecommendationRequirement.model_validate(values)
+    def test_legacy_manual_and_human_evaluation_requirements_are_rejected(self) -> None:
+        for kind in (
+            "manual_approval",
+            "minimum_evaluations",
+            "evaluation_completion",
+            "research_recommendation",
+        ):
+            with self.subTest(kind=kind):
+                values = _policy().model_dump()
+                requirements = list(values["requirements"])
+                requirements[0] = {
+                    "requirement_id": "legacy-requirement",
+                    "kind": kind,
+                }
+                values["requirements"] = requirements
+                with self.assertRaises(ValidationError):
+                    ProductionPromotionPolicy.model_validate(values)

@@ -17,7 +17,7 @@ from tests.test_production_promotion_policy import _policy
 _ASSESSED_AT = datetime(2026, 7, 22, 15, tzinfo=UTC)
 
 
-def _results(*, failed_ids: tuple[str, ...] = ("manual-approval",)):
+def _results(*, failed_ids: tuple[str, ...] = ("approved-product-policy",)):
     return tuple(
         EligibilityRequirementResult(
             requirement_id=requirement.requirement_id,
@@ -34,7 +34,7 @@ def _results(*, failed_ids: tuple[str, ...] = ("manual-approval",)):
 
 
 def _assessment(
-    *, failed_ids: tuple[str, ...] = ("manual-approval",)
+    *, failed_ids: tuple[str, ...] = ("approved-product-policy",)
 ) -> ProductionEligibilityAssessment:
     evaluation = _evaluation()
     return ProductionEligibilityAssessment(
@@ -61,7 +61,7 @@ class ProductionEligibilityAssessmentTests(TestCase):
 
         self.assertEqual(first, second)
         self.assertFalse(first.eligible)
-        self.assertEqual(first.failed_requirement_ids, ("manual-approval",))
+        self.assertEqual(first.failed_requirement_ids, ("approved-product-policy",))
         self.assertEqual(
             ProductionEligibilityAssessment.model_validate_json(
                 first.model_dump_json()
@@ -73,33 +73,20 @@ class ProductionEligibilityAssessmentTests(TestCase):
 
     def test_ineligible_assessment_records_failures_in_policy_order(self) -> None:
         assessment = _assessment(
-            failed_ids=("manual-approval", "minimum-evaluations")
+            failed_ids=("release-governance-reviews", "approved-product-policy")
         )
 
         self.assertFalse(assessment.eligible)
         self.assertEqual(
             assessment.failed_requirement_ids,
-            ("minimum-evaluations", "manual-approval"),
+            ("approved-product-policy", "release-governance-reviews"),
         )
 
-    def test_manual_approval_cannot_be_satisfied_without_governed_artifact(self) -> None:
-        assessment = _assessment()
-        results = tuple(
-            result.model_copy(update={"satisfied": True, "failure_reason": None})
-            if result.requirement_kind == "manual_approval"
-            else result
-            for result in assessment.requirement_results
-        )
+    def test_release_governance_requirements_can_produce_eligible_assessment(self) -> None:
+        assessment = _assessment(failed_ids=())
 
-        with self.assertRaisesRegex(ValidationError, "governed approval artifact"):
-            ProductionEligibilityAssessment(
-                **{
-                    **assessment.model_dump(),
-                    "requirement_results": results,
-                    "eligible": True,
-                    "failed_requirement_ids": (),
-                }
-            )
+        self.assertTrue(assessment.eligible)
+        self.assertEqual(assessment.failed_requirement_ids, ())
 
     def test_results_must_match_policy_identity_kind_and_order(self) -> None:
         assessment = _assessment()

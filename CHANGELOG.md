@@ -9,12 +9,18 @@ This file records user-visible and architectural changes to YT Signal Scout by r
 - Canonical SIG-002 Research Protocol covering governed datasets, independent channel labels,
   deterministic classification metrics, Wilson intervals, sensitivity and boundary testing,
   immutable study artifacts, acceptance criteria, and the Product evidence boundary.
+- Historical Dataset JSON schema version 2 with immutable custody and collection provenance,
+  observation-cutoff validation, canonical UTF-8 serialization, SHA-256 integrity verification,
+  and typed digest failures.
+- Corrected release-governance contracts so production eligibility depends on an approved
+  versioned Product decision and required release reviews, never manual runtime authorization.
 
 ### Release boundaries
 
 - No research was executed and no dataset, labels, study report, or threshold recommendation was
   created.
-- SIG-002 remains blocked; no production threshold, runtime behavior, or public contract changed.
+- SIG-002 remains blocked; no production threshold or production runtime behavior changed.
+- No historical dataset was created or imported, and no research execution or labelling occurred.
 
 ## 0.6.0 - 2026-07-22
 

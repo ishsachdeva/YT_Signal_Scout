@@ -107,7 +107,9 @@ persistence, or scheduled-execution integration.
 
 External historical research data enters through the strict versioned-JSON
 `HistoricalDatasetImporter`; successful import returns the existing immutable backtest dataset but
-does not execute it. The schema and trust boundary are documented in
+does not execute it. Schema version 2 requires immutable custody and collection provenance,
+enforces the observation cutoff, verifies a canonical SHA-256 digest, and can emit stable canonical
+JSON through `HistoricalDatasetCanonicalizer`. The schema and trust boundary are documented in
 [`docs/engineering/HISTORICAL_DATASET_FORMAT.md`](../docs/engineering/HISTORICAL_DATASET_FORMAT.md).
 
 `BacktestExecutionService` is the controlled synchronous execution boundary. It accepts one
@@ -121,7 +123,7 @@ complete factual report, and typed reviews may approve or reject only the resear
 Study approval does not publish a threshold, authorize production policy, or activate a signal.
 
 `ThresholdEvaluationMethodology` defines an ordered, versioned set of factual report concepts that
-human reviewers must inspect and the closed research-only recommendations they may record. It
+research evaluators may inspect and the closed research-only recommendations they may record. It
 contains no weights, scores, calculated summary, ranking, threshold recommendation, or production
 approval state.
 
@@ -130,20 +132,22 @@ methodology. It preserves the methodology's criterion order, records qualitative
 status and notes, and uses the existing research-only recommendation vocabulary. It contains no
 scores, weights, percentages, calculations, or production decision.
 
-`ProductionPromotionPolicy` declaratively versions the prerequisites that must be satisfied before
-an evaluated study could become eligible for a separate future production-promotion decision. Its
-typed requirements cover approved research status, exact methodology version, evaluation count,
-qualitative completion, research recommendation, and mandatory manual approval. The policy neither
-determines eligibility nor contains, publishes, registers, or activates a threshold.
-Every valid policy contains exactly one requirement of each of these six kinds while preserving
-the explicitly supplied order.
+`ProductionPromotionPolicy` declaratively versions development-time release prerequisites. Its
+typed requirements cover approved research status, exact methodology version, an approved
+versioned Product Decision Record with effective release, and recorded Analytics and Architecture
+release reviews. Human research evaluations may inform the Product decision but are not structural
+promotion prerequisites. The policy neither determines eligibility nor contains, publishes,
+registers, or activates a threshold.
 
 `ProductionEligibilityAssessment` is an immutable factual snapshot binding one promotion policy,
 one executed study, its governed evaluations, and one ordered satisfaction result per policy
 requirement. Eligibility and failed requirement IDs must agree exactly with those results. The
-assessment records no production approval and cannot publish, register, or activate a threshold.
-Until a separate governed approval artifact exists, the mandatory manual-approval result must
-remain unsatisfied, its requirement ID must remain failed, and eligibility must remain false.
+assessment records no Product approval and cannot publish, register, activate, or execute a
+threshold. It may be eligible when all release-governance results are satisfied.
+
+Once an approved Product policy and conforming implementation are released, production evaluation
+is deterministic and autonomous. No runtime human approval, review queue, research label, study
+evaluation, or per-signal authorization participates in execution.
 
 ## Signal engine foundation
 

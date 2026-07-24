@@ -228,8 +228,8 @@ evidence:
 - ADR-015 defines immutable study artifacts.
 - ADR-016 defines factual evaluation methodology.
 - ADR-017 defines immutable human evaluation artifacts.
-- ADR-018 and ADR-019 define research-to-eligibility governance contracts without selecting or
-  publishing a threshold.
+- ADR-021 supersedes the manual-approval portions of ADR-018 and ADR-019 and defines one-time
+  Product/release governance followed by autonomous runtime evaluation.
 
 No governed dataset instance, execution result, study artifact, completed human evaluation, or
 research recommendation is committed. Test fixtures prove contract behavior only and are not
@@ -246,7 +246,8 @@ Product evidence.
 - ADR-007: Signal Catalog governance
 - ADR-010: acquisition provenance and subscriber-relative qualification
 - ADR-011: policy-free subscriber-relative evidence
-- ADR-012 through ADR-019: governed research and eligibility contracts
+- ADR-012 through ADR-020: governed research, dataset, and eligibility contracts
+- ADR-021: release governance separated from autonomous runtime evaluation
 
 ## Implementation blockers and dependencies
 

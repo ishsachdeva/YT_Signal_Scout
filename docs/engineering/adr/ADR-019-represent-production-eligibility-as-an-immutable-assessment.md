@@ -1,6 +1,6 @@
 # ADR-019: Represent Production Eligibility as an Immutable Assessment
 
-**Status:** Accepted
+**Status:** Superseded in part by ADR-021
 
 **Date:** 2026-07-22
 
@@ -9,6 +9,10 @@
 ## Supersedes
 
 None. This decision implements the assessment boundary anticipated by ADR-018.
+
+ADR-021 preserves the immutable assessment shape but supersedes the forced-unsatisfied manual
+approval rule and the resulting requirement that every assessment remain ineligible. The text
+below is retained as the historical decision.
 
 ---
 

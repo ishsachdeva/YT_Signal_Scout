@@ -1,6 +1,6 @@
 # ADR-016: Define Versioned Factual Threshold Evaluation Methodology
 
-**Status:** Accepted
+**Status:** Accepted — recommendation vocabulary amended by ADR-021
 
 **Date:** 2026-07-22
 
@@ -9,6 +9,9 @@
 ## Supersedes
 
 None. This decision extends the research governance established by ADR-012 through ADR-015.
+
+ADR-021 later renamed two research recommendations without changing this ADR's factual methodology
+or production-authority boundary.
 
 ---
 

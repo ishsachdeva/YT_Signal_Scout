@@ -188,11 +188,13 @@ or recommend a threshold, emit a signal, or change catalog approval.
 The backtesting package has no acquisition, persistence, API, scheduler, AI, or production
 composition dependency. `SignalEngine` remains production rule orchestration only.
 
-ADR-013 governs external historical input before that research path. A strict versioned JSON
-document enters only through `HistoricalDatasetImporter`, which validates a schema manifest and
-existing immutable `SubscriberRelativeBacktestObservation` records. It rejects unknown fields,
-coercive primitive substitutions, inconsistent nested analysis, and duplicate identities, then
-sorts observations by stable ID and returns `HistoricalDatasetImportResult` with the canonical
+ADR-013 and ADR-020 govern external historical input before that research path. A strict schema
+version 2 JSON document enters only through `HistoricalDatasetImporter`, which validates immutable
+dataset identity, custody, collection provenance, observation cutoff, known limitations, a
+canonical SHA-256 digest, and existing `SubscriberRelativeBacktestObservation` records. It rejects
+unknown fields, coercive primitive substitutions, inconsistent nested analysis, observations after
+the cutoff, digest mismatch, and duplicate identities, then sorts observations by stable ID and
+returns `HistoricalDatasetImportResult` with the canonical
 `SubscriberRelativeBacktestDataset`.
 
 ```text
@@ -212,9 +214,11 @@ SubscriberRelativeBacktestDataset
 Future controlled offline execution
 ```
 
-Import validates structure and consistency but cannot prove factual custody. It does not invoke
-YouTube, analytics, qualification, evidence, signals, or the backtester, and is not registered in
-production composition. Schema version 1 is documented in
+Import validates structure, declared custody metadata, cutoff, and content integrity but cannot
+authenticate the creator or prove source facts. `HistoricalDatasetCanonicalizer` calculates the
+digest over canonical metadata and ordered observations and serializes validated results to stable
+UTF-8 JSON. Neither component invokes YouTube, analytics, qualification, evidence, signals, or the
+backtester, and neither is registered in production composition. Schema version 2 is documented in
 [`HISTORICAL_DATASET_FORMAT.md`](HISTORICAL_DATASET_FORMAT.md).
 
 ADR-014 defines the controlled execution boundary that follows successful import:
@@ -271,8 +275,8 @@ exclusions, and qualification-failure counts. It performs no evaluation and cont
 scores, ranking, optimization, or calculated summary.
 
 The methodology also closes research recommendations to further investigation, insufficient
-evidence, candidate worth reviewing, and readiness for human review. These dispositions have no
-production authority and cannot publish a threshold, approve policy, or activate SIG-002.
+evidence, candidate for Product consideration, and ready for Product decision. These dispositions
+have no production authority and cannot publish a threshold, approve policy, or activate SIG-002.
 
 ADR-017 defines the immutable human evaluation artifact that binds one executed
 `BacktestStudyArtifact` to one `ThresholdEvaluationMethodology`. It records reviewer identity, an
@@ -286,30 +290,23 @@ criteria cannot be marked not reviewed; needs clarification remains a valid huma
 Optional criteria may be marked not reviewed. The artifact has no score, weight, percentage,
 ranking, threshold selection, study approval, or production authority.
 
-ADR-018 defines a declarative production-promotion policy after human evaluation. The versioned
-`ProductionPromotionPolicy` contains a unique ordered set of typed prerequisites: an approved
-research study, exact methodology identity/version, positive minimum evaluation count, qualitative
-criterion completion, permitted existing research recommendations, and mandatory separate manual
-approval.
-Every valid policy contains exactly one requirement of each supported kind. Requirement order is
-explicitly supplied and preserved; policy validation neither sorts requirements nor inserts
-defaults.
+ADR-021 supersedes the mandatory human-evaluation and manual-approval portions of ADR-018 and
+ADR-019. `ProductionPromotionPolicy` is a development-time release-governance contract with one
+requirement each for an approved research study, exact methodology version, approved versioned
+Product Decision Record and effective release, and recorded Analytics and Architecture reviews.
+Human labels, study reviews, and methodology-bound evaluations may inform Product but are not
+structural production prerequisites.
 
-This policy states only what future eligibility assessment must require. It has no threshold value,
-eligibility result, promotion decision, evaluator, publisher, registry, runtime lookup, or signal
-integration. Research approval and recommendation remain necessary governance inputs rather than
-production authorization.
+`ProductionEligibilityAssessment` remains an immutable release-governance snapshot binding one
+policy, one executed study, optional research evaluations, and one ordered result for every policy
+requirement. Failed IDs preserve result order, and `eligible=true` is valid when every corrected
+requirement is satisfied. Eligibility does not approve policy, publish a threshold, implement a
+rule, or deploy a release.
 
-ADR-019 defines immutable production-eligibility assessment after declarative promotion policy.
-`ProductionEligibilityAssessment` embeds one policy, one executed study, zero or more unique human
-evaluations bound to that exact study, and one ordered `EligibilityRequirementResult` for every
-policy requirement. Requirement result identity and kind must exactly match policy order.
-
-Failed requirement IDs preserve result order, and `eligible` is structurally valid only when every
-requirement result is satisfied. The assessment records an outcome but does not infer requirement
-satisfaction, perform manual approval, publish a threshold, modify inputs, or affect runtime state.
-Because no governed manual production-approval artifact exists, the manual-approval requirement
-cannot be satisfied: its result remains failed and every current assessment remains ineligible.
+After an approved policy and conforming implementation are released, runtime evaluation is fully
+deterministic and autonomous. It does not consult a human approval, operational review queue,
+research label, or study evaluation for individual signals or executions. Behavior changes require
+a new governed policy/rule version and release.
 
 The YouTube acquisition layer owns interaction with the external API and conversion from upstream response shapes into immutable canonical models. The canonical models expose only the subset of public YouTube data with expected long-term application value.
 

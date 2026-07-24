@@ -17,9 +17,14 @@ from app.services.analytics.qualification import (
 )
 from app.services.backtesting import (
     HistoricalDatasetDuplicateError,
+    HistoricalDatasetDigestMismatchError,
+    HistoricalDatasetCanonicalizer,
+    HistoricalDatasetCustody,
+    HistoricalDatasetDigest,
     HistoricalDatasetImporter,
     HistoricalDatasetImportResult,
     HistoricalDatasetManifest,
+    HistoricalDatasetProvenance,
     HistoricalDatasetReadError,
     HistoricalDatasetSyntaxError,
     HistoricalDatasetValidationError,
@@ -86,12 +91,32 @@ def _observation(
 
 
 def _document(*observations: SubscriberRelativeBacktestObservation) -> dict[str, object]:
+    manifest = HistoricalDatasetManifest(
+        schema_version=2,
+        dataset_id="research-dataset-v1",
+        dataset_version=1,
+        custody=HistoricalDatasetCustody(
+            creator_identity="analytics-owner",
+            created_at=_OBSERVED_AT,
+        ),
+        provenance=HistoricalDatasetProvenance(
+            source_description="Governed historical test observations",
+            collection_methodology="Deterministic test fixture construction",
+            selection_methodology_id="selection-v1",
+            selection_methodology_version=1,
+            collection_started_at=_OBSERVED_AT,
+            collection_ended_at=_OBSERVED_AT,
+            observation_cutoff=_OBSERVED_AT,
+            known_limitations=("Synthetic test data",),
+        ),
+        digest=HistoricalDatasetDigest(algorithm="sha256", value="0" * 64),
+    )
+    digest = HistoricalDatasetCanonicalizer.calculate_digest(manifest, observations)
+    manifest = manifest.model_copy(
+        update={"digest": HistoricalDatasetDigest(algorithm="sha256", value=digest)}
+    )
     return {
-        "manifest": {
-            "schema_version": 1,
-            "dataset_id": "research-dataset-v1",
-            "dataset_version": 1,
-        },
+        "manifest": manifest.model_dump(mode="json"),
         "observations": [
             observation.model_dump(mode="json") for observation in observations
         ],
@@ -110,14 +135,14 @@ class HistoricalDatasetImporterTests(TestCase):
         result = self.importer.import_json(_json(_observation("observation-1")))
 
         self.assertIsInstance(result, HistoricalDatasetImportResult)
-        self.assertEqual(result.manifest.schema_version, 1)
+        self.assertEqual(result.manifest.schema_version, 2)
         self.assertEqual(result.dataset.dataset_id, "research-dataset-v1")
         self.assertEqual(result.dataset.version, 1)
         self.assertEqual(result.dataset.observations[0].observation_id, "observation-1")
         with self.assertRaises(ValidationError):
             result.dataset.version = 2
         with self.assertRaises(ValidationError):
-            result.manifest.schema_version = 2
+            result.manifest.schema_version = 3
 
     def test_file_import_uses_the_same_contract(self) -> None:
         payload = _json(_observation("observation-1"))
@@ -142,10 +167,21 @@ class HistoricalDatasetImporterTests(TestCase):
         document = _document()
         manifest = document["manifest"]
         assert isinstance(manifest, dict)
-        manifest["schema_version"] = 2
+        manifest["schema_version"] = 3
 
         with self.assertRaisesRegex(
-            UnsupportedHistoricalDatasetSchemaError, "schema version: 2"
+            UnsupportedHistoricalDatasetSchemaError, "schema version: 3"
+        ):
+            self.importer.import_json(json.dumps(document))
+
+    def test_legacy_schema_version_is_rejected(self) -> None:
+        document = _document()
+        manifest = document["manifest"]
+        assert isinstance(manifest, dict)
+        manifest["schema_version"] = 1
+
+        with self.assertRaisesRegex(
+            UnsupportedHistoricalDatasetSchemaError, "schema version: 1"
         ):
             self.importer.import_json(json.dumps(document))
 
@@ -259,6 +295,86 @@ class HistoricalDatasetImporterTests(TestCase):
             ("observation-1", "observation-2"),
         )
 
+    def test_digest_rejects_tampered_observation_and_manifest_metadata(self) -> None:
+        for mutate in ("observation", "metadata"):
+            with self.subTest(mutate=mutate):
+                document = _document(_observation("observation-1"))
+                if mutate == "observation":
+                    observations = document["observations"]
+                    assert isinstance(observations, list)
+                    record = observations[0]
+                    assert isinstance(record, dict)
+                    record["subscriber_count"] = 501
+                else:
+                    manifest = document["manifest"]
+                    assert isinstance(manifest, dict)
+                    provenance = manifest["provenance"]
+                    assert isinstance(provenance, dict)
+                    provenance["source_description"] = "Tampered source"
+                with self.assertRaises(HistoricalDatasetDigestMismatchError):
+                    self.importer.import_json(json.dumps(document))
+
+    def test_observation_after_manifest_cutoff_is_rejected(self) -> None:
+        document = _document(_observation("observation-1"))
+        manifest = document["manifest"]
+        assert isinstance(manifest, dict)
+        provenance = manifest["provenance"]
+        assert isinstance(provenance, dict)
+        provenance["observation_cutoff"] = "2026-07-22T11:00:00Z"
+        provenance["collection_started_at"] = "2026-07-22T11:00:00Z"
+        with self.assertRaisesRegex(
+            HistoricalDatasetValidationError, "after manifest observation cutoff"
+        ):
+            self.importer.import_json(json.dumps(document))
+
+    def test_canonical_serialization_is_stable(self) -> None:
+        result = self.importer.import_json(
+            _json(_observation("observation-2"), _observation("observation-1"))
+        )
+        canonical = HistoricalDatasetCanonicalizer.serialize_import_result(result)
+
+        self.assertEqual(self.importer.import_json(canonical), result)
+        self.assertEqual(
+            HistoricalDatasetCanonicalizer.serialize_import_result(
+                self.importer.import_json(canonical)
+            ),
+            canonical,
+        )
+
+    def test_manifest_enforces_custody_provenance_and_digest_contracts(self) -> None:
+        cases = (
+            ("custody", "created_at", "2026-07-22T11:00:00"),
+            ("provenance", "collection_started_at", "2026-07-22T12:30:00Z"),
+            ("provenance", "collection_ended_at", "2026-07-22T11:00:00Z"),
+            ("provenance", "known_limitations", ["duplicate", "duplicate"]),
+            ("digest", "algorithm", "md5"),
+            ("digest", "value", "ABC"),
+        )
+        for section, field, value in cases:
+            with self.subTest(section=section, field=field):
+                document = _document()
+                manifest = document["manifest"]
+                assert isinstance(manifest, dict)
+                nested = manifest[section]
+                assert isinstance(nested, dict)
+                nested[field] = value
+                with self.assertRaises(HistoricalDatasetValidationError):
+                    self.importer.import_json(json.dumps(document))
+
+    def test_manifest_creation_cannot_precede_collection_end(self) -> None:
+        document = _document()
+        manifest = document["manifest"]
+        assert isinstance(manifest, dict)
+        custody = manifest["custody"]
+        assert isinstance(custody, dict)
+        custody["created_at"] = "2026-07-22T11:00:00Z"
+
+        with self.assertRaisesRegex(
+            HistoricalDatasetValidationError,
+            "creation time must not precede collection end",
+        ):
+            self.importer.import_json(json.dumps(document))
+
     def test_import_result_serialization_round_trip_is_stable(self) -> None:
         result = self.importer.import_json(_json(_observation("observation-1")))
         serialized = result.model_dump_json()
@@ -268,9 +384,11 @@ class HistoricalDatasetImporterTests(TestCase):
         )
 
     def test_manifest_rejects_invalid_identity_and_version(self) -> None:
+        valid_manifest = _document()["manifest"]
+        assert isinstance(valid_manifest, dict)
         for values in (
-            {"schema_version": 1, "dataset_id": "Invalid ID", "dataset_version": 1},
-            {"schema_version": 1, "dataset_id": "research-v1", "dataset_version": 0},
+            {**valid_manifest, "dataset_id": "Invalid ID"},
+            {**valid_manifest, "dataset_version": 0},
         ):
             with self.subTest(values=values), self.assertRaises(ValidationError):
                 HistoricalDatasetManifest.model_validate(values)

@@ -33,6 +33,10 @@ class HistoricalDatasetDuplicateError(HistoricalDatasetValidationError):
     """Raised when governed observation identity rules are violated."""
 
 
+class HistoricalDatasetDigestMismatchError(HistoricalDatasetValidationError):
+    """Raised when canonical dataset content does not match its declared digest."""
+
+
 class BacktestExecutionError(Exception):
     """Base failure for controlled offline backtest execution."""
 

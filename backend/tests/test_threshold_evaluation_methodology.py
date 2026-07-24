@@ -33,7 +33,7 @@ def _methodology() -> ThresholdEvaluationMethodology:
         methodology_id="median-vsr-evaluation-v1",
         version=1,
         name="Median VSR threshold evaluation",
-        objective="Define factual evidence that human reviewers must inspect.",
+        objective="Define factual evidence that research evaluators may inspect.",
         criteria=(
             _criterion(),
             _criterion(
@@ -44,8 +44,8 @@ def _methodology() -> ThresholdEvaluationMethodology:
         permitted_recommendations=(
             ResearchRecommendation.FURTHER_INVESTIGATION,
             ResearchRecommendation.INSUFFICIENT_EVIDENCE,
-            ResearchRecommendation.CANDIDATE_WORTH_REVIEWING,
-            ResearchRecommendation.READY_FOR_HUMAN_REVIEW,
+            ResearchRecommendation.CANDIDATE_FOR_PRODUCT_CONSIDERATION,
+            ResearchRecommendation.READY_FOR_PRODUCT_DECISION,
         ),
     )
 
@@ -85,8 +85,8 @@ class ThresholdEvaluationMethodologyTests(TestCase):
             (
                 ResearchRecommendation.FURTHER_INVESTIGATION,
                 ResearchRecommendation.INSUFFICIENT_EVIDENCE,
-                ResearchRecommendation.CANDIDATE_WORTH_REVIEWING,
-                ResearchRecommendation.READY_FOR_HUMAN_REVIEW,
+                ResearchRecommendation.CANDIDATE_FOR_PRODUCT_CONSIDERATION,
+                ResearchRecommendation.READY_FOR_PRODUCT_DECISION,
             ),
         )
         prohibited_terms = ("production", "publish", "enable", "deploy", "release")

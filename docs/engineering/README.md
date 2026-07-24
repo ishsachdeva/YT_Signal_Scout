@@ -29,7 +29,9 @@ New contributors should read the documents in the following order:
 | ../governance/DECISION_GOVERNANCE.md | Repository-wide decision ownership, approval, review, lifecycle, and traceability |
 | ENGINEERING_PRINCIPLES.md | Engineering philosophy and decision-making principles |
 | ARCHITECTURE.md | Current and target system architecture |
+| HISTORICAL_DATASET_FORMAT.md | Governed schema, custody, provenance, digest, and canonical import format |
 | adr/ | Architecture Decision Records |
+| ../research/SIG-002_RESEARCH_PROTOCOL.md | Canonical SIG-002 research methodology |
 | ../product/SIGNAL_CATALOG.md | Governed signal definitions, readiness, and threshold provenance |
 
 ---
