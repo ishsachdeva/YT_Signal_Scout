@@ -275,6 +275,11 @@ Positive, True Negative, False Positive, and False Negative values are observati
 not totals; Borderline/Unknown truth and explicitly unavailable predictions remain Unknown or Not
 Evaluated. Aggregation, metrics, intervals, and interpretation remain later protocol stages.
 
+ADR-026 performs the first later stage as counts only: it counts the six immutable observation
+outcomes, treats Unknown as evaluated and Not Evaluated as skipped, and records Total Evaluated and
+Total Observations. It performs no division and produces no rate, percentage, metric, interval, or
+interpretation; those remain separate later stages.
+
 ### 6.3 Required metrics
 
 For every candidate, report:
@@ -494,6 +499,7 @@ close any SIG-002 Product or Architecture gap.
   canonical integrity, and exact label-artifact binding.
 - ADR-024 and ADR-025: governed non-analytical study execution followed by immutable
   observation-level prediction-versus-truth facts before aggregation.
+- ADR-026: deterministic counts-only aggregation before derived statistical evaluation.
 
 ## 12. Version history
 
@@ -501,3 +507,4 @@ close any SIG-002 Product or Architecture gap.
 |---|---|---|---|
 | 1 | 2026-07-24 | Initial canonical SIG-002 research protocol | Documentation milestone v0.9.1 |
 | 2 | 2026-07-24 | Added governed execution and observation-level labelled evaluation boundaries | ADR-024 and ADR-025 |
+| 3 | 2026-07-24 | Added the counts-only evaluation aggregation boundary | ADR-026 |

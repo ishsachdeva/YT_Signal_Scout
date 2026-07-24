@@ -352,6 +352,12 @@ label, then records only the categorical relationship (true/false positive/negat
 Not Evaluated). These are per-observation facts, not aggregate confusion-matrix counts. The layer
 contains no totals, rates, statistics, threshold evaluation, recommendation, or runtime behavior.
 
+ADR-026 adds a separate counts-only aggregation boundary after observation-level evaluation. It
+consumes exactly one immutable evaluation result and counts its six closed outcomes once. Unknown
+contributes to Total Evaluated; Not Evaluated does not. The output contains only non-negative
+integer counts and structural total identities—no division, rate, percentage, metric, interval,
+ranking, recommendation, or runtime behavior.
+
 ADR-016 defines evaluation methodology separately from both execution facts and study reviews.
 `ThresholdEvaluationMethodology` is an immutable, versioned, ordered collection of criteria whose
 metrics map only to facts already present in `ThresholdBacktestReport`: qualification coverage,

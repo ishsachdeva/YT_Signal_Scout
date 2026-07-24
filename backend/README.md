@@ -143,6 +143,13 @@ See
 [`docs/engineering/LABELLED_EVALUATION_FORMAT.md`](../docs/engineering/LABELLED_EVALUATION_FORMAT.md)
 and ADR-025.
 
+`EvaluationAggregationService` consumes exactly one immutable labelled-evaluation result and emits
+only six outcome counts plus Total Evaluated and Total Observations. Unknown contributes to Total
+Evaluated; Not Evaluated does not. The service performs no division and exposes no percentage,
+rate, statistical metric, threshold recommendation, or policy decision. See
+[`docs/engineering/EVALUATION_AGGREGATION_FORMAT.md`](../docs/engineering/EVALUATION_AGGREGATION_FORMAT.md)
+and ADR-026.
+
 `BacktestExecutionService` is the controlled synchronous execution boundary. It accepts one
 validated import result and one versioned study configuration bound to that dataset, invokes the
 existing backtester once, and returns immutable factual metadata with the report. Execution does

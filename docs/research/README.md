@@ -14,6 +14,8 @@ or authorize runtime behavior.
   analysis.
 - [Labelled Evaluation Contract](../engineering/LABELLED_EVALUATION_FORMAT.md) defines the factual
   per-observation comparison boundary used before any statistical aggregation.
+- [Evaluation Aggregation Contract](../engineering/EVALUATION_AGGREGATION_FORMAT.md) defines the
+  counts-only cohort boundary used before derived statistical metrics.
 
 Study-specific datasets, configurations, executions, reports, labels, and reviews are not stored
 here unless a separately approved milestone explicitly adds them.

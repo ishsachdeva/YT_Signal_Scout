@@ -179,3 +179,19 @@ class EvaluationValidationError(EvaluationError):
 
 class EvaluationDigestMismatchError(EvaluationValidationError):
     """Raised when canonical evaluation content differs from its digest."""
+
+
+class EvaluationAggregationError(Exception):
+    """Base failure for counts-only evaluation aggregation."""
+
+
+class EvaluationAggregationValidationError(EvaluationAggregationError):
+    """Raised when an aggregation input is invalid or mismatched."""
+
+    def __init__(self, issues: tuple[str, ...]) -> None:
+        self.issues = issues
+        super().__init__("evaluation aggregation validation failed: " + "; ".join(issues))
+
+
+class EvaluationAggregationDigestMismatchError(EvaluationAggregationValidationError):
+    """Raised when canonical aggregation content differs from its digest."""

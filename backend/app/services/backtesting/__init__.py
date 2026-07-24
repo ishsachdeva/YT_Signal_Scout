@@ -12,6 +12,9 @@ from app.services.backtesting.exceptions import (
     EvidencePackSyntaxError,
     EvidencePackValidationError,
     EvaluationDigestMismatchError,
+    EvaluationAggregationDigestMismatchError,
+    EvaluationAggregationError,
+    EvaluationAggregationValidationError,
     EvaluationError,
     EvaluationValidationError,
     GroundTruthLabelBindingError,
@@ -163,6 +166,23 @@ from app.services.backtesting.study_models import (
     BacktestStudyStatus,
 )
 from app.services.backtesting.validation import BacktestDatasetValidator
+from app.services.backtesting.evaluation_aggregation import (
+    EvaluationAggregationService,
+    EvaluationAggregationValidator,
+)
+from app.services.backtesting.evaluation_aggregation_canonicalizer import (
+    EvaluationAggregationCanonicalizer,
+)
+from app.services.backtesting.evaluation_aggregation_models import (
+    EVALUATION_AGGREGATION_SCHEMA_VERSION,
+    EvaluationAggregationConfiguration,
+    EvaluationAggregationDefinition,
+    EvaluationAggregationManifest,
+    EvaluationAggregationMetadata,
+    EvaluationAggregationRequest,
+    EvaluationAggregationResult,
+    EvaluationAggregationSummary,
+)
 from app.services.backtesting.labelled_evaluation import (
     EvaluationValidator,
     LabelledEvaluationService,
@@ -203,6 +223,20 @@ from app.services.backtesting.study_execution_models import (
 )
 
 __all__ = [
+    "EVALUATION_AGGREGATION_SCHEMA_VERSION",
+    "EvaluationAggregationCanonicalizer",
+    "EvaluationAggregationConfiguration",
+    "EvaluationAggregationDefinition",
+    "EvaluationAggregationDigestMismatchError",
+    "EvaluationAggregationError",
+    "EvaluationAggregationManifest",
+    "EvaluationAggregationMetadata",
+    "EvaluationAggregationRequest",
+    "EvaluationAggregationResult",
+    "EvaluationAggregationService",
+    "EvaluationAggregationSummary",
+    "EvaluationAggregationValidationError",
+    "EvaluationAggregationValidator",
     "LABELLED_EVALUATION_SCHEMA_VERSION",
     "EvaluationCanonicalizer",
     "EvaluationConfiguration",

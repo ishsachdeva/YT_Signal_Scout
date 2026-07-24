@@ -33,6 +33,8 @@ Key documentation:
   governed-input validation and immutable non-analytical execution artifacts.
 - [Labelled Evaluation Format](docs/engineering/LABELLED_EVALUATION_FORMAT.md) defines immutable
   per-observation prediction-versus-truth outcomes without aggregation.
+- [Evaluation Aggregation Format](docs/engineering/EVALUATION_AGGREGATION_FORMAT.md) defines
+  immutable counts-only cohort summaries without statistical metrics.
 - [Signal Catalog v1](docs/product/SIGNAL_CATALOG.md) governs proposed and approved signal policy.
 - [Backend README](backend/README.md) contains setup and test commands.
 - [Changelog](CHANGELOG.md) records release capabilities and boundaries.
